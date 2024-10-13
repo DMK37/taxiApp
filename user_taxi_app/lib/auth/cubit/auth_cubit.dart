@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
 import 'package:taxiapp/auth/repository/auth_repository.dart';
+import 'package:taxiapp/models/user_model.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
@@ -29,6 +30,11 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> isAuthenticated() async {
-    await _authRepository.isAuthenticated();
+    final isAuth = await _authRepository.isAuthenticated();
+    if (isAuth) {
+      emit(AuthenticatedState(user: UserModel(walletId: "0x1234567890")));
+    } else {
+      emit(UnauthenticatedState());
+    }
   }
 }

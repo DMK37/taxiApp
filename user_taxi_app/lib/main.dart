@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/pages/auth_listener_wrapper.dart';
 import 'package:taxiapp/auth/repository/metamask_repository.dart';
+import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/router_config.dart';
 
 void main() async {
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) => LocationCubit()..getLocation(),
+          ),
           BlocProvider(
             create: (context) =>
                 AuthCubit(MetamaskRepository())..isAuthenticated(),
