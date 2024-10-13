@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
+import 'package:taxiapp/components/error_snack_bar.dart';
 
 class AuthListenerWrapper extends StatelessWidget {
   final Widget child;
@@ -14,10 +15,34 @@ class AuthListenerWrapper extends StatelessWidget {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthFailureState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            content: ErrorSnackBar(
+              errorMessage: state.errorMessage,
+            ),
+          ));
+          context.go('/login');
+        }
+        if (state is UnauthenticatedState) {
           context.go('/login');
         }
       },
-      child: child,
+      child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+
+        switch (state) {
+          case AuthLoadingState():
+            return const Center(child: CircularProgressIndicator());
+          // case AuthLoadingState() || UnauthenticatedState():
+          //   return const Center(child: CircularProgressIndicator());
+          case AuthenticatedState():
+            return child;
+
+          default:
+            return const SizedBox.shrink();
+        }
+      }),
     );
   }
 }
