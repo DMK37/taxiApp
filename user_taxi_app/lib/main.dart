@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
-import 'package:taxiapp/auth/pages/auth_listener_wrapper.dart';
 import 'package:taxiapp/auth/repository/metamask_repository.dart';
+import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/router_config.dart';
+import 'package:taxiapp/theme/light_theme.dart';
 
 void main() async {
   final appRouter = AppRouter();
@@ -23,18 +24,22 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => LocationCubit()..getLocation(),
+            create: (context) =>
+                LocationCubit()..checkPermissionsAndGetLocation(),
           ),
           BlocProvider(
             create: (context) =>
                 AuthCubit(MetamaskRepository())..isAuthenticated(),
           ),
+          BlocProvider(
+            create: (context) => InitialOrderCubit(),
+          )
         ],
-        child: AuthListenerWrapper(
-            child: MaterialApp.router(
+        child: MaterialApp.router(
           routerConfig: router,
           title: 'Taxi App',
           debugShowCheckedModeBanner: false,
-        )));
+          theme: lightTheme,
+        ));
   }
 }

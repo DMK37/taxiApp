@@ -34,8 +34,6 @@ class AuthListenerWrapper extends StatelessWidget {
         switch (state) {
           case AuthLoadingState():
             return const Center(child: CircularProgressIndicator());
-          // case AuthLoadingState() || UnauthenticatedState():
-          //   return const Center(child: CircularProgressIndicator());
           case AuthenticatedState():
             return child;
 
