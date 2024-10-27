@@ -4,8 +4,10 @@ abstract class InitialOrderState {}
 
 class OrderInitial extends InitialOrderState {
   LatLng? source;
+  String? sourceAddress;
   LatLng? destination;
-  OrderInitial({this.source, this.destination});
+  String? destinationAddress;
+  OrderInitial({this.source, this.sourceAddress, this.destination, this.destinationAddress});
 }
 
 class OrderWithAssignedDriver extends InitialOrderState {}

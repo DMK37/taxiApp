@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class MainDraggableScrollableSheet extends StatefulWidget {
   final Widget firstChild;
   final Widget secondChild;
+  final bool isDestination;
   const MainDraggableScrollableSheet(
-      {super.key, required this.firstChild, required this.secondChild});
+      {super.key, required this.firstChild, required this.secondChild, required this.isDestination});
 
   @override
   State<MainDraggableScrollableSheet> createState() =>
@@ -49,9 +50,10 @@ class _MainDraggableScrollableSheetState
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ListView(
+                  shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
                   controller: scrollController,
-                  padding: EdgeInsets.zero, // Remove default padding
+                  padding: EdgeInsets.zero, 
 
                   children: [
                     const SizedBox(height: 10),
