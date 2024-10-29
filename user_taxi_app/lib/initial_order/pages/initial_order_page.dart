@@ -28,6 +28,38 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
   final FocusNode _destinationFocusNode = FocusNode();
   LatLng? _source;
   LatLng? _destination;
+  List<dynamic> _autoCompleteSuggestions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _isDestination = false;
+    _sourceController.text =
+        (context.read<LocationCubit>().state as LocationSuccessState).address;
+    context.read<InitialOrderCubit>().pickSource(
+        (context.read<LocationCubit>().state as LocationSuccessState).location,
+        (context.read<LocationCubit>().state as LocationSuccessState).address);
+    _source =
+        (context.read<LocationCubit>().state as LocationSuccessState).location;
+
+    _sourceFocusNode.addListener(() {
+      if (_sourceFocusNode.hasFocus) {
+        _sourceController.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: _sourceController.text.length,
+        );
+      }
+    });
+
+    _destinationFocusNode.addListener(() {
+      if (_destinationFocusNode.hasFocus) {
+        _destinationController.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: _destinationController.text.length,
+        );
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -46,18 +78,6 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_sourceController.text == "") {
-      setState(() {
-        _isDestination = false;
-      });
-      _sourceController.text =
-          (context.read<LocationCubit>().state as LocationSuccessState).address;
-      context.read<InitialOrderCubit>().pickSource(
-          (context.read<LocationCubit>().state as LocationSuccessState)
-              .location);
-      _source = (context.read<LocationCubit>().state as LocationSuccessState)
-          .location;
-    }
     return Scaffold(
       body: Stack(
         children: [
@@ -93,7 +113,6 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                   //   ),
                   // },
                   onCameraMove: (CameraPosition position) {
-                    // update position order cubit
                     if (_isDestination) {
                       _destination = position.target;
                     } else {
@@ -101,14 +120,18 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                     }
                   },
                   onCameraIdle: () async {
-                    // get address
+                    setState(() {
+                      _autoCompleteSuggestions = [];
+                    });
                     final loc = _isDestination ? _destination : _source;
-                    final places = await placemarkFromCoordinates(loc!.latitude, loc.longitude);
-                    final addressBeforeComma = places[0].street;
+                    final places = await placemarkFromCoordinates(
+                        loc!.latitude, loc.longitude);
+                    final address =
+                        "${places[0].street}, ${places[0].locality}";
                     if (_isDestination) {
-                      _destinationController.text = addressBeforeComma!;
+                      _destinationController.text = address;
                     } else {
-                      _sourceController.text = addressBeforeComma!;
+                      _sourceController.text = address;
                     }
                   },
                 ),
@@ -147,6 +170,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
             ),
           ),
           MainDraggableScrollableSheet(
+              isDestination: _isDestination,
               firstChild: _isDestination
                   ? Column(
                       children: [
@@ -154,8 +178,8 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                           child: Text(
                             "Pick Destination",
                             style: TextStyle(
-                              fontSize: 20.0, // Larger font size
-                              fontWeight: FontWeight.bold, // Bold font weight
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -173,24 +197,21 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                             disabledBorder: InputBorder.none,
                           ),
                         ),
-                        const SizedBox(height: 20), // Add some spacing
+                        const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
-                            context
-                                .read<InitialOrderCubit>()
-                                .pickDestination(_destination!);
+                            context.read<InitialOrderCubit>().pickDestination(
+                                _destination!, _destinationController.text);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .primary, // Set the background color to green
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
                           ),
                           child: const Text(
                             'Confirm Destination Point',
                             style: TextStyle(
-                              color:
-                                  Colors.white, // Set the text color to white
-                              fontSize: 16.0, // Adjust font size
+                              color: Colors.white,
+                              fontSize: 16.0,
                             ),
                           ),
                         ),
@@ -202,8 +223,8 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                           child: Text(
                             "Pick Source",
                             style: TextStyle(
-                              fontSize: 20.0, // Larger font size
-                              fontWeight: FontWeight.bold, // Bold font weight
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -229,7 +250,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                             });
                             context
                                 .read<InitialOrderCubit>()
-                                .pickSource(_source!);
+                                .pickSource(_source!, _sourceController.text);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
@@ -250,8 +271,8 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                   child: Text(
                     "Your Ride",
                     style: TextStyle(
-                      fontSize: 20.0, // Larger font size
-                      fontWeight: FontWeight.bold, // Bold font weight
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -259,54 +280,192 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                 TextField(
                   controller: _sourceController,
                   focusNode: _sourceFocusNode,
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Source',
                     hintStyle: TextStyle(
                       color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.normal,
                     ),
-                    border: const OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        width: 1.5,
+                        color:
+                            Theme.of(context).inputDecorationTheme.fillColor!,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 1.5,
+                      ),
+                    ),
                     prefixIcon: const Icon(Icons.adjust_sharp),
                     suffixIcon: IconButton(
                         onPressed: () {
                           _sourceController.clear();
                           _destinationFocusNode.unfocus();
                           _sourceFocusNode.requestFocus();
+
+                          setState(() {
+                            _autoCompleteSuggestions = [];
+                          });
                         },
                         icon: const Icon(Icons.clear)),
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    if (_sourceController.text != "") {
+                      _autoCompleteSuggestions = await context
+                          .read<LocationCubit>()
+                          .getAutoCompleteSuggestions(_sourceController.text);
+                    } else {
+                      _autoCompleteSuggestions = [];
+                    }
                     setState(() {
                       _isDestination = false;
                     });
                   },
+                  onChanged: (value) async {
+                    if (value.isNotEmpty) {
+                      _autoCompleteSuggestions = await context
+                          .read<LocationCubit>()
+                          .getAutoCompleteSuggestions(value);
+                      setState(() {});
+                    }
+                  },
                 ),
-                const SizedBox(height: 10),
                 TextField(
                   controller: _destinationController,
                   focusNode: _destinationFocusNode,
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w500,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Destination',
                     hintStyle: TextStyle(
                       color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.normal,
                     ),
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.location_on),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        width: 1.5,
+                        color:
+                            Theme.of(context).inputDecorationTheme.fillColor!,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 1.5,
+                      ),
+                    ),
+                    prefixIcon: const Icon(Icons.crop_square_outlined),
                     suffixIcon: IconButton(
                         onPressed: () {
                           _destinationController.clear();
                           _sourceFocusNode.unfocus();
                           _destinationFocusNode.requestFocus();
+                          setState(() {
+                            _autoCompleteSuggestions = [];
+                          });
                         },
                         icon: const Icon(Icons.clear)),
                   ),
-                  onTap: () {
+                  onTap: () async {
+                    if (_destinationController.text != "") {
+                      _autoCompleteSuggestions = await context
+                          .read<LocationCubit>()
+                          .getAutoCompleteSuggestions(
+                              _destinationController.text);
+                    } else {
+                      _autoCompleteSuggestions = [];
+                    }
                     setState(() {
                       _isDestination = true;
                     });
                   },
+                  onChanged: (value) async {
+                    if (value.isNotEmpty) {
+                      _autoCompleteSuggestions = await context
+                          .read<LocationCubit>()
+                          .getAutoCompleteSuggestions(value);
+                      setState(() {});
+                    }
+                  },
                 ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: MediaQuery.of(context).viewInsets.bottom > 0
+                      ? MediaQuery.of(context).size.height * 0.755 -
+                          MediaQuery.of(context).viewInsets.bottom
+                      : MediaQuery.of(context).size.height * 0.73,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: _autoCompleteSuggestions.length,
+                    itemBuilder: (context, index) {
+                      String suggestion =
+                          _autoCompleteSuggestions[index]['description'];
+                      return Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.location_on,
+                                color: Theme.of(context).colorScheme.primary),
+                            title: Text(
+                              suggestion,
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            onTap: () async {
+                              final LatLng? loc = await context
+                                  .read<LocationCubit>()
+                                  .getPlaceCoordinates(
+                                      _autoCompleteSuggestions[index]
+                                          ['place_id']);
+                              if (_isDestination) {
+                                context
+                                    .read<InitialOrderCubit>()
+                                    .pickDestination(loc!, suggestion);
+                                _destinationController.text = suggestion;
+                                _destination = loc;
+                              } else {
+                                context
+                                    .read<InitialOrderCubit>()
+                                    .pickSource(loc!, suggestion);
+                                _sourceController.text = suggestion;
+                                _source = loc;
+                              }
+                              setState(() {
+                                _autoCompleteSuggestions = [];
+                              });
+                            },
+                          ),
+                          if (index != _autoCompleteSuggestions.length - 1)
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width *
+                                  0.85, // Adjust the width as needed
+                              child: Divider(
+                                color: Theme.of(context).colorScheme.secondary,
+                                height: 1,
+                                thickness: 1,
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                )
               ]))
         ],
       ),

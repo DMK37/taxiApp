@@ -55,9 +55,11 @@ class _PickLocationColumnState extends State<PickLocationColumn> {
             if (widget.isDestination) {
               context
                   .read<InitialOrderCubit>()
-                  .pickDestination(widget.location);
+                  .pickDestination(widget.location, widget.controller.text);
             } else {
-              context.read<InitialOrderCubit>().pickSource(widget.location);
+              context
+                  .read<InitialOrderCubit>()
+                  .pickSource(widget.location, widget.controller.text);
             }
           },
           style: ElevatedButton.styleFrom(
