@@ -16,7 +16,6 @@ class LocationListenerWrapper extends StatelessWidget {
       listener: (context, state) {
         switch (state) {
           case LocationLoadingState():
-            // display a loading indicator
             break;
 
           case NoPermissionState():

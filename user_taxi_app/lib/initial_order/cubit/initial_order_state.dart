@@ -11,3 +11,12 @@ class OrderInitial extends InitialOrderState {
 }
 
 class OrderWithAssignedDriver extends InitialOrderState {}
+
+class OrderWithPoints extends InitialOrderState {
+  LatLng source;
+  String sourceAddress;
+  LatLng destination;
+  String destinationAddress;
+
+  OrderWithPoints({required this.source, required this.sourceAddress, required this.destination, required this.destinationAddress});
+}

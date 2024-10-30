@@ -10,11 +10,20 @@ class InitialOrderCubit extends Cubit<InitialOrderState> {
 
     if (currentState is OrderInitial) {
       // if all go to next state
-      emit(OrderInitial(
-          source: location,
-          sourceAddress: address,
-          destination: currentState.destination,
-          destinationAddress: currentState.destinationAddress));
+      if (currentState.destination != null &&
+          currentState.destinationAddress != null) {
+        emit(OrderWithPoints(
+            source: location,
+            sourceAddress: address,
+            destination: currentState.destination!,
+            destinationAddress: currentState.destinationAddress!));
+      } else {
+        emit(OrderInitial(
+            source: location,
+            sourceAddress: address,
+            destination: currentState.destination,
+            destinationAddress: currentState.destinationAddress));
+      }
     }
   }
 
@@ -23,12 +32,23 @@ class InitialOrderCubit extends Cubit<InitialOrderState> {
 
     if (currentState is OrderInitial) {
       // if all go to next state
-
-      emit(OrderInitial(
-          source: currentState.source,
-          sourceAddress: currentState.sourceAddress,
-          destination: currentState.destination,
-          destinationAddress: address));
+      if (currentState.source != null && currentState.sourceAddress != null) {
+        emit(OrderWithPoints(
+            source: currentState.source!,
+            sourceAddress: currentState.sourceAddress!,
+            destination: location,
+            destinationAddress: address));
+      } else {
+        emit(OrderInitial(
+            source: currentState.source,
+            sourceAddress: currentState.sourceAddress,
+            destination: location,
+            destinationAddress: address));
+      }
     }
+  }
+
+  void clearPoints() {
+    emit(OrderInitial());
   }
 }

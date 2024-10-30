@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,6 +10,7 @@ import 'package:http/http.dart' as http;
 
 class LocationCubit extends Cubit<LocationState> {
   LocationCubit() : super(LocationLoadingState());
+  PolylinePoints polylinePoints = PolylinePoints();
   static const String placesApiKey = "AIzaSyAJI-buaRrNN3x2RASJk6yv_UltK2fePzM";
 
   Future<void> checkPermissionsAndGetLocation() async {
@@ -102,5 +105,31 @@ class LocationCubit extends Cubit<LocationState> {
     }
 
     return null;
+  }
+
+  Future<Polyline> getPolyline(LatLng origin, LatLng destination) async {
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      googleApiKey: placesApiKey,
+      request: PolylineRequest(
+        origin: PointLatLng(origin.latitude, origin.longitude),
+        destination: PointLatLng(destination.latitude, destination.longitude),
+        mode: TravelMode.driving,
+      ),
+    );
+
+    List<LatLng> polylineCoordinates = [];
+
+    if (result.points.isNotEmpty) {
+      for (var point in result.points) {
+        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      }
+    }
+
+    PolylineId id = const PolylineId("route");
+    return Polyline(
+        polylineId: id,
+        color: Colors.black,
+        points: polylineCoordinates,
+        width: 5);
   }
 }
