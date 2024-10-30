@@ -33,7 +33,6 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
   @override
   void initState() {
     super.initState();
-    _isDestination = false;
     _sourceController.text =
         (context.read<LocationCubit>().state as LocationSuccessState).address;
     context.read<InitialOrderCubit>().pickSource(
@@ -81,76 +80,72 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
     return Scaffold(
       body: Stack(
         children: [
-          LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            return SizedBox(
-              height: constraints.maxHeight * 0.8,
-              child: Stack(children: [
-                GoogleMap(
-                  tiltGesturesEnabled: false,
-                  mapType: MapType.normal,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                  initialCameraPosition: CameraPosition(
-                    target: (context.read<LocationCubit>().state
-                            as LocationSuccessState)
-                        .location,
-                    zoom: 17.0,
-                  ),
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: false,
-                  // markers: {
-                  //   Marker(
-                  //     markerId: const MarkerId('user_location'),
-                  //     position: (context.read<LocationCubit>().state
-                  //             as LocationSuccessState)
-                  //         .location,
-                  //     infoWindow: const InfoWindow(title: 'Your Location'),
-                  //     icon: BitmapDescriptor.defaultMarkerWithHue(
-                  //       BitmapDescriptor.hueBlue,
-                  //     ),
-                  //   ),
-                  // },
-                  onCameraMove: (CameraPosition position) {
-                    if (_isDestination) {
-                      _destination = position.target;
-                    } else {
-                      _source = position.target;
-                    }
-                  },
-                  onCameraIdle: () async {
-                    setState(() {
-                      _autoCompleteSuggestions = [];
-                    });
-                    final loc = _isDestination ? _destination : _source;
-                    final places = await placemarkFromCoordinates(
-                        loc!.latitude, loc.longitude);
-                    final address =
-                        "${places[0].street}, ${places[0].locality}";
-                    if (_isDestination) {
-                      _destinationController.text = address;
-                    } else {
-                      _sourceController.text = address;
-                    }
-                  },
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: Stack(children: [
+              GoogleMap(
+                tiltGesturesEnabled: false,
+                mapType: MapType.normal,
+                onMapCreated: (GoogleMapController controller) {
+                  _controller.complete(controller);
+                },
+                initialCameraPosition: CameraPosition(
+                  target: (context.read<LocationCubit>().state
+                          as LocationSuccessState)
+                      .location,
+                  zoom: 17.0,
                 ),
-                const Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 25.0),
-                    child: Icon(
-                      Icons.location_pin,
-                      size: 50.0,
-                      color: Colors.black,
-                    ),
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                // markers: {
+                //   Marker(
+                //     markerId: const MarkerId('user_location'),
+                //     position: (context.read<LocationCubit>().state
+                //             as LocationSuccessState)
+                //         .location,
+                //     infoWindow: const InfoWindow(title: 'Your Location'),
+                //     icon: BitmapDescriptor.defaultMarkerWithHue(
+                //       BitmapDescriptor.hueBlue,
+                //     ),
+                //   ),
+                // },
+                onCameraMove: (CameraPosition position) {
+                  if (_isDestination) {
+                    _destination = position.target;
+                  } else {
+                    _source = position.target;
+                  }
+                },
+                onCameraIdle: () async {
+                  setState(() {
+                    _autoCompleteSuggestions = [];
+                  });
+                  final loc = _isDestination ? _destination : _source;
+                  final places = await placemarkFromCoordinates(
+                      loc!.latitude, loc.longitude);
+                  final address = "${places[0].street}, ${places[0].locality}";
+                  if (_isDestination) {
+                    _destinationController.text = address;
+                  } else {
+                    _sourceController.text = address;
+                  }
+                },
+              ),
+              const Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 25.0),
+                  child: Icon(
+                    Icons.location_pin,
+                    size: 50.0,
+                    color: Colors.black,
                   ),
                 ),
-              ]),
-            );
-          }),
+              ),
+            ]),
+          ),
           Positioned(
-            bottom: 220,
+            bottom: MediaQuery.of(context).size.height * 0.24,
             right: 16,
             child: SizedBox(
               height: 45,
@@ -174,14 +169,9 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
               firstChild: _isDestination
                   ? Column(
                       children: [
-                        const Center(
-                          child: Text(
-                            "Pick Destination",
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        Center(
+                          child: Text("Pick Destination",
+                              style: Theme.of(context).textTheme.titleMedium),
                         ),
                         const SizedBox(height: 10),
                         TextField(
@@ -206,11 +196,13 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.surface,
                           ),
-                          child: const Text(
+                          child: Text(
                             'Confirm Destination Point',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.surface,
                               fontSize: 16.0,
                             ),
                           ),
@@ -219,13 +211,10 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                     )
                   : Column(
                       children: [
-                        const Center(
+                        Center(
                           child: Text(
                             "Pick Source",
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -255,11 +244,13 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.surface,
                           ),
-                          child: const Text(
+                          child: Text(
                             'Confirm Pick Up Point',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.surface,
                               fontSize: 16.0,
                             ),
                           ),
