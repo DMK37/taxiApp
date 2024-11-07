@@ -12,8 +12,10 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       // Sign in logic
       final user = await _authRepository.signIn();
+      print(user.walletId);
       emit(AuthenticatedState(user: user));
     } catch (e) {
+      print(e);
       emit(AuthFailureState(errorMessage: e.toString()));
     }
   }

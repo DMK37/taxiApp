@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
+import 'package:taxiapp/auth/pages/login_page.dart';
 import 'package:taxiapp/components/error_snack_bar.dart';
 
 class AuthListenerWrapper extends StatelessWidget {
@@ -33,12 +34,17 @@ class AuthListenerWrapper extends StatelessWidget {
 
         switch (state) {
           case AuthLoadingState():
-            return const Center(child: CircularProgressIndicator());
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
           case AuthenticatedState():
             return child;
-
+          case UnauthenticatedState():
+            return const LoginPage();
           default:
-            return const SizedBox.shrink();
+            return const Scaffold(
+              body: Center(
+                child: Text('Something went wrong!'),
+              ),
+            );
         }
       }),
     );

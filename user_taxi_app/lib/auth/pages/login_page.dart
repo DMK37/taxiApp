@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -19,7 +21,9 @@ class LoginPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<AuthCubit>().signIn();
+              },
               child: const Text('Connect MetaMask'),
             ),
           ],

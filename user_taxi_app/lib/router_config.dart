@@ -15,7 +15,8 @@ class AppRouter {
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) => const LoginPage(),
+      builder: (context, state) =>
+          const AuthListenerWrapper(child: LoginPage()),
     ),
     GoRoute(
         path: '/user',
