@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                AuthCubit(MetamaskRepository())..signIn(),
+                AuthCubit(MetamaskRepository()),
           ),
           BlocProvider(
             create: (context) => InitialOrderCubit(),

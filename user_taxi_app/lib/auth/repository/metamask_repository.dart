@@ -18,6 +18,6 @@ class MetamaskRepository implements AuthRepository {
 
   @override
   Future<bool> isAuthenticated() async {
-    return true;
+    return false;
   }
 }
