@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "FCeWpBRTycDi+a73liUtiP4SaocN5JdcqI+PYss+Ock=",
+  "Source": "TaxiAppServer",
+  "BasePath": "_content/TaxiAppServer",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
