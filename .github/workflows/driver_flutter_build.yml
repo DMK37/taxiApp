@@ -1,0 +1,34 @@
+name: Driver Flutter App
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    # The machine, we can also use windows-latest or ubuntu-latest
+    # We are choosing macos-latest because we will be also building for iOS
+    runs-on: macos-latest
+
+    steps:
+      # Clones the project on the machine
+      - uses: actions/checkout@v4
+
+      # Installs flutter and related dependency on this machine
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      # Fetches proj dependencies from pub
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ./driver_taxi_app
+
+      # Runs the tests
+      - name: Run tests
+        run: flutter test
+        working-directory: ./driver_taxi_app
