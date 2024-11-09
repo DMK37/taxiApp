@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "DAOKMQNBnUXUHqLaKnWX+YUQN9n61aCm85Xnfp2ofu0=",
+  "Source": "initial_order_server",
+  "BasePath": "_content/initial_order_server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
