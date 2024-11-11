@@ -25,9 +25,9 @@ class DriverLocationCubit extends Cubit<DriverLocationState> {
       LatLng(currentPosition.latitude, currentPosition.longitude),
       street
     );
-    }
+  }
 
-    Future<void> checkPerrmissionsAndGetLocation() async {
+  Future<void> checkPerrmissionsAndGetLocation() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       emit(DriverNoPermissionState());
