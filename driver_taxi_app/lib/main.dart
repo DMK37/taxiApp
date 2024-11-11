@@ -6,6 +6,7 @@ import 'package:driver_taxi_app/router_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared/theme/light_theme.dart';
 
 void main() async {
   final appRouter = AppRouter();
@@ -22,18 +23,21 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => DriverLocationCubit()..getLocation(),
+            create: (context) => DriverLocationCubit()..checkPerrmissionsAndGetLocation(),
           ),
           BlocProvider(
             create: (context) =>
                 DriverAuthCubit(MetamaskDriverRepository())..isAuthenticated(),
           ),
         ],
-        child: AuthListenerWrapper(
+        //child: AuthListenerWrapper(
             child: MaterialApp.router(
           routerConfig: router,
           title: 'Taxi Driver App',
           debugShowCheckedModeBanner: false,
-        )));
+          theme: lightTheme,
+        )
+        //)
+        );
   }
 }
