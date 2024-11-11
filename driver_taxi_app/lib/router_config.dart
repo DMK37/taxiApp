@@ -15,8 +15,10 @@ class AppRouter {
         child: AuthListenerWrapper(child: InitialDriverPage()),
       ),
     ),
-    GoRoute(path: '/login',
-    builder: (context, state) => const DriverLoginPage(),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) =>
+          const AuthListenerWrapper(child: DriverLoginPage()),
     )
   ]);
 }

@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                DriverAuthCubit(MetamaskDriverRepository())..isAuthenticated(),
+                DriverAuthCubit(MetamaskDriverRepository()),
           ),
         ],
         //child: AuthListenerWrapper(
