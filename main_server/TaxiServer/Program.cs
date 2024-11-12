@@ -1,7 +1,7 @@
 using Google.Cloud.Firestore;
-using TaxiAppServer.Abstractions;
-using TaxiAppServer.Data;
-using TaxiAppServer.Services;
+using TaxiServer.Abstractions;
+using TaxiServer.Data;
+using TaxiServer.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
