@@ -29,6 +29,9 @@ class AuthListenerWrapper extends StatelessWidget {
         if (state is UnauthenticatedState) {
           context.go('/login');
         }
+        if (state is AuthenticatedState) {
+          context.go('/');
+        }
       },
       child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
 
@@ -38,7 +41,7 @@ class AuthListenerWrapper extends StatelessWidget {
           case AuthenticatedState():
             return child;
           case UnauthenticatedState():
-            return const LoginPage();
+            return  const LoginPage();
           default:
             return const Scaffold(
               body: Center(

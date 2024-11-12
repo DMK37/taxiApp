@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
-import 'package:taxiapp/auth/repository/metamask_repository.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/router_config.dart';
@@ -29,7 +28,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                AuthCubit(MetamaskRepository()),
+                AuthCubit()..init(),
           ),
           BlocProvider(
             create: (context) => InitialOrderCubit(),

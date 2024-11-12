@@ -1,4 +1,15 @@
 PODS:
+  - appcheck (1.0.3):
+    - Flutter
+  - coinbase_wallet_sdk (0.0.1):
+    - CoinbaseWalletSDK/CrossPlatform (= 1.0.4)
+    - Flutter
+  - CoinbaseWalletSDK/Client (1.0.4)
+  - CoinbaseWalletSDK/CrossPlatform (1.0.4):
+    - CoinbaseWalletSDK/Client
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - Flutter (1.0.0)
   - geocoding_ios (1.0.5):
     - Flutter
@@ -12,27 +23,50 @@ PODS:
   - GoogleMaps/Base (8.4.0)
   - GoogleMaps/Maps (8.4.0):
     - GoogleMaps/Base
-  - metamask-ios-sdk (0.3.1):
-    - Socket.IO-Client-Swift (~> 16.1.0)
-  - Socket.IO-Client-Swift (16.1.1):
-    - Starscream (~> 4.0.8)
-  - Starscream (4.0.8)
+  - package_info_plus (0.4.5):
+    - Flutter
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - sqflite_darwin (0.0.4):
+    - Flutter
+    - FlutterMacOS
+  - url_launcher_ios (0.0.1):
+    - Flutter
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
+  - appcheck (from `.symlinks/plugins/appcheck/ios`)
+  - coinbase_wallet_sdk (from `.symlinks/plugins/coinbase_wallet_sdk/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/darwin`)
   - Flutter (from `Flutter`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
-  - metamask-ios-sdk
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
 
 SPEC REPOS:
   trunk:
+    - CoinbaseWalletSDK
     - GoogleMaps
-    - metamask-ios-sdk
-    - Socket.IO-Client-Swift
-    - Starscream
 
 EXTERNAL SOURCES:
+  appcheck:
+    :path: ".symlinks/plugins/appcheck/ios"
+  coinbase_wallet_sdk:
+    :path: ".symlinks/plugins/coinbase_wallet_sdk/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/darwin"
   Flutter:
     :path: Flutter
   geocoding_ios:
@@ -41,17 +75,36 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geolocator_apple/ios"
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
+  appcheck: e1ab9d4e03736f03e0401554a134d1ed502d7629
+  coinbase_wallet_sdk: 7ccd4e1a7940deba6ba9bd81beece999a2268c15
+  CoinbaseWalletSDK: ea1f37512bbc69ebe07416e3b29bf840f5cc3152
+  connectivity_plus: 4c41c08fc6d7c91f63bc7aec70ffe3730b04f563
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   geocoding_ios: d7460f56e80e118d57678efe5c2cdc888739ff18
   geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
   google_maps_flutter_ios: 5bc2be60ad012e79b182ce0fb0ef5030a50fb03e
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
-  metamask-ios-sdk: 314f033ecfce4ddfbb1a5a05d608db0afcf43ab3
-  Socket.IO-Client-Swift: 3614bea82ba005df1c2ff01154f4004993e05ad7
-  Starscream: 19b5533ddb925208db698f0ac508a100b884a1b9
+  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
+  webview_flutter_wkwebview: 0982481e3d9c78fd5c6f62a002fcd24fc791f1e4
 
-PODFILE CHECKSUM: 286fdc286a1998d04b57a53801b9f9c1494a1118
+PODFILE CHECKSUM: 7c423aa5592faddf00fdb1f68fef53aca8f15772
 
 COCOAPODS: 1.15.2
