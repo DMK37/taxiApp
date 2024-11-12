@@ -1,19 +1,37 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reown_appkit/reown_appkit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
-import 'package:taxiapp/auth/repository/auth_repository.dart';
 import 'package:taxiapp/models/user_model.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  final AuthRepository _authRepository;
-  AuthCubit(this._authRepository) : super(UnauthenticatedState());
+  late ReownAppKit appKit;
+  AuthCubit() : super(UnauthenticatedState());
 
-  Future<void> signIn() async {
+  Future<void> init() async {
     emit(AuthLoadingState());
     try {
-      // Sign in logic
-      final user = await _authRepository.signIn();
-      print(user.walletId);
-      emit(AuthenticatedState(user: user));
+      appKit = await ReownAppKit.createInstance(
+        projectId: '121c0fdfdd60ce21ad8ce7bd40ab8d5b',
+        metadata: const PairingMetadata(
+          name: 'Taxi App',
+          description: 'Best blockchain taxi app',
+          url: 'https://taxiApp.com/',
+          icons: ['https://reown.com/logo.png'],
+          redirect: Redirect(
+            native: 'taxiapp://',
+            linkMode: true,
+          )
+        ),
+      );
+      appKit.onSessionConnect.subscribe((event) {
+        print('Session connected');
+        print(event?.session.namespaces['eip155']?.accounts[0]);
+        emit(AuthenticatedState(
+            user: UserModel(
+                walletId: event?.session.namespaces['eip155']?.accounts[0] ??
+                    "0x1234567890")));
+      });
+      emit(UnauthenticatedState());
     } catch (e) {
       print(e);
       emit(AuthFailureState(errorMessage: e.toString()));
@@ -24,19 +42,10 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoadingState());
     try {
       // Sign out logic
-      await _authRepository.logout();
+      //await _authRepository.logout();
       emit(UnauthenticatedState());
     } catch (e) {
       emit(AuthFailureState(errorMessage: e.toString()));
-    }
-  }
-
-  Future<void> isAuthenticated() async {
-    final isAuth = await _authRepository.isAuthenticated();
-    if (isAuth) {
-      emit(AuthenticatedState(user: UserModel(walletId: "0x1234567890")));
-    } else {
-      emit(UnauthenticatedState());
     }
   }
 }
