@@ -37,7 +37,7 @@ public class FirestoreService : IFirestoreService
         if (document == null) return null;
         var snapshot = await document.GetSnapshotAsync();
         
-        if (snapshot.Exists) return null;
+        if (!snapshot.Exists) return null;
         await document.SetAsync(data, SetOptions.MergeAll);
         return data;
     }

@@ -54,7 +54,7 @@ class ClientRepository implements ClientRepositoryAbstract {
   Future<ClientModel?> updateClient(ClientModel client) async {
     try {
       final response = await http.put(
-        Uri.parse('$apiUrl/${client.id}'),
+        Uri.parse('$apiUrl'),
         headers: {
           'Content-Type': 'application/json',
         },

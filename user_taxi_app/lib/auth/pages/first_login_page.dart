@@ -48,7 +48,7 @@ class _FirstLoginPageState extends State<FirstLoginPage> {
             children: [
               TextFormField(
                 controller: _firstNameController,
-                decoration: InputDecoration(labelText: "First Name"),
+                decoration: const InputDecoration(labelText: "First Name"),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your first name';
@@ -59,7 +59,7 @@ class _FirstLoginPageState extends State<FirstLoginPage> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _lastNameController,
-                decoration: InputDecoration(labelText: "Last Name"),
+                decoration: const InputDecoration(labelText: "Last Name"),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your last name';
@@ -70,7 +70,11 @@ class _FirstLoginPageState extends State<FirstLoginPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text("Submit"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.surface,
+                ),
+                child: const Text("Submit"),
               ),
             ],
           ),
