@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared/repositories/client/client_repository.dart';
 
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                AuthCubit()..init(),
+                AuthCubit(ClientRepository())..init(),
           ),
           BlocProvider(
             create: (context) => InitialOrderCubit(),

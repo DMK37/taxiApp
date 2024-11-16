@@ -21,6 +21,8 @@ class _LoginPageState extends State<LoginPage> {
       appKit: appKit,
     );
     _appKitModal.init();
+
+    context.read<AuthCubit>().isConnected(_appKitModal);
   }
 
   @override
@@ -38,12 +40,6 @@ class _LoginPageState extends State<LoginPage> {
               height: 200,
             ),
             const SizedBox(height: 20),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     context.read<AuthCubit>().signIn();
-            //   },
-            //   child: const Text('Connect MetaMask'),
-            // ),
             AppKitModalConnectButton(
               appKit: _appKitModal,
             ),

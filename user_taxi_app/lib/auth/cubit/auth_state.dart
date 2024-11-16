@@ -1,9 +1,9 @@
-import 'package:taxiapp/models/user_model.dart';
+import 'package:shared/models/client_model.dart';
 
 abstract class AuthState {}
 
 class AuthenticatedState extends AuthState {
-  final UserModel user;
+  final ClientModel user;
 
   AuthenticatedState({required this.user});
 }
@@ -16,4 +16,10 @@ class AuthFailureState extends AuthState {
   final String errorMessage;
 
   AuthFailureState({required this.errorMessage});
+}
+
+class FirstLoginState extends AuthState {
+  final String address;
+
+  FirstLoginState({required this.address});
 }

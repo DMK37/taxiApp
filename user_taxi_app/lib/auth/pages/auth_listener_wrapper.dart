@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
+import 'package:taxiapp/auth/pages/first_login_page.dart';
 import 'package:taxiapp/auth/pages/login_page.dart';
 import 'package:taxiapp/components/error_snack_bar.dart';
 
@@ -24,12 +25,16 @@ class AuthListenerWrapper extends StatelessWidget {
               errorMessage: state.errorMessage,
             ),
           ));
+          print("failure");
+          print(state.errorMessage);
           context.go('/login');
         }
         if (state is UnauthenticatedState) {
+          print("unauth");
           context.go('/login');
         }
         if (state is AuthenticatedState) {
+          print("auth");
           context.go('/');
         }
       },
@@ -42,6 +47,8 @@ class AuthListenerWrapper extends StatelessWidget {
             return child;
           case UnauthenticatedState():
             return  const LoginPage();
+          case FirstLoginState(address: String address):
+            return FirstLoginPage(address: address);
           default:
             return const Scaffold(
               body: Center(

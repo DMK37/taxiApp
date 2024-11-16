@@ -15,17 +15,17 @@ namespace TaxiServer.Controllers
             _clientRepository = clientRepository;
         }
 
-        [HttpGet("profile/{id}")]
-        public async Task<ActionResult<ClientProfile>> GetProfile(string id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Client>> GetProfile(string id)
         {
-            ClientProfile? profile = await _clientRepository.GetClient(id);
+            var profile = await _clientRepository.GetClient(id);
             
             if (profile == null) return NotFound();
             return Ok(profile);
         }
 
-        [HttpPut("profile")]
-        public async Task<ActionResult<ClientProfile>> UpdateProfile([FromBody] Client client)
+        [HttpPut]
+        public async Task<ActionResult<Client>> UpdateProfile([FromBody] Client client)
         {
             var resp = await _clientRepository.UpdateClient(client.Id, client);
             if (resp == null) return NotFound();
@@ -33,7 +33,7 @@ namespace TaxiServer.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ClientProfile>> CreateProfile(Client client)
+        public async Task<ActionResult<Client>> CreateProfile(Client client)
         {
             var resp = await _clientRepository.CreateClient(client);
             if (resp == null) return Conflict(new { message = "User with this ID already exists." });
@@ -41,7 +41,7 @@ namespace TaxiServer.Controllers
         }
 
         [HttpGet("ride-history/{id}")]
-        public async Task<ActionResult<ClientProfile>> GetRideHistory(string id)
+        public async Task<ActionResult<Client>> GetRideHistory(string id)
         {
             return Ok(new { FirstName = id, LastName = id });
         }

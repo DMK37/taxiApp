@@ -19,12 +19,7 @@ public class ClientControllerTests
             FirstName = "Alex",
             LastName = "Brown",
         };
-        ClientProfile profile = new ClientProfile
-        {
-            FirstName = "Alex",
-            LastName = "Brown",
-        };
-        mockClientRepository.Setup(repository => repository.CreateClient(client)).ReturnsAsync(profile);
+        mockClientRepository.Setup(repository => repository.CreateClient(client)).ReturnsAsync(client);
         
         var controller = new ClientController(mockClientRepository.Object);
 
@@ -35,10 +30,11 @@ public class ClientControllerTests
 
         // Assert
         var createdResult = Assert.IsType<CreatedResult>(result.Result);
-        var resultProfile = Assert.IsType<ClientProfile>(createdResult.Value);
+        var resultProfile = Assert.IsType<Client>(createdResult.Value);
         mockClientRepository.Verify(repository => repository.CreateClient(client), Times.Once);
-        Assert.Equal(profile.FirstName, resultProfile.FirstName);
-        Assert.Equal(profile.LastName, resultProfile.LastName);
+        Assert.Equal(client.FirstName, resultProfile.FirstName);
+        Assert.Equal(client.LastName, resultProfile.LastName);
+        Assert.Equal(client.Id, resultProfile.Id);
     }
     
     [Fact]
@@ -53,7 +49,7 @@ public class ClientControllerTests
             LastName = "Brown",
         };
         
-        mockClientRepository.Setup(repository => repository.CreateClient(client)).ReturnsAsync(null as ClientProfile);
+        mockClientRepository.Setup(repository => repository.CreateClient(client)).ReturnsAsync(null as Client);
         
         var controller = new ClientController(mockClientRepository.Object);
         
@@ -70,8 +66,9 @@ public class ClientControllerTests
     {
         // Arrange
         var mockClientRepository = new Mock<IClientRepository>();
-        ClientProfile profile = new ClientProfile
+        Client profile = new Client
         {
+            Id = "0x123456789",
             FirstName = "Alex",
             LastName = "Brown",
         };
@@ -84,10 +81,11 @@ public class ClientControllerTests
         
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var resultProfile = Assert.IsType<ClientProfile>(okResult.Value);
+        var resultProfile = Assert.IsType<Client>(okResult.Value);
         mockClientRepository.Verify(repository => repository.GetClient("0x123456789"), Times.Once);
         Assert.Equal(profile.FirstName, resultProfile.FirstName);
         Assert.Equal(profile.LastName, resultProfile.LastName);
+        Assert.Equal(profile.Id, resultProfile.Id);
     }
     
     [Fact]
@@ -97,7 +95,7 @@ public class ClientControllerTests
         var mockClientRepository = new Mock<IClientRepository>();
         
 
-        mockClientRepository.Setup(repository => repository.GetClient("0x123456789")).ReturnsAsync(null as ClientProfile);
+        mockClientRepository.Setup(repository => repository.GetClient("0x123456789")).ReturnsAsync(null as Client);
         
         var controller = new ClientController(mockClientRepository.Object);
         
@@ -120,13 +118,8 @@ public class ClientControllerTests
             FirstName = "Alex",
             LastName = "Brown"
         };
-        ClientProfile profile = new ClientProfile
-        {
-            FirstName = "Alex",
-            LastName = "Brown",
-        };
         mockClientRepository.Setup(repository => 
-            repository.UpdateClient("0x123456789", client)).ReturnsAsync(profile);
+            repository.UpdateClient("0x123456789", client)).ReturnsAsync(client);
         
         var controller = new ClientController(mockClientRepository.Object);
 
@@ -135,10 +128,11 @@ public class ClientControllerTests
         
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var resultProfile = Assert.IsType<ClientProfile>(okResult.Value);
+        var resultProfile = Assert.IsType<Client>(okResult.Value);
         mockClientRepository.Verify(repository => repository.UpdateClient("0x123456789", client), Times.Once);
-        Assert.Equal(profile.FirstName, resultProfile.FirstName);
-        Assert.Equal(profile.LastName, resultProfile.LastName);
+        Assert.Equal(client.FirstName, resultProfile.FirstName);
+        Assert.Equal(client.LastName, resultProfile.LastName);
+        Assert.Equal(client.Id, resultProfile.Id);
     }
     
     [Fact]
@@ -154,7 +148,7 @@ public class ClientControllerTests
         };
 
         mockClientRepository.Setup(repository => 
-            repository.UpdateClient("0x123456789", client)).ReturnsAsync(null as ClientProfile);
+            repository.UpdateClient("0x123456789", client)).ReturnsAsync(null as Client);
         
         var controller = new ClientController(mockClientRepository.Object);
         

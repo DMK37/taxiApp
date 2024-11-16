@@ -4,7 +4,7 @@ namespace TaxiServer.Abstractions;
 
 public interface IClientRepository
 {
-    Task<ClientProfile?> GetClient(string clientId);
-    Task<ClientProfile?> UpdateClient(string id, Client client);
-    Task<ClientProfile?> CreateClient(Client client);
+    Task<Client?> GetClient(string clientId);
+    Task<Client?> UpdateClient(string id, Client client);
+    Task<Client?> CreateClient(Client client);
 }
