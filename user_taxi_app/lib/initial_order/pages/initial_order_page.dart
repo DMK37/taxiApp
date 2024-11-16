@@ -98,18 +98,6 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                 ),
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
-                // markers: {
-                //   Marker(
-                //     markerId: const MarkerId('user_location'),
-                //     position: (context.read<LocationCubit>().state
-                //             as LocationSuccessState)
-                //         .location,
-                //     infoWindow: const InfoWindow(title: 'Your Location'),
-                //     icon: BitmapDescriptor.defaultMarkerWithHue(
-                //       BitmapDescriptor.hueBlue,
-                //     ),
-                //   ),
-                // },
                 onCameraMove: (CameraPosition position) {
                   if (_isDestination) {
                     _destination = position.target;

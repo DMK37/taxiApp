@@ -15,16 +15,16 @@ public class DriverController: Controller
         _driverRepository = driverRepository;
     }
     
-    [HttpGet("profile/{id}")]
-    public async Task<ActionResult<DriverProfile>> GetProfile(string id)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Driver>> GetProfile(string id)
     {
         var profile = await _driverRepository.GetDriver(id);
         if (profile == null) return NotFound();
         return Ok(profile);
     }
 
-    [HttpPut("profile")]
-    public async Task<ActionResult<DriverProfile>> UpdateProfile([FromBody] Driver driver)
+    [HttpPut]
+    public async Task<ActionResult<Driver>> UpdateProfile([FromBody] Driver driver)
     {
         var profile = await _driverRepository.UpdateDriver(driver.Id, driver);
         if (profile == null) return NotFound();
@@ -32,7 +32,7 @@ public class DriverController: Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<DriverProfile>> CreateProfile(Driver driver)
+    public async Task<ActionResult<Driver>> CreateProfile(Driver driver)
     {
         var profile = await _driverRepository.CreateDriver(driver);
         if (profile == null) return Conflict(new { message = "User with this ID already exists." });
@@ -40,7 +40,7 @@ public class DriverController: Controller
     }
 
     [HttpGet("ride-history/{id}")]
-    public async Task<ActionResult<DriverProfile>> GetRideHistory(string id)
+    public async Task<ActionResult<Driver>> GetRideHistory(string id)
     {
         return Ok(new { FirstName = id, LastName = id });
     }

@@ -4,7 +4,7 @@ namespace TaxiServer.Abstractions;
 
 public interface IDriverRepository
 {
-    Task<DriverProfile?> GetDriver(string driverId);
-    Task<DriverProfile?> UpdateDriver(string id, Driver driver);
-    Task<DriverProfile?> CreateDriver(Driver driver);
+    Task<Driver?> GetDriver(string driverId);
+    Task<Driver?> UpdateDriver(string id, Driver driver);
+    Task<Driver?> CreateDriver(Driver driver);
 }

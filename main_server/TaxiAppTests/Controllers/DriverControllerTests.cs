@@ -19,12 +19,8 @@ public class DriverControllerTests
             FirstName = "Alex",
             LastName = "Brown",
         };
-        DriverProfile profile = new DriverProfile
-        {
-            FirstName = "Alex",
-            LastName = "Brown",
-        };
-        mockClientRepository.Setup(repository => repository.CreateDriver(driver)).ReturnsAsync(profile);
+
+        mockClientRepository.Setup(repository => repository.CreateDriver(driver)).ReturnsAsync(driver);
         
         var controller = new DriverController(mockClientRepository.Object);
 
@@ -35,10 +31,11 @@ public class DriverControllerTests
 
         // Assert
         var createdResult = Assert.IsType<CreatedResult>(result.Result);
-        var resultProfile = Assert.IsType<DriverProfile>(createdResult.Value);
+        var resultProfile = Assert.IsType<Driver>(createdResult.Value);
         mockClientRepository.Verify(repository => repository.CreateDriver(driver), Times.Once);
-        Assert.Equal(profile.FirstName, resultProfile.FirstName);
-        Assert.Equal(profile.LastName, resultProfile.LastName);
+        Assert.Equal(driver.FirstName, resultProfile.FirstName);
+        Assert.Equal(driver.LastName, resultProfile.LastName);
+        Assert.Equal(driver.Id, resultProfile.Id);
     }
     
     [Fact]
@@ -53,7 +50,7 @@ public class DriverControllerTests
             LastName = "Brown",
         };
         
-        mockClientRepository.Setup(repository => repository.CreateDriver(driver)).ReturnsAsync(null as DriverProfile);
+        mockClientRepository.Setup(repository => repository.CreateDriver(driver)).ReturnsAsync(null as Driver);
         
         var controller = new DriverController(mockClientRepository.Object);
         
@@ -70,8 +67,9 @@ public class DriverControllerTests
     {
         // Arrange
         var mockClientRepository = new Mock<IDriverRepository>();
-        DriverProfile profile = new DriverProfile
+        Driver profile = new Driver
         {
+            Id = "0x123456789",
             FirstName = "Alex",
             LastName = "Brown",
         };
@@ -84,10 +82,11 @@ public class DriverControllerTests
         
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var resultProfile = Assert.IsType<DriverProfile>(okResult.Value);
+        var resultProfile = Assert.IsType<Driver>(okResult.Value);
         mockClientRepository.Verify(repository => repository.GetDriver("0x123456789"), Times.Once);
         Assert.Equal(profile.FirstName, resultProfile.FirstName);
         Assert.Equal(profile.LastName, resultProfile.LastName);
+        Assert.Equal(profile.Id, resultProfile.Id);
     }
     
     [Fact]
@@ -97,7 +96,7 @@ public class DriverControllerTests
         var mockClientRepository = new Mock<IDriverRepository>();
         
 
-        mockClientRepository.Setup(repository => repository.GetDriver("0x123456789")).ReturnsAsync(null as DriverProfile);
+        mockClientRepository.Setup(repository => repository.GetDriver("0x123456789")).ReturnsAsync(null as Driver);
         
         var controller = new DriverController(mockClientRepository.Object);
         
@@ -120,13 +119,9 @@ public class DriverControllerTests
             FirstName = "Alex",
             LastName = "Brown"
         };
-        DriverProfile profile = new DriverProfile
-        {
-            FirstName = "Alex",
-            LastName = "Brown",
-        };
+
         mockClientRepository.Setup(repository => 
-            repository.UpdateDriver("0x123456789", driver)).ReturnsAsync(profile);
+            repository.UpdateDriver("0x123456789", driver)).ReturnsAsync(driver);
         
         var controller = new DriverController(mockClientRepository.Object);
 
@@ -135,10 +130,10 @@ public class DriverControllerTests
         
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var resultProfile = Assert.IsType<DriverProfile>(okResult.Value);
+        var resultProfile = Assert.IsType<Driver>(okResult.Value);
         mockClientRepository.Verify(repository => repository.UpdateDriver("0x123456789", driver), Times.Once);
-        Assert.Equal(profile.FirstName, resultProfile.FirstName);
-        Assert.Equal(profile.LastName, resultProfile.LastName);
+        Assert.Equal(driver.FirstName, resultProfile.FirstName);
+        Assert.Equal(driver.LastName, resultProfile.LastName);
     }
     
     [Fact]
@@ -154,7 +149,7 @@ public class DriverControllerTests
         };
 
         mockClientRepository.Setup(repository => 
-            repository.UpdateDriver("0x123456789", driver)).ReturnsAsync(null as DriverProfile);
+            repository.UpdateDriver("0x123456789", driver)).ReturnsAsync(null as Driver);
         
         var controller = new DriverController(mockClientRepository.Object);
         
