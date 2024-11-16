@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
+import 'package:taxiapp/auth/cubit/auth_state.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -13,11 +14,15 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   late ReownAppKitModal _appKitModal;
 
   @override
   void initState() {
     super.initState();
+    _firstNameController.text = (context.read<AuthCubit>().state as AuthenticatedState).user.firstName;
+    _lastNameController.text = (context.read<AuthCubit>().state as AuthenticatedState).user.lastName;
     final appKit = context.read<AuthCubit>().appKit;
     _appKitModal = ReownAppKitModal(
       context: context,
@@ -34,90 +39,96 @@ class _UserPageState extends State<UserPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(child: AppKitModalAccountButton(appKit: _appKitModal, size: BaseButtonSize.big,)),
-            const SizedBox(height: 20),
-
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'First Name',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                          height:
-                              8), 
-                      TextField(
-                        controller: _firstNameController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                  child: AppKitModalAccountButton(
+                appKit: _appKitModal,
+                size: BaseButtonSize.big,
+              )),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'First Name',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                    width: 16), // Add some space between the text fields
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Last Name',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(
-                          height:
-                              8), // Add some space between the label and the text field
-                      TextField(
-                        controller: _lastNameController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _firstNameController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your first name';
+                            }
+                            return null;
+                          },
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Last Name',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _lastNameController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your last name';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      // Handle save changes logic here
+                      String firstName = _firstNameController.text.trim();
+                      String lastName = _lastNameController.text.trim();
+                      print('First Name: $firstName, Last Name: $lastName');
+                      // Add your save changes logic here
+                      final id = (context.read<AuthCubit>().state as AuthenticatedState).user.id;
+                      print('ID: $id');
+                      await context.read<AuthCubit>().updateAccount(id, firstName, lastName);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.surface,
+                  ),
+                  child: const Text('Save Changes'),
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            const Text(
-              'Wallet ID',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(
-                height:
-                    8), // Add some space between the label and the text field
-            TextField(
-              controller: TextEditingController(
-                  text: '1234-5678-9012-3456'), // Replace with actual wallet ID
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
               ),
-              enabled: false,
-            ),
-
-            const SizedBox(height: 20),
-            const Text(
-              'Email',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

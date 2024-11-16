@@ -83,4 +83,19 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthenticatedState(
         user: client));
   }
+
+  Future<void> updateAccount(String id, String firstName, String lastName) async {
+    emit(AuthLoadingState());
+    final client = ClientModel(
+        id: id,
+        firstName: firstName,
+        lastName: lastName);
+    final response = await clientRepository.updateClient(client);
+    if (response == null) {
+      emit(AuthFailureState(errorMessage: 'Failed to update account'));
+      return;
+    }
+    emit(AuthenticatedState(
+        user: client));
+  }
 }
