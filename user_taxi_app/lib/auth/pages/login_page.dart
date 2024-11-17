@@ -16,9 +16,12 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     final appKit = context.read<AuthCubit>().appKit;
+    final testNetworks = ReownAppKitModalNetworks.test['eip155'] ?? [];
+    ReownAppKitModalNetworks.addNetworks('eip155', testNetworks);
     _appKitModal = ReownAppKitModal(
       context: context,
       appKit: appKit,
+      
     );
     _appKitModal.init();
 
@@ -43,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
             AppKitModalConnectButton(
               appKit: _appKitModal,
             ),
-            AppKitModalAccountButton(appKit: _appKitModal),
+            // AppKitModalAccountButton(appKit: _appKitModal),
           ],
         ),
       ),
