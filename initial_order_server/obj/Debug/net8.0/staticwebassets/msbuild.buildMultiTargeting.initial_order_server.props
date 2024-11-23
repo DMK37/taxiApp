@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/initial_order_server.props" />
-</Project>
