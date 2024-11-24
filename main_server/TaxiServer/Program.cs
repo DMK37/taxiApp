@@ -25,6 +25,8 @@ builder.Services.AddSingleton<IDriverRepository>(s =>
     return new DriverRepository(firestoreService);
 });
 
+builder.Services.AddSingleton<IPricingService>(s => new PricingService());
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
