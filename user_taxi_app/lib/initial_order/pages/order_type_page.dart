@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:reown_appkit/reown_appkit.dart';
+import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_state.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
@@ -20,6 +23,243 @@ class _OrderTypePageState extends State<OrderTypePage> {
       Completer<GoogleMapController>();
   Map<PolylineId, Polyline> polylines = {};
   Map<MarkerId, Marker> markers = {};
+
+  late ReownAppKitModal _appKitModal;
+  final deployedContract = DeployedContract(
+    ContractAbi.fromJson(
+      jsonEncode([
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "rideId",
+              "type": "uint64"
+            }
+          ],
+          "name": "RideCancelled",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "rideId",
+              "type": "uint64"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "endTime",
+              "type": "uint256"
+            }
+          ],
+          "name": "RideCompleted",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "rideId",
+              "type": "uint64"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "driver",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "confirmationTime",
+              "type": "uint256"
+            }
+          ],
+          "name": "RideConfirmed",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "rideId",
+              "type": "uint64"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "client",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "cost",
+              "type": "uint256"
+            }
+          ],
+          "name": "RideCreated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "rideId",
+              "type": "uint64"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "startTime",
+              "type": "uint256"
+            }
+          ],
+          "name": "RideStarted",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
+          ],
+          "name": "cancelRide",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
+          ],
+          "name": "confirmDestinationArrivalByClient",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
+          ],
+          "name": "confirmDestinationArrivalByDriver",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
+          ],
+          "name": "confirmRide",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
+          ],
+          "name": "confirmSourceArrivalByClient",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
+          ],
+          "name": "confirmSourceArrivalByDriver",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {"internalType": "uint64", "name": "_distance", "type": "uint64"},
+            {"internalType": "string", "name": "_source", "type": "string"},
+            {"internalType": "string", "name": "_destination", "type": "string"}
+          ],
+          "name": "createRide",
+          "outputs": [
+            {"internalType": "uint64", "name": "", "type": "uint64"}
+          ],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rideCounter",
+          "outputs": [
+            {"internalType": "uint64", "name": "", "type": "uint64"}
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {"internalType": "uint64", "name": "", "type": "uint64"}
+          ],
+          "name": "rides",
+          "outputs": [
+            {
+              "internalType": "address payable",
+              "name": "client",
+              "type": "address"
+            },
+            {
+              "internalType": "address payable",
+              "name": "driver",
+              "type": "address"
+            },
+            {"internalType": "uint256", "name": "cost", "type": "uint256"},
+            {"internalType": "uint64", "name": "distance", "type": "uint64"},
+            {"internalType": "string", "name": "source", "type": "string"},
+            {"internalType": "string", "name": "destination", "type": "string"},
+            {
+              "internalType": "uint256",
+              "name": "confirmationTime",
+              "type": "uint256"
+            },
+            {"internalType": "uint256", "name": "startTime", "type": "uint256"},
+            {"internalType": "uint256", "name": "endTime", "type": "uint256"},
+            {
+              "internalType": "enum Ride.RideStatus",
+              "name": "status",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]), // ABI object
+      'Tether USD',
+    ),
+    EthereumAddress.fromHex('0xA3391Cc3a3e0AAFA305AEEE03E00999151B5df5A'),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+
+    final appKit = context.read<AuthCubit>().appKit;
+    final testNetworks = ReownAppKitModalNetworks.test['eip155'] ?? [];
+    ReownAppKitModalNetworks.addNetworks('eip155', testNetworks);
+    _appKitModal = ReownAppKitModal(
+      context: context,
+      appKit: appKit,
+    );
+    _appKitModal.init();
+  }
 
   _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
     MarkerId markerId = MarkerId(id);
@@ -192,7 +432,21 @@ class _OrderTypePageState extends State<OrderTypePage> {
                       ),
                       const Spacer(),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final result = await _appKitModal.requestWriteContract(
+                              topic: _appKitModal.session!.topic,
+                              chainId: _appKitModal.selectedChain!.chainId,
+                              deployedContract: deployedContract,
+                              functionName: "createRide",
+                              transaction: Transaction(
+                                from: EthereumAddress.fromHex(
+                                    _appKitModal.session!.address!),
+                                value: EtherAmount.inWei(
+                                    BigInt.from(100000000000)),
+                              ),
+                              parameters: [BigInt.from(25), "A", "B"]);
+                          print("Result: $result");
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,

@@ -15,10 +15,10 @@ contract Ride {
     }
 
     struct RideDetails {
-        address client;
-        address driver;
+        address payable client;
+        address payable driver;
         uint256 cost;
-        uint256 distance;
+        uint64 distance;
         string source;
         string destination;
         uint256 confirmationTime;
@@ -27,27 +27,30 @@ contract Ride {
         RideStatus status;
     }
 
-    mapping(uint256 => RideDetails) public rides;
-    uint256 public rideCounter;
+    mapping(uint64 => RideDetails) public rides;
+    uint64 public rideCounter;
 
-    event RideCreated(uint256 rideId, address client, uint256 cost);
-    event RideConfirmed(uint256 rideId, address driver, uint256 confirmationTime);
-    event RideStarted(uint256 rideId, uint256 startTime);
-    event RideCompleted(uint256 rideId, address driver, uint256 payout);
-    event RideCancelled(uint256 rideId);
+    event RideCreated(uint64 rideId, address client, uint256 cost);
+    event RideConfirmed(
+        uint64 rideId,
+        address driver,
+        uint256 confirmationTime
+    );
+    event RideStarted(uint64 rideId, uint256 startTime);
+    event RideCompleted(uint64 rideId, uint256 endTime);
+    event RideCancelled(uint64 rideId);
 
     function createRide(
-        address _client,
-        uint256 _cost,
-        uint256 _distance,
+        uint64 _distance,
         string memory _source,
         string memory _destination
-    ) public returns (uint256) {
+    ) external payable returns (uint64) {
+        require(msg.value > 0, "Cost should be greater than 0");
         rideCounter++;
         rides[rideCounter] = RideDetails(
-            _client,
-            address(0),
-            _cost,
+            payable(msg.sender),
+            payable(address(0)),
+            msg.value,
             _distance,
             _source,
             _destination,
@@ -56,25 +59,51 @@ contract Ride {
             0,
             RideStatus.Requested
         );
-
-        emit RideCreated(rideCounter, _client, _cost);
+        emit RideCreated(rideCounter, msg.sender, msg.value);
 
         return rideCounter;
     }
 
-    function confirmRide(uint256 _rideId, address _driver) public {
+    modifier notExistingRide(uint64 _rideId) {
+        require(rides[_rideId].client != address(0), "Ride does not exist");
+        _;
+    }
+
+    modifier onlyClient(uint64 _rideId) {
+        require(
+            msg.sender == rides[_rideId].client,
+            "Only client can perform this action"
+        );
+        _;
+    }
+
+    modifier onlyDriver(uint64 _rideId) {
+        require(
+            msg.sender == rides[_rideId].driver,
+            "Only driver can perform this action"
+        );
+        _;
+    }
+
+    function confirmRide(uint64 _rideId) external notExistingRide(_rideId) {
         require(
             rides[_rideId].status == RideStatus.Requested,
             "Ride is not in requested state"
         );
-        rides[_rideId].driver = _driver;
+        rides[_rideId].driver = payable(msg.sender);
         rides[_rideId].confirmationTime = block.timestamp;
         rides[_rideId].status = RideStatus.Confirmed;
 
-        emit RideConfirmed(_rideId, _driver, rides[_rideId].confirmationTime);
+        emit RideConfirmed(
+            _rideId,
+            msg.sender,
+            rides[_rideId].confirmationTime
+        );
     }
 
-    function confirmSourceArrivalByClient(uint256 _rideId) public {
+    function confirmSourceArrivalByClient(
+        uint64 _rideId
+    ) external notExistingRide(_rideId) onlyClient(_rideId) {
         require(
             rides[_rideId].status == RideStatus.Confirmed ||
                 rides[_rideId].status == RideStatus.SourceArrivedByDriver,
@@ -90,7 +119,9 @@ contract Ride {
         }
     }
 
-    function confirmSourceArrivalByDriver(uint256 _rideId) public {
+    function confirmSourceArrivalByDriver(
+        uint64 _rideId
+    ) external notExistingRide(_rideId) onlyDriver(_rideId) {
         require(
             rides[_rideId].status == RideStatus.Confirmed ||
                 rides[_rideId].status == RideStatus.SourceArrivedByClient,
@@ -106,7 +137,9 @@ contract Ride {
         }
     }
 
-    function destinationArrivedByClient(uint256 _rideId) public {
+    function confirmDestinationArrivalByClient(
+        uint64 _rideId
+    ) external notExistingRide(_rideId) onlyClient(_rideId) {
         require(
             rides[_rideId].status == RideStatus.InProgress ||
                 rides[_rideId].status == RideStatus.DestinationArrivedByDriver,
@@ -117,12 +150,17 @@ contract Ride {
         } else {
             rides[_rideId].endTime = block.timestamp;
             rides[_rideId].status = RideStatus.Completed;
-
-            emit RideCompleted(_rideId, rides[_rideId].driver, rides[_rideId].cost);
+            rides[_rideId].driver.transfer(rides[_rideId].cost);
+            emit RideCompleted(
+                _rideId,
+                rides[_rideId].endTime
+            );
         }
     }
 
-    function destinationArrivedByDriver(uint256 _rideId) public {
+    function confirmDestinationArrivalByDriver(
+        uint64 _rideId
+    ) external notExistingRide(_rideId) onlyDriver(_rideId) {
         require(
             rides[_rideId].status == RideStatus.InProgress ||
                 rides[_rideId].status == RideStatus.DestinationArrivedByClient,
@@ -133,18 +171,22 @@ contract Ride {
         } else {
             rides[_rideId].endTime = block.timestamp;
             rides[_rideId].status = RideStatus.Completed;
-
-            emit RideCompleted(_rideId, rides[_rideId].driver, rides[_rideId].cost);
+            rides[_rideId].driver.transfer(rides[_rideId].cost);
+            emit RideCompleted(
+                _rideId,
+                rides[_rideId].endTime
+            );
         }
     }
 
-    function cancelRide(uint256 _rideId) public {
+    function cancelRide(uint64 _rideId) external notExistingRide(_rideId) {
         require(
-            rides[_rideId].status == RideStatus.Requested,
-            "Ride is not in requested state"
+            msg.sender == rides[_rideId].client ||
+                msg.sender == rides[_rideId].driver,
+            "Only client or driver can cancel the ride"
         );
         rides[_rideId].status = RideStatus.Cancelled;
-
+        rides[_rideId].client.transfer(rides[_rideId].cost);
         emit RideCancelled(_rideId);
     }
 }
