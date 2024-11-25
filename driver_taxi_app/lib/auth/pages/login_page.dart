@@ -2,13 +2,13 @@ import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DriverLoginPage extends StatelessWidget{
-  const DriverLoginPage({super.key});
+class DriverLoginPage extends StatelessWidget {
+  DriverLoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
-     body: Center(
+    return Scaffold(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -18,16 +18,15 @@ class DriverLoginPage extends StatelessWidget{
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                context.read<DriverAuthCubit>().signIn();
+              onPressed: () async {
+                //context.read<DriverAuthCubit>().signIn();
+                
               },
               child: const Text('Connect MetaMask'),
             ),
           ],
         ),
       ),
-   );
+    );
   }
-
-
 }

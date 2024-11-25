@@ -38,7 +38,7 @@ class AuthListenerWrapper extends StatelessWidget {
           case DriverAuthenticatedState():
             return child;
           case DriverUnauthenticatedState():
-              return const DriverLoginPage();
+              return DriverLoginPage();
 
           default:
             return const SizedBox.shrink();
