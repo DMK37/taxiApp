@@ -51,10 +51,37 @@ namespace TaxiServer.Controllers
         }
 
         [HttpGet("prices")]
-        public async Task<ActionResult<List<RidePrice>>> GetPrices([FromQuery] LatLng source,
-            [FromQuery] LatLng destination, [FromQuery] int distance)
+        public async Task<ActionResult<List<RidePrice>>> GetPrices([FromQuery] string source,
+            [FromQuery] string destination, [FromQuery] int distance)
         {
-            var prices = await _pricingService.CalculateTaxiPrice(source, destination, distance);
+            if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(destination))
+            {
+                return BadRequest("Query parameter 'source' and 'destination' is required.");
+            }
+
+            var parts = source.Split(',');
+            var parts2 = destination.Split(',');
+            if (parts.Length != 2 || !double.TryParse(parts[0], out double latitude) ||
+                !double.TryParse(parts[1], out double longitude)
+                || parts2.Length != 2 || !double.TryParse(parts2[0], out double latitude2) ||
+                !double.TryParse(parts2[1], out double longitude2))
+            {
+                return BadRequest(
+                    "Query parameter 'source' and 'destination' must be in the format 'latitude,longitude'.");
+            }
+
+            LatLng src = new LatLng
+            {
+                Latitude = latitude,
+                Longitude = longitude
+            };
+
+            LatLng dest = new LatLng
+            {
+                Latitude = latitude2,
+                Longitude = longitude2
+            };
+            var prices = await _pricingService.CalculateTaxiPrice(src, dest, distance);
             return Ok(prices);
         }
 

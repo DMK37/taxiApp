@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared/models/client_model.dart';
+import 'package:shared/models/ride_price_model.dart';
 import 'package:shared/repositories/client/client_repository_abstract.dart';
 import 'package:http/http.dart' as http;
 
@@ -73,4 +75,22 @@ class ClientRepository implements ClientRepositoryAbstract {
     }
     return null;
   }
+
+  Future<List<RidePriceModel>?> getPrices(LatLng source, LatLng destination, int distance) async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/prices?source=${source.latitude},${source.longitude}&destination=${destination.latitude},${destination.longitude}&distance=$distance'));
+
+      if (response.statusCode == 200) {
+        print("Ride prices fetched successfully");
+        final json = jsonDecode(response.body);
+        return json.map<RidePriceModel>((price) => RidePriceModel.fromJson(price)).toList();
+      } else {
+        print("Failed to fetch client: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+    return null;
+  }
+
 }
