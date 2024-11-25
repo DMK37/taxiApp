@@ -1,4 +1,5 @@
 using Google.Type;
+using TaxiServer.Models.Car;
 using TaxiServer.Models.Price;
 using TaxiServer.Services;
 
@@ -31,17 +32,17 @@ public class PricingServiceTests
         {
             new()
             {
-                Type = "Basic",
+                Type = CarType.Basic,
                 Amount = basePrice
             },
             new()
             {
-                Type = "Comfort",
+                Type = CarType.Comfort,
                 Amount = basePrice * 1.5m
             },
             new()
             {
-                Type = "Premium",
+                Type = CarType.Premium,
                 Amount = basePrice * 2
             }
         };

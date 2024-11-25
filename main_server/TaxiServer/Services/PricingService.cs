@@ -1,5 +1,6 @@
 using Google.Type;
 using TaxiServer.Abstractions;
+using TaxiServer.Models.Car;
 using TaxiServer.Models.Price;
 
 namespace TaxiServer.Services;
@@ -19,17 +20,17 @@ public class PricingService : IPricingService
         [
             new RidePrice
             {
-                Type = "Basic",
+                Type = CarType.Basic,
                 Amount = basePrice
             },
             new RidePrice
             {
-                Type = "Comfort",
+                Type = CarType.Comfort,
                 Amount = basePrice * 1.5m
             },
             new RidePrice
             {
-                Type = "Premium",
+                Type = CarType.Premium,
                 Amount = basePrice * 2
             }
         ];
