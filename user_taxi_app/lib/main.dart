@@ -6,6 +6,7 @@ import 'package:shared/repositories/client/client_repository.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
+import 'package:taxiapp/ride/cubit/ride_cubit.dart';
 import 'package:taxiapp/router_config.dart';
 import 'package:taxiapp/theme/light_theme.dart';
 
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => InitialOrderCubit(),
-          )
+          ),
+          BlocProvider(create: (context) => RideCubit()),
         ],
         child: MaterialApp.router(
           routerConfig: router,

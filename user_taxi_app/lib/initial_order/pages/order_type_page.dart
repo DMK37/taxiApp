@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/reown_appkit.dart';
+import 'package:shared/models/ride_price_model.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_state.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/location/cubit/location_state.dart';
+import 'package:taxiapp/ride/cubit/ride_cubit.dart';
 
 class OrderTypePage extends StatefulWidget {
   const OrderTypePage({super.key});
@@ -23,229 +24,10 @@ class _OrderTypePageState extends State<OrderTypePage> {
       Completer<GoogleMapController>();
   Map<PolylineId, Polyline> polylines = {};
   Map<MarkerId, Marker> markers = {};
+  List<RidePriceModel> prices = [];
+  int _selectedTaxiIndex = 0;
 
   late ReownAppKitModal _appKitModal;
-  final deployedContract = DeployedContract(
-    ContractAbi.fromJson(
-      jsonEncode([
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint64",
-              "name": "rideId",
-              "type": "uint64"
-            }
-          ],
-          "name": "RideCancelled",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint64",
-              "name": "rideId",
-              "type": "uint64"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "endTime",
-              "type": "uint256"
-            }
-          ],
-          "name": "RideCompleted",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint64",
-              "name": "rideId",
-              "type": "uint64"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "driver",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "confirmationTime",
-              "type": "uint256"
-            }
-          ],
-          "name": "RideConfirmed",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint64",
-              "name": "rideId",
-              "type": "uint64"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "client",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "cost",
-              "type": "uint256"
-            }
-          ],
-          "name": "RideCreated",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint64",
-              "name": "rideId",
-              "type": "uint64"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "startTime",
-              "type": "uint256"
-            }
-          ],
-          "name": "RideStarted",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
-          ],
-          "name": "cancelRide",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
-          ],
-          "name": "confirmDestinationArrivalByClient",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
-          ],
-          "name": "confirmDestinationArrivalByDriver",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
-          ],
-          "name": "confirmRide",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
-          ],
-          "name": "confirmSourceArrivalByClient",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {"internalType": "uint64", "name": "_rideId", "type": "uint64"}
-          ],
-          "name": "confirmSourceArrivalByDriver",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {"internalType": "uint64", "name": "_distance", "type": "uint64"},
-            {"internalType": "string", "name": "_source", "type": "string"},
-            {"internalType": "string", "name": "_destination", "type": "string"}
-          ],
-          "name": "createRide",
-          "outputs": [
-            {"internalType": "uint64", "name": "", "type": "uint64"}
-          ],
-          "stateMutability": "payable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "rideCounter",
-          "outputs": [
-            {"internalType": "uint64", "name": "", "type": "uint64"}
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {"internalType": "uint64", "name": "", "type": "uint64"}
-          ],
-          "name": "rides",
-          "outputs": [
-            {
-              "internalType": "address payable",
-              "name": "client",
-              "type": "address"
-            },
-            {
-              "internalType": "address payable",
-              "name": "driver",
-              "type": "address"
-            },
-            {"internalType": "uint256", "name": "cost", "type": "uint256"},
-            {"internalType": "uint64", "name": "distance", "type": "uint64"},
-            {"internalType": "string", "name": "source", "type": "string"},
-            {"internalType": "string", "name": "destination", "type": "string"},
-            {
-              "internalType": "uint256",
-              "name": "confirmationTime",
-              "type": "uint256"
-            },
-            {"internalType": "uint256", "name": "startTime", "type": "uint256"},
-            {"internalType": "uint256", "name": "endTime", "type": "uint256"},
-            {
-              "internalType": "enum Ride.RideStatus",
-              "name": "status",
-              "type": "uint8"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ]), // ABI object
-      'Tether USD',
-    ),
-    EthereumAddress.fromHex('0xA3391Cc3a3e0AAFA305AEEE03E00999151B5df5A'),
-  );
 
   @override
   void initState() {
@@ -313,9 +95,12 @@ class _OrderTypePageState extends State<OrderTypePage> {
                   final destination = (context.read<InitialOrderCubit>().state
                           as OrderWithPoints)
                       .destination;
-                  final polyline = await context
+                  final (polyline, distance) = await context
                       .read<LocationCubit>()
                       .getPolyline(source, destination);
+                  prices = await context
+                      .read<InitialOrderCubit>()
+                      .getPrices(source, destination, distance);
                   polylines[polyline.polylineId] = polyline;
                   setState(() {});
 
@@ -398,72 +183,131 @@ class _OrderTypePageState extends State<OrderTypePage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      ListTile(
-                        leading: const Icon(Icons.directions_car),
-                        title: Text('Comfort',
-                            style: Theme.of(context).textTheme.titleSmall),
-                        subtitle: Text('Affordable, everyday rides',
-                            style: Theme.of(context).textTheme.bodyMedium),
-                        onTap: () {
-                          // Handle UberX selection
-                        },
+                      Text(
+                        'Select a car type',
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      ListTile(
-                        leading: const Icon(Icons.local_taxi),
-                        title: Text('Family',
-                            style: Theme.of(context).textTheme.titleSmall),
-                        subtitle: Text(
-                          'Affordable rides for groups up to 6',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(
+                              top: 16), // Padding at the top
+
+                          itemCount: prices.length,
+                          itemBuilder: (context, index) {
+                            final price = prices[index];
+                            final isSelected = _selectedTaxiIndex == index;
+
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedTaxiIndex = index;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.surface,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: isSelected
+                                      ? Border.all(
+                                          color: Colors.greenAccent, width: 2)
+                                      : Border.all(
+                                          color: Colors.grey, width: 1),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          price.carType.toString(),
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: isSelected
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .surface
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          "ETH ${price.price.toStringAsPrecision(2)}",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: isSelected
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .surface
+                                                : Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Icon(
+                                      isSelected
+                                          ? Icons.check_circle
+                                          : Icons.circle_outlined,
+                                      color: isSelected
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .surface
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                      size: 24,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        onTap: () {
-                          // Handle UberXL selection
-                        },
                       ),
-                      ListTile(
-                        leading: const Icon(Icons.directions_car_filled),
-                        title: Text('Premium',
-                            style: Theme.of(context).textTheme.titleSmall),
-                        subtitle: Text('Luxury rides with professional drivers',
-                            style: Theme.of(context).textTheme.bodyMedium),
-                        onTap: () {
-                          // Handle UberBlack selection
-                        },
-                      ),
-                      const Spacer(),
+                      const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
-                          final result = await _appKitModal.requestWriteContract(
-                              topic: _appKitModal.session!.topic,
-                              chainId: _appKitModal.selectedChain!.chainId,
-                              deployedContract: deployedContract,
-                              functionName: "createRide",
-                              transaction: Transaction(
-                                from: EthereumAddress.fromHex(
-                                    _appKitModal.session!.address!),
-                                value: EtherAmount.inWei(
-                                    BigInt.from(100000000000)),
-                              ),
-                              parameters: [BigInt.from(25), "A", "B"]);
-                          print("Result: $result");
+                          await context.read<RideCubit>().createRide(
+                              _appKitModal,
+                              prices[_selectedTaxiIndex].price,
+                              "A",
+                              "B",
+                              5000);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
                           foregroundColor:
                               Theme.of(context).colorScheme.surface,
-                        ),
-                        child: Text(
-                          'Pay',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.surface,
-                            fontSize: 16.0,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
+                        child: Text(
+                          'Confirm',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(context).colorScheme.surface),
+                        ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      )
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ))

@@ -8,15 +8,15 @@ class RidePriceModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'carType': carType.value,
-      'price': price,
+      'type': carType.value,
+      'amount': price,
     };
   }
 
   factory RidePriceModel.fromJson(Map<String, dynamic> json) {
     return RidePriceModel(
-      carType: CarType.fromValue(json['carType']),
-      price: json['price'],
+      carType: CarType.fromValue(json['type']),
+      price: json['amount'],
     );
   }
 }
