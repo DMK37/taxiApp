@@ -26,13 +26,20 @@ class _OrderTypePageState extends State<OrderTypePage> {
   Map<MarkerId, Marker> markers = {};
   List<RidePriceModel> prices = [];
   int _selectedTaxiIndex = 0;
+  String sourceAddress = "";
+  String destinationAddress = "";
+  int distance = 0;
 
   late ReownAppKitModal _appKitModal;
 
   @override
   void initState() {
     super.initState();
-
+    sourceAddress = (context.read<InitialOrderCubit>().state as OrderWithPoints)
+        .sourceAddress;
+    destinationAddress =
+        (context.read<InitialOrderCubit>().state as OrderWithPoints)
+            .destinationAddress;
     final appKit = context.read<AuthCubit>().appKit;
     final testNetworks = ReownAppKitModalNetworks.test['eip155'] ?? [];
     ReownAppKitModalNetworks.addNetworks('eip155', testNetworks);
@@ -95,12 +102,13 @@ class _OrderTypePageState extends State<OrderTypePage> {
                   final destination = (context.read<InitialOrderCubit>().state
                           as OrderWithPoints)
                       .destination;
-                  final (polyline, distance) = await context
+                  final (polyline, dist) = await context
                       .read<LocationCubit>()
                       .getPolyline(source, destination);
                   prices = await context
                       .read<InitialOrderCubit>()
-                      .getPrices(source, destination, distance);
+                      .getPrices(source, destination, dist);
+                  distance = dist;
                   polylines[polyline.polylineId] = polyline;
                   setState(() {});
 
@@ -285,9 +293,9 @@ class _OrderTypePageState extends State<OrderTypePage> {
                           await context.read<RideCubit>().createRide(
                               _appKitModal,
                               prices[_selectedTaxiIndex].price,
-                              "A",
-                              "B",
-                              5000);
+                              sourceAddress,
+                              destinationAddress,
+                              distance);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
