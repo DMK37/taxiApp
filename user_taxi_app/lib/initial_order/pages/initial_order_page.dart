@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxiapp/components/main_draggable_scrollable_sheet.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
@@ -97,18 +98,6 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                 ),
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
-                // markers: {
-                //   Marker(
-                //     markerId: const MarkerId('user_location'),
-                //     position: (context.read<LocationCubit>().state
-                //             as LocationSuccessState)
-                //         .location,
-                //     infoWindow: const InfoWindow(title: 'Your Location'),
-                //     icon: BitmapDescriptor.defaultMarkerWithHue(
-                //       BitmapDescriptor.hueBlue,
-                //     ),
-                //   ),
-                // },
                 onCameraMove: (CameraPosition position) {
                   if (_isDestination) {
                     _destination = position.target;
@@ -143,6 +132,27 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                 ),
               ),
             ]),
+          ),
+          Positioned(
+            top: 45,
+            left: 16,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: FloatingActionButton(
+                heroTag: 'user-page',
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                onPressed: () {
+                  context.push('/user');
+                },
+                child: Icon(
+                  Icons.person,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
           ),
           Positioned(
             bottom: MediaQuery.of(context).size.height * 0.24,

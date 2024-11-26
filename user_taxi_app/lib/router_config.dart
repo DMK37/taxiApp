@@ -3,6 +3,7 @@ import 'package:taxiapp/auth/pages/auth_listener_wrapper.dart';
 import 'package:taxiapp/auth/pages/login_page.dart';
 import 'package:taxiapp/initial_order/pages/initial_order_builder.dart';
 import 'package:taxiapp/location/pages/location_listener_wrapper.dart';
+import 'package:taxiapp/user/pages/user_page.dart';
 
 class AppRouter {
   final router = GoRouter(routes: [
@@ -14,7 +15,12 @@ class AppRouter {
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) => const LoginPage(),
+      builder: (context, state) =>
+           const AuthListenerWrapper(child: LoginPage()),
     ),
+    GoRoute(
+        path: '/user',
+        builder: (context, state) =>
+            const AuthListenerWrapper(child: UserPage())),
   ]);
 }

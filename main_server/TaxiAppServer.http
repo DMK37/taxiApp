@@ -1,6 +1,0 @@
-@TaxiAppServer_HostAddress = http://localhost:5113
-
-GET {{TaxiAppServer_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
