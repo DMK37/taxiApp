@@ -1,6 +1,6 @@
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
-import 'package:driver_taxi_app/auth/pages/auth_listener_wrapper.dart';
 import 'package:driver_taxi_app/auth/repository/metamask_repository.dart';
+import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/router_config.dart';
 import 'package:flutter/material.dart';
@@ -26,18 +26,17 @@ class MyApp extends StatelessWidget {
             create: (context) => DriverLocationCubit()..checkPerrmissionsAndGetLocation(),
           ),
           BlocProvider(
-            create: (context) =>
-                DriverAuthCubit(MetamaskDriverRepository()),
+            create: (context) => DriverAuthCubit(MetamaskDriverRepository()),
+          ),
+          BlocProvider(create: 
+          (context) => DriverInitCubit()
           ),
         ],
-        //child: AuthListenerWrapper(
-            child: MaterialApp.router(
+        child: MaterialApp.router(
           routerConfig: router,
           title: 'Taxi Driver App',
           debugShowCheckedModeBanner: false,
           theme: lightTheme,
-        )
-        //)
-        );
+        ));
   }
 }
