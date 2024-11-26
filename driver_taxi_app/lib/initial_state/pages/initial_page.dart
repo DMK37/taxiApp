@@ -1,18 +1,12 @@
 import 'dart:async';
-
-import 'package:driver_taxi_app/initial_state/cubit/initial_state.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
-import 'package:driver_taxi_app/recieved_order/cubit/recieved_order_cubit.dart';
-import 'package:driver_taxi_app/recieved_order/pages/recieved_order_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:shared/widgets/main_draggable_scrollable_sheet.dart';
 
 class InitialDriverPage extends StatefulWidget {
-  //final DriverInitState state;
   const InitialDriverPage({super.key});
 
   @override
