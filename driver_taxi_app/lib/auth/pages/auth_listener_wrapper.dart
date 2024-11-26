@@ -1,6 +1,5 @@
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
-import 'package:driver_taxi_app/auth/pages/login_page.dart';
 import 'package:shared/widgets/error_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
