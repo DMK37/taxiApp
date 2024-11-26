@@ -87,9 +87,9 @@ class RideContract implements RideContractAbstract {
   }
 
   @override
-  Future<void> createRide(ReownAppKitModal modal, int distance, String source,
+  Future<bool> createRide(ReownAppKitModal modal, int distance, String source,
       String destination, BigInt price) async {
-    await modal.requestWriteContract(
+    final resp = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
@@ -98,7 +98,9 @@ class RideContract implements RideContractAbstract {
           from: EthereumAddress.fromHex(modal.session!.address!),
           value: EtherAmount.inWei(price),
         ),
-        parameters: [BigInt.from(25), "A", "B"]);
+        parameters: [BigInt.from(distance), source, destination]);
+
+    return resp != null;
   }
 
   final deployedContract = DeployedContract(

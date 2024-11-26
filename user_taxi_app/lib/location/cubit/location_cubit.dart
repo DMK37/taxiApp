@@ -107,7 +107,7 @@ class LocationCubit extends Cubit<LocationState> {
     return null;
   }
 
-  Future<Polyline> getPolyline(LatLng origin, LatLng destination) async {
+  Future<(Polyline,int)> getPolyline(LatLng origin, LatLng destination) async {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       googleApiKey: placesApiKey,
       request: PolylineRequest(
@@ -116,7 +116,6 @@ class LocationCubit extends Cubit<LocationState> {
         mode: TravelMode.driving,
       ),
     );
-
     List<LatLng> polylineCoordinates = [];
 
     if (result.points.isNotEmpty) {
@@ -126,10 +125,10 @@ class LocationCubit extends Cubit<LocationState> {
     }
 
     PolylineId id = const PolylineId("route");
-    return Polyline(
+    return (Polyline(
         polylineId: id,
         color: Colors.black,
         points: polylineCoordinates,
-        width: 5);
+        width: 5), result.totalDistanceValue!);
   }
 }

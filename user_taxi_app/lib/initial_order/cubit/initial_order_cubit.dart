@@ -1,10 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared/models/ride_price_model.dart';
+import 'package:shared/repositories/client/client_repository.dart';
+import 'package:shared/repositories/client/client_repository_abstract.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_state.dart';
 
 class InitialOrderCubit extends Cubit<InitialOrderState> {
   InitialOrderCubit() : super(OrderInitial());
-
+  final ClientRepositoryAbstract clientRepository = ClientRepository();
   void pickSource(LatLng location, String address) {
     final currentState = state;
 
@@ -50,5 +53,15 @@ class InitialOrderCubit extends Cubit<InitialOrderState> {
 
   void clearPoints() {
     emit(OrderInitial());
+  }
+
+  Future<List<RidePriceModel>> getPrices(
+      LatLng source, LatLng destination, int distance) async {
+    final res = await clientRepository.getPrices(source, destination, distance);
+    if (res != null) {
+      return res;
+    }
+
+    return [];
   }
 }
