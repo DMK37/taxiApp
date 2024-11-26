@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "834007746519",
+    "firebase_url": "https://taxiapp-6761d-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "taxiapp-6761d",
+    "storage_bucket": "taxiapp-6761d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834007746519:android:d58cf0222818cc03202d92",
+        "android_client_info": {
+          "package_name": "com.example.driver_taxi_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLeidsGKkCyrjqMobClu-X737-R-6iLdw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

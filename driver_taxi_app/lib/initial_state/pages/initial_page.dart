@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +136,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
     );
   }
 
-  void showGoOnlineDialog(BuildContext context) {
+  Future<void> showGoOnlineDialog(BuildContext context) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -156,9 +157,11 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
         );
       },
     );
+    final location = await context.read<DriverLocationCubit>().getLocation();
+    await context.read<DriverInitCubit>().startLocationUpdate(location.$1);
   }
 
-  void showGoOfflineDialog(BuildContext context) {
+  void showGoOfflineDialog(BuildContext context) async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -179,5 +182,6 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
         );
       },
     );
+    await context.read<DriverInitCubit>().stopLocationUpdate();
   }
 }
