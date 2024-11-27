@@ -10,6 +10,7 @@ class ClientRepository implements ClientRepositoryAbstract {
   // mac: 192.168.18.81
   // change for your local ip
   final String apiUrl = "http://192.168.18.81:5112/api/client";
+  //final String apiUrl = "http://10.5.4.11:7169/api/client";
 
   @override
   Future<ClientModel?> createClient(ClientModel client) async {

@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxiapp/firebase/data_providers/client_location_dp.dart';
 import 'package:taxiapp/location/cubit/location_state.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -12,6 +15,8 @@ class LocationCubit extends Cubit<LocationState> {
   LocationCubit() : super(LocationLoadingState());
   PolylinePoints polylinePoints = PolylinePoints();
   static const String placesApiKey = "AIzaSyAJI-buaRrNN3x2RASJk6yv_UltK2fePzM";
+  Timer? _locationTimer;
+  ClientLocationDataProvider provider = ClientLocationDataProvider();
 
   Future<void> checkPermissionsAndGetLocation() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -27,8 +32,7 @@ class LocationCubit extends Cubit<LocationState> {
     }
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
+      if (permission != LocationPermission.whileInUse && permission != LocationPermission.always) {
         emit(NoPermissionState());
         return;
       }
@@ -40,26 +44,19 @@ class LocationCubit extends Cubit<LocationState> {
   Future<(LatLng, String)> getLocation() async {
     final currentPosition = await Geolocator.getCurrentPosition();
 
-    final data = await placemarkFromCoordinates(
-        currentPosition.latitude, currentPosition.longitude);
+    final data = await placemarkFromCoordinates(currentPosition.latitude, currentPosition.longitude);
 
     final street = "${data[0].street}, ${data[0].locality}";
-    emit(LocationSuccessState(
-        location: LatLng(currentPosition.latitude, currentPosition.longitude),
-        address: street));
+    emit(LocationSuccessState(location: LatLng(currentPosition.latitude, currentPosition.longitude), address: street));
 
-    return (
-      LatLng(currentPosition.latitude, currentPosition.longitude),
-      street
-    );
+    return (LatLng(currentPosition.latitude, currentPosition.longitude), street);
   }
 
   Future<List<dynamic>> getAutoCompleteSuggestions(String input) async {
     final location = await getLocation();
 
     List<dynamic> placeList = [];
-    String baseURL =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+    String baseURL = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 
     String request =
         '$baseURL?input=$input&key=$placesApiKey&location=${location.$1.latitude}%2C${location.$1.longitude}&radius=50000&strictbounds=true';
@@ -68,10 +65,7 @@ class LocationCubit extends Cubit<LocationState> {
 
       if (response.statusCode == 200) {
         placeList = json.decode(response.body)['predictions'];
-        placeList = placeList
-            .map((e) =>
-                {'description': e['description'], 'place_id': e['place_id']})
-            .toList();
+        placeList = placeList.map((e) => {'description': e['description'], 'place_id': e['place_id']}).toList();
         return placeList;
       } else {
         throw Exception('Failed to load predictions');
@@ -93,8 +87,7 @@ class LocationCubit extends Cubit<LocationState> {
       if (response.statusCode == 200) {
         var data = json.decode(response.body)['result']['geometry']['location'];
         final location = LatLng(data['lat'], data['lng']);
-        final address =
-            json.decode(response.body)['result']['formatted_address'];
+        final address = json.decode(response.body)['result']['formatted_address'];
         emit(LocationSuccessState(location: location, address: address));
         return location;
       } else {
@@ -107,7 +100,7 @@ class LocationCubit extends Cubit<LocationState> {
     return null;
   }
 
-  Future<(Polyline,int)> getPolyline(LatLng origin, LatLng destination) async {
+  Future<(Polyline, int)> getPolyline(LatLng origin, LatLng destination) async {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
       googleApiKey: placesApiKey,
       request: PolylineRequest(
@@ -125,10 +118,23 @@ class LocationCubit extends Cubit<LocationState> {
     }
 
     PolylineId id = const PolylineId("route");
-    return (Polyline(
-        polylineId: id,
-        color: Colors.black,
-        points: polylineCoordinates,
-        width: 5), result.totalDistanceValue!);
+    return (
+      Polyline(polylineId: id, color: Colors.black, points: polylineCoordinates, width: 5),
+      result.totalDistanceValue!
+    );
+  }
+
+  startLocationUpdate(String clientId) async {
+    final clientLocation = await getLocation();
+
+    provider.setClientCurrenLocation(clientLocation.$1, clientId);
+    _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      provider.setClientCurrenLocation(clientLocation.$1, clientId);
+    });
+  }
+
+  stopLocationUpdate(String clientId) async {
+    _locationTimer?.cancel();
+    provider.removeActiveClient(clientId);
   }
 }
