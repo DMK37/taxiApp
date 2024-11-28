@@ -1,4 +1,7 @@
+import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class DriverLoginPage extends StatelessWidget {
   DriverLoginPage({super.key});
@@ -17,8 +20,8 @@ class DriverLoginPage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                //context.read<DriverAuthCubit>().signIn();
-                
+                context.read<DriverAuthCubit>().signIn();
+                context.push('/map');
               },
               child: const Text('Connect MetaMask'),
             ),

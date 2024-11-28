@@ -1,5 +1,6 @@
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
+import 'package:driver_taxi_app/auth/pages/login_page.dart';
 import 'package:shared/widgets/error_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,10 +24,10 @@ class AuthListenerWrapper extends StatelessWidget {
               errorMessage: state.errorMessage,
             ),
           ));
-          context.go('/login');
+          context.go('/');
         }
         if (state is DriverUnauthenticatedState) {
-          context.go('/login');
+          context.go('/');
         }
       },
       child: BlocBuilder<DriverAuthCubit, DriverAuthState>(builder: (context, state) {
@@ -37,8 +38,8 @@ class AuthListenerWrapper extends StatelessWidget {
           case DriverAuthenticatedState():
             return child;
           case DriverUnauthenticatedState():
-              //return DriverLoginPage();
-              return child;
+              return DriverLoginPage();
+              //return child;
 
           default:
             return const SizedBox.shrink();
