@@ -30,15 +30,15 @@ contract Ride {
     mapping(uint64 => RideDetails) public rides;
     uint64 public rideCounter;
 
-    event RideCreated(uint64 rideId, address client, uint256 cost);
+    event RideCreated(uint64 indexed rideId, address indexed client, uint256 indexed cost);
     event RideConfirmed(
-        uint64 rideId,
-        address driver,
-        uint256 confirmationTime
+        uint64 indexed rideId,
+        address indexed driver,
+        uint256 indexed confirmationTime
     );
-    event RideStarted(uint64 rideId, uint256 startTime);
-    event RideCompleted(uint64 rideId, uint256 endTime);
-    event RideCancelled(uint64 rideId);
+    event RideStarted(uint64 indexed rideId, uint256 indexed startTime);
+    event RideCompleted(uint64 indexed rideId, uint256 indexed endTime);
+    event RideCancelled(uint64 indexed rideId);
 
     function createRide(
         uint64 _distance,

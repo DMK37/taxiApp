@@ -1,4 +1,4 @@
-using TaxiServer.Models.Car;
+using TaxiServer.Models.Vehicle;
 
 namespace TaxiServer.Models.Price;
 

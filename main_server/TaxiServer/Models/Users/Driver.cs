@@ -1,5 +1,5 @@
 using Google.Cloud.Firestore;
-using TaxiServer.Models.Car;
+using TaxiServer.Models.Vehicle;
 
 namespace TaxiServer.Models.Users;
 
@@ -12,5 +12,5 @@ public class Driver
 
     [FirestoreProperty] public string LastName { get; set; }
 
-    [FirestoreProperty] public Car.Car Car { get; set; }
+    [FirestoreProperty] public Car Car { get; set; }
 }
