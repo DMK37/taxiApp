@@ -1,6 +1,8 @@
 package contract_types
 
 import (
+	"context"
+	"contract_listener/db"
 	"encoding/binary"
 	"fmt"
 	"log"
@@ -18,7 +20,7 @@ type RideCreated struct {
 	cost   *big.Int
 }
 
-func HandleRideCreatedEvent(parsedABI abi.ABI, vLog types.Log) {
+func HandleRideCreatedEvent(parsedABI abi.ABI, vLog types.Log, firestoreService db.FirestoreService) {
 	event := RideCreated{}
 	err := parsedABI.UnpackIntoInterface(&event, "RideCreated", vLog.Data)
 	if err != nil {
@@ -30,6 +32,11 @@ func HandleRideCreatedEvent(parsedABI abi.ABI, vLog types.Log) {
 	event.cost = new(big.Int).SetBytes(vLog.Topics[3].Bytes())
 
 	fmt.Printf("Ride created: %d, client: %s, cost: %s\n", event.rideId, event.client.Hex(), event.cost.String())
+	firestoreService.AddDocument(context.Background(), "rides", fmt.Sprintf("%d", event.rideId), map[string]interface{}{
+		"client": event.client.Hex(),
+		"cost":   event.cost.String(),
+		"status": "created",
+	})
 }
 
 func RideCreatedHash() common.Hash {

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"contract_listener/contract_types"
+	"contract_listener/db"
 	"log"
 
 	"github.com/ethereum/go-ethereum"
@@ -13,7 +14,7 @@ import (
 )
 
 // Subscribe to Contract Events
-func subscribeToEvents(client *ethclient.Client, contractABI abi.ABI, contractAddress common.Address) {
+func subscribeToEvents(client *ethclient.Client, contractABI abi.ABI, contractAddress common.Address, firestoreService db.FirestoreService) {
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddress},
 	}
@@ -31,24 +32,24 @@ func subscribeToEvents(client *ethclient.Client, contractABI abi.ABI, contractAd
 		case err := <-sub.Err():
 			log.Fatalf("Subscription error: %v", err)
 		case vLog := <-logs:
-			handleEvent(contractABI, vLog)
+			handleEvent(contractABI, vLog, firestoreService)
 		}
 	}
 }
 
 // Handle Events
-func handleEvent(contractABI abi.ABI, vLog types.Log) {
+func handleEvent(contractABI abi.ABI, vLog types.Log, firestoreService db.FirestoreService) {
 	switch vLog.Topics[0].Hex() {
 	case contract_types.RideCreatedHash().Hex():
-		contract_types.HandleRideCreatedEvent(contractABI, vLog)
+		contract_types.HandleRideCreatedEvent(contractABI, vLog, firestoreService)
 	case contract_types.RideConfirmedHash().Hex():
-		contract_types.HandleRideConfirmedEvent(contractABI, vLog)
+		contract_types.HandleRideConfirmedEvent(contractABI, vLog, firestoreService)
 	case contract_types.RideCancelledHash().Hex():
-		contract_types.HandleRideCancelledEvent(contractABI, vLog)
+		contract_types.HandleRideCancelledEvent(contractABI, vLog, firestoreService)
 	case contract_types.RideCompletedHash().Hex():
-		contract_types.HandleRideCompletedEvent(contractABI, vLog)
+		contract_types.HandleRideCompletedEvent(contractABI, vLog, firestoreService)
 	case contract_types.RideStartedHash().Hex():
-		contract_types.HandleRideStartedEvent(contractABI, vLog)
+		contract_types.HandleRideStartedEvent(contractABI, vLog, firestoreService)
 	default:
 		log.Printf("Unknown event with topic: %s", vLog.Topics[0].Hex())
 	}
