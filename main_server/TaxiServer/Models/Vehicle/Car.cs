@@ -1,6 +1,6 @@
 using Google.Cloud.Firestore;
 
-namespace TaxiServer.Models.Car;
+namespace TaxiServer.Models.Vehicle;
 
 [FirestoreData]
 public class Car

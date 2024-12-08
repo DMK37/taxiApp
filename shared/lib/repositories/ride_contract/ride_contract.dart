@@ -110,7 +110,7 @@ class RideContract implements RideContractAbstract {
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint64",
               "name": "rideId",
               "type": "uint64"
@@ -123,13 +123,13 @@ class RideContract implements RideContractAbstract {
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint64",
               "name": "rideId",
               "type": "uint64"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint256",
               "name": "endTime",
               "type": "uint256"
@@ -142,19 +142,19 @@ class RideContract implements RideContractAbstract {
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint64",
               "name": "rideId",
               "type": "uint64"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "driver",
               "type": "address"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint256",
               "name": "confirmationTime",
               "type": "uint256"
@@ -167,19 +167,19 @@ class RideContract implements RideContractAbstract {
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint64",
               "name": "rideId",
               "type": "uint64"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "address",
               "name": "client",
               "type": "address"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint256",
               "name": "cost",
               "type": "uint256"
@@ -192,13 +192,13 @@ class RideContract implements RideContractAbstract {
           "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint64",
               "name": "rideId",
               "type": "uint64"
             },
             {
-              "indexed": false,
+              "indexed": true,
               "internalType": "uint256",
               "name": "startTime",
               "type": "uint256"
@@ -322,6 +322,6 @@ class RideContract implements RideContractAbstract {
       ]), // ABI object
       'ETH',
     ),
-    EthereumAddress.fromHex('0xA3391Cc3a3e0AAFA305AEEE03E00999151B5df5A'),
+    EthereumAddress.fromHex('0x01fC6D67e0d121e00643e82Ea03bd6206a1bf39a'),
   );
 }

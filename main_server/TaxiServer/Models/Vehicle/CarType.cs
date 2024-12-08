@@ -1,4 +1,4 @@
-namespace TaxiServer.Models.Car;
+namespace TaxiServer.Models.Vehicle;
 
 public enum CarType
 {
