@@ -2,15 +2,25 @@ package main
 
 import (
 	"contract_listener/config"
+	"contract_listener/db"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Failed to load .env file: %v", err)
+	}
+
+	firestoreService, err := db.NewFirestoreAccessor(config.FIREBASE_PROJECT_ID)
+
 	// Connect to Ethereum Node
 	client := connectToEthereum(config.WS_URL)
 	defer client.Close()
@@ -21,7 +31,7 @@ func main() {
 	contractABI := readContractABI("abi/abi.json")
 
 	// Subscribe to Contract Events
-	subscribeToEvents(client, contractABI, config.CONTRACT_ADDRESS)
+	subscribeToEvents(client, contractABI, config.CONTRACT_ADDRESS, firestoreService)
 }
 
 // Connect to Ethereum Node
