@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"order_server/cloud_message"
+	conf "order_server/config"
 	"order_server/server"
 
 	firebase "firebase.google.com/go"
@@ -27,9 +28,9 @@ func main() {
 	}
 
 	sqsClient := sqs.NewFromConfig(cfg)
-	queueURL := "https://sqs.us-east-1.amazonaws.com/703671903373/Order.fifo"
+	queueURL := conf.AWS_QUEUE_URL
 
-	opt := option.WithCredentialsFile("./config/taxiapp-6761d-firebase-adminsdk-4yxbd-536043c9c8.json")
+	opt := option.WithCredentialsFile(conf.FIREBASE_JSON_PATH)
 
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
