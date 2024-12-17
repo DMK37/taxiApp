@@ -1,5 +1,6 @@
-import 'package:driver_taxi_app/models/driver.dart';
+
 import 'package:equatable/equatable.dart';
+import 'package:shared/models/driver_model.dart';
 
 abstract class DriverAuthState extends Equatable{}
 
@@ -13,6 +14,16 @@ class DriverAuthenticatedState extends DriverAuthState{
 }
 
 class DriverUnauthenticatedState extends DriverAuthState{
+  @override
+  List<Object?> get props => [];
+
+}
+
+class DriverFirstLoginState extends DriverAuthState{
+  final String address;
+
+  DriverFirstLoginState({required this.address});
+
   @override
   List<Object?> get props => [];
 
