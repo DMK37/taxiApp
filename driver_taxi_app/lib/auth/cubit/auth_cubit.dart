@@ -87,7 +87,7 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
       emit(DriverAuthFailureState(errorMessage: 'Failed to create account'));
       return;
     }
-    print("emit auth");
+    print("created driver");
     emit(DriverAuthenticatedState(
         driver: driver));
   }

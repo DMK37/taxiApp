@@ -1,7 +1,7 @@
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
 import 'package:driver_taxi_app/auth/pages/login_page.dart';
-import 'package:driver_taxi_app/initial_state/pages/initial_page_builder.dart';
+import 'package:driver_taxi_app/auth/pages/register_page.dart';
 import 'package:shared/widgets/error_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,10 +25,10 @@ class AuthListenerWrapper extends StatelessWidget {
               errorMessage: state.errorMessage,
             ),
           ));
-          context.go('/');
+          context.go('/login');
         }
         if (state is DriverUnauthenticatedState) {
-          context.go('/');
+          context.go('/login');
         }
         if (state is DriverAuthenticatedState) {
           print("auth");
@@ -46,8 +46,7 @@ class AuthListenerWrapper extends StatelessWidget {
               return DriverLoginPage();
               //return child;
           case DriverFirstLoginState(address: String address):
-            //return DriverFirstLoginPage(address: address);
-            return const InitialPageBuilder();
+            return RegisterPage(address: address);
           default:
             return const SizedBox.shrink();
         }

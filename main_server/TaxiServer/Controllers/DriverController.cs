@@ -1,6 +1,10 @@
+using Google.Type;
 using Microsoft.AspNetCore.Mvc;
 using TaxiServer.Abstractions;
+using TaxiServer.Models.Price;
 using TaxiServer.Models.Users;
+using TaxiServer.Models.Vehicle;
+using TaxiServer.Services;
 
 namespace TaxiServer.Controllers;
 
@@ -9,10 +13,12 @@ namespace TaxiServer.Controllers;
 public class DriverController: Controller
 {
     private readonly IDriverRepository _driverRepository;
+    private readonly IPricingService _pricingService;
 
-    public DriverController(IDriverRepository driverRepository)
+    public DriverController(IDriverRepository driverRepository, IPricingService pricingService)
     {
         _driverRepository = driverRepository;
+        _pricingService = pricingService;
     }
     
     [HttpGet("{id}")]
@@ -43,5 +49,12 @@ public class DriverController: Controller
     public async Task<ActionResult<Driver>> GetRideHistory(string id)
     {
         return Ok(new { FirstName = id, LastName = id });
+    }
+
+    [HttpGet("car-types")]
+    public async Task<ActionResult<List<CarType>>> GetCarTypes()
+    {
+        var prices = await _pricingService.GetCarTypeList();
+        return Ok(prices);
     }
 }
