@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using TaxiServer.Abstractions;
 using TaxiServer.Controllers;
-using TaxiServer.Models.Car;
+using TaxiServer.Models.Vehicle;
 using TaxiServer.Models.Users;
 
 namespace TaxiAppTests.Controllers;

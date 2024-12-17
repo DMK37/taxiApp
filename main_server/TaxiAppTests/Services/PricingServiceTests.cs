@@ -1,5 +1,5 @@
 using Google.Type;
-using TaxiServer.Models.Car;
+using TaxiServer.Models.Vehicle;
 using TaxiServer.Models.Price;
 using TaxiServer.Services;
 

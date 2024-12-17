@@ -7,13 +7,13 @@ import 'package:go_router/go_router.dart';
 class AppRouter {
   final router = GoRouter(routes: [
     GoRoute(
-      path: '/',
+      path: '/map',
       builder: (context, state) => const LocationListenerWrapper(
         child: AuthListenerWrapper(child: InitialPageBuilder()),
       ),
     ),
     GoRoute(
-      path: '/login',
+      path: '/',
       builder: (context, state) =>
           AuthListenerWrapper(child: DriverLoginPage()),
     )

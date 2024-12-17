@@ -25,10 +25,10 @@ class AuthListenerWrapper extends StatelessWidget {
               errorMessage: state.errorMessage,
             ),
           ));
-          context.go('/login');
+          context.go('/');
         }
         if (state is DriverUnauthenticatedState) {
-          context.go('/login');
+          context.go('/');
         }
         if (state is DriverAuthenticatedState) {
           print("auth");
