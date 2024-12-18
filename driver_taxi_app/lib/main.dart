@@ -4,6 +4,7 @@ import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/router_config.dart';
+import 'package:driver_taxi_app/services/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  //await NotificationService.instance.initialize();
   //-- only for development
   if (const bool.fromEnvironment('dart.vm.product') == false) {
     HttpOverrides.global = CustomHttpOverrides();
