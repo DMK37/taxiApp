@@ -4,6 +4,7 @@ using TaxiServer.Abstractions;
 using TaxiServer.Controllers;
 using TaxiServer.Models.Vehicle;
 using TaxiServer.Models.Users;
+using TaxiServer.Services;
 
 namespace TaxiAppTests.Controllers;
 
@@ -28,7 +29,7 @@ public class DriverControllerTests
 
         mockClientRepository.Setup(repository => repository.CreateDriver(driver)).ReturnsAsync(driver);
 
-        var controller = new DriverController(mockClientRepository.Object);
+        var controller = new DriverController(mockClientRepository.Object, new PricingService());
 
 
 
@@ -65,7 +66,7 @@ public class DriverControllerTests
 
         mockClientRepository.Setup(repository => repository.CreateDriver(driver)).ReturnsAsync(null as Driver);
 
-        var controller = new DriverController(mockClientRepository.Object);
+        var controller = new DriverController(mockClientRepository.Object, new PricingService());
 
         // Act
         var result = await controller.CreateProfile(driver);
@@ -93,7 +94,7 @@ public class DriverControllerTests
         };
         mockClientRepository.Setup(repository => repository.GetDriver("0x123456789")).ReturnsAsync(driver);
 
-        var controller = new DriverController(mockClientRepository.Object);
+        var controller = new DriverController(mockClientRepository.Object, new PricingService());
 
         // Act
         var result = await controller.GetProfile("0x123456789");
@@ -118,7 +119,7 @@ public class DriverControllerTests
 
         mockClientRepository.Setup(repository => repository.GetDriver("0x123456789")).ReturnsAsync(null as Driver);
 
-        var controller = new DriverController(mockClientRepository.Object);
+        var controller = new DriverController(mockClientRepository.Object, new PricingService());
 
         // Act
         var result = await controller.GetProfile("0x123456789");
@@ -148,7 +149,7 @@ public class DriverControllerTests
         mockClientRepository.Setup(repository =>
             repository.UpdateDriver("0x123456789", driver)).ReturnsAsync(driver);
 
-        var controller = new DriverController(mockClientRepository.Object);
+        var controller = new DriverController(mockClientRepository.Object, new PricingService());
 
         // Act
         var result = await controller.UpdateProfile(driver);
@@ -184,7 +185,7 @@ public class DriverControllerTests
         mockClientRepository.Setup(repository =>
             repository.UpdateDriver("0x123456789", driver)).ReturnsAsync(null as Driver);
 
-        var controller = new DriverController(mockClientRepository.Object);
+        var controller = new DriverController(mockClientRepository.Object, new PricingService());
 
         // Act
         var result = await controller.UpdateProfile(driver);
