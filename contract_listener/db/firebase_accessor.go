@@ -11,6 +11,7 @@ import (
 type FirestoreService interface {
 	AddDocument(ctx context.Context, collection string, key string, data map[string]interface{}) error
 	AddFields(ctx context.Context, collection string, key string, updates []firestore.Update) error
+	GetDocument(ctx context.Context, collection string, key string) (*firestore.DocumentSnapshot, error)
 	Close() error
 }
 
@@ -55,6 +56,17 @@ func (fa *FirestoreAccessor) AddFields(ctx context.Context, collection string, k
 
 	log.Printf("Fields updated in document %s successfully!", key)
 	return nil
+}
+
+func (fa *FirestoreAccessor) GetDocument(ctx context.Context, collection string, key string) (*firestore.DocumentSnapshot, error) {
+	docRef := fa.Client.Collection(collection).Doc(key)
+
+	doc, err := docRef.Get(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get document %s: %v", key, err)
+	}
+
+	return doc, nil
 }
 
 func (fa *FirestoreAccessor) Close() error {

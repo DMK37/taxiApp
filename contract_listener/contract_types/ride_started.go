@@ -15,26 +15,34 @@ import (
 )
 
 type RideStarted struct {
-	rideId    uint64
-	startTime uint64
+	RideId    uint64 `json:"rideId"`
+	StartTime uint64 `json:"startTime"`
 }
 
-func HandleRideStartedEvent(parsedABI abi.ABI, vLog types.Log, firestoreService db.FirestoreService) {
+func NewRideStarted(parsedABI abi.ABI, vLog types.Log) RideStarted {
 	event := RideStarted{}
 	err := parsedABI.UnpackIntoInterface(&event, "RideStarted", vLog.Data)
 	if err != nil {
 		log.Fatalf("Failed to unpack RideStarted event: %v", err)
 	}
 
-	event.rideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
-	event.startTime = binary.BigEndian.Uint64(vLog.Topics[2].Bytes()[24:])
+	event.RideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
+	event.StartTime = binary.BigEndian.Uint64(vLog.Topics[2].Bytes()[24:])
 
-	fmt.Printf("Ride started: %d, start time: %d\n", event.rideId, event.startTime)
+	return event
+}
 
-	firestoreService.AddFields(context.Background(), "rides", fmt.Sprintf("%d", event.rideId), []firestore.Update{
-		{Path: "startTime", Value: event.startTime},
+func HandleRideStartedEvent(event RideStarted, firestoreService db.FirestoreService) {
+
+	fmt.Printf("Ride started: %d, start time: %d\n", event.RideId, event.StartTime)
+
+	err := firestoreService.AddFields(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), []firestore.Update{
+		{Path: "startTime", Value: fmt.Sprint(event.StartTime)},
 		{Path: "status", Value: "started"},
 	})
+	if err != nil {
+		log.Fatalf("Failed to add fields to Firestore: %v", err)
+	}
 }
 
 func RideStartedHash() common.Hash {
