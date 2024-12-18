@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:reown_appkit/reown_appkit.dart';
 import 'package:shared/repositories/ride_contract/ride_contract_abstract.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RideContract implements RideContractAbstract {
   @override
@@ -89,6 +90,12 @@ class RideContract implements RideContractAbstract {
   @override
   Future<bool> createRide(ReownAppKitModal modal, int distance, String source,
       String destination, BigInt price) async {
+    if (await canLaunchUrl(Uri.parse("metamask://"))) {
+      await launchUrl(Uri.parse("metamask://"));
+    } else {
+      throw 'Could not launch metamask://';
+    }
+
     final resp = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
