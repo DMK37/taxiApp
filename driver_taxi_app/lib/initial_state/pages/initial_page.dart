@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
+import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
 import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
@@ -20,11 +22,13 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
   bool isOnline = false;
 
   LatLng? _currentAddress;
+  late String driverId;
 
   @override
   void initState() {
     super.initState();
     _currentAddressController.text = (context.read<DriverLocationCubit>().state as DriverLocationSuccessState).address;
+    driverId = (context.read<DriverAuthCubit>().state as DriverAuthenticatedState).driver.id;
   }
 
   @override
@@ -158,7 +162,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
       },
     );
     final location = await context.read<DriverLocationCubit>().getLocation();
-    await context.read<DriverInitCubit>().startLocationUpdate(location.$1);
+    await context.read<DriverInitCubit>().startLocationUpdate(location.$1, driverId);
   }
 
   void showGoOfflineDialog(BuildContext context) async {
@@ -182,6 +186,6 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
         );
       },
     );
-    await context.read<DriverInitCubit>().stopLocationUpdate();
+    await context.read<DriverInitCubit>().stopLocationUpdate(driverId);
   }
 }

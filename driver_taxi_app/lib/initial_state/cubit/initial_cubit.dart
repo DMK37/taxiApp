@@ -14,19 +14,17 @@ class DriverInitCubit extends Cubit<DriverInitState> {
   DriverLocationDataProvider provider = DriverLocationDataProvider();
   DriverRepository repository = DriverRepository();
 
-  // TODO: driver id as database id
-
-  startLocationUpdate(LatLng driverLocation) async
+  startLocationUpdate(LatLng driverLocation, String driverId) async
   {
-    provider.setDriverCurrenLocation(driverLocation);
+    provider.setDriverCurrenLocation(driverLocation, driverId);
      _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-    provider.setDriverCurrenLocation(driverLocation);
+    provider.setDriverCurrenLocation(driverLocation, driverId);
   });
   }
 
-  stopLocationUpdate() async {
+  stopLocationUpdate(String driverId) async {
     _locationTimer?.cancel();
-    provider.removeActiveDriver();
+    provider.removeActiveDriver(driverId);
   }
 
   Future<List<CarType>> getCarTypeList() async {
