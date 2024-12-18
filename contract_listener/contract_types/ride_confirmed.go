@@ -15,29 +15,38 @@ import (
 )
 
 type RideConfirmed struct {
-	rideId           uint64
-	driver           common.Address
-	confirmationTime uint64
+	RideId           uint64         `json:"rideId"`
+	Driver           common.Address `json:"driver"`
+	ConfirmationTime uint64         `json:"confirmationTime"`
 }
 
-func HandleRideConfirmedEvent(parsedABI abi.ABI, vLog types.Log, firestoreService db.FirestoreService) {
+func NewRideConfirmed(parsedABI abi.ABI, vLog types.Log) RideConfirmed {
 	event := RideConfirmed{}
 	err := parsedABI.UnpackIntoInterface(&event, "RideConfirmed", vLog.Data)
 	if err != nil {
 		log.Fatalf("Failed to unpack RideConfirmed event: %v", err)
 	}
 
-	event.rideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
-	event.driver = common.HexToAddress(vLog.Topics[2].Hex())
-	event.confirmationTime = binary.BigEndian.Uint64(vLog.Topics[3].Bytes()[24:])
+	event.RideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
+	event.Driver = common.HexToAddress(vLog.Topics[2].Hex())
+	event.ConfirmationTime = binary.BigEndian.Uint64(vLog.Topics[3].Bytes()[24:])
 
-	fmt.Printf("Ride confirmed: %d, driver: %s, confirmation time: %d\n", event.rideId, event.driver.Hex(), event.confirmationTime)
+	return event
+}
 
-	firestoreService.AddFields(context.Background(), "rides", fmt.Sprintf("%d", event.rideId), []firestore.Update{
-		{Path: "driver", Value: event.driver.Hex()},
-		{Path: "confirmationTime", Value: event.confirmationTime},
+func HandleRideConfirmedEvent(event RideConfirmed, firestoreService db.FirestoreService) {
+
+	fmt.Printf("Ride confirmed: %d, driver: %s, confirmation time: %d\n", event.RideId, event.Driver.Hex(), event.ConfirmationTime)
+
+	err := firestoreService.AddFields(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), []firestore.Update{
+		{Path: "driver", Value: event.Driver.Hex()},
+		{Path: "confirmationTime", Value: fmt.Sprint(event.ConfirmationTime)},
 		{Path: "status", Value: "confirmed"},
 	})
+
+	if err != nil {
+		log.Fatalf("Failed to add fields to Firestore: %v", err)
+	}
 }
 
 func RideConfirmedHash() common.Hash {

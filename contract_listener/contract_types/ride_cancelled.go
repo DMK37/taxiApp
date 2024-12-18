@@ -15,23 +15,32 @@ import (
 )
 
 type RideCancelled struct {
-	rideId uint64
+	RideId uint64 `json:"rideId"`
 }
 
-func HandleRideCancelledEvent(parsedABI abi.ABI, vLog types.Log, firestoreService db.FirestoreService) {
+func NewRideCancelled(parsedABI abi.ABI, vLog types.Log) RideCancelled {
 	event := RideCancelled{}
 	err := parsedABI.UnpackIntoInterface(&event, "RideCancelled", vLog.Data)
 	if err != nil {
 		log.Fatalf("Failed to unpack RideCancelled event: %v", err)
 	}
 
-	event.rideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
+	event.RideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
 
-	fmt.Printf("Ride cancelled: %d\n", event.rideId)
+	return event
+}
 
-	firestoreService.AddFields(context.Background(), "rides", fmt.Sprintf("%d", event.rideId), []firestore.Update{
+func HandleRideCancelledEvent(event RideCancelled, firestoreService db.FirestoreService) {
+
+	fmt.Printf("Ride cancelled: %d\n", event.RideId)
+
+	err := firestoreService.AddFields(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), []firestore.Update{
 		{Path: "status", Value: "cancelled"},
 	})
+
+	if err != nil {
+		log.Fatalf("Failed to add fields to Firestore: %v", err)
+	}
 }
 
 func RideCancelledHash() common.Hash {

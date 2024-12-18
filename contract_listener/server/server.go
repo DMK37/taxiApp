@@ -61,15 +61,20 @@ func (s *Server) Start() {
 func (s *Server) handleEvent(vLog types.Log) {
 	switch vLog.Topics[0].Hex() {
 	case contract_types.RideCreatedHash().Hex():
-		contract_types.HandleRideCreatedEvent(s.abi, vLog, s.firestoreService, s.sqsClient, s.queueURL)
+		createdEvent := contract_types.NewRideCreated(s.abi, vLog)
+		contract_types.HandleRideCreatedEvent(createdEvent, s.firestoreService, s.sqsClient, s.queueURL)
 	case contract_types.RideConfirmedHash().Hex():
-		contract_types.HandleRideConfirmedEvent(s.abi, vLog, s.firestoreService)
+		confirmedEvent := contract_types.NewRideConfirmed(s.abi, vLog)
+		contract_types.HandleRideConfirmedEvent(confirmedEvent, s.firestoreService)
 	case contract_types.RideCancelledHash().Hex():
-		contract_types.HandleRideCancelledEvent(s.abi, vLog, s.firestoreService)
+		cancelledEvent := contract_types.NewRideCancelled(s.abi, vLog)
+		contract_types.HandleRideCancelledEvent(cancelledEvent, s.firestoreService)
 	case contract_types.RideCompletedHash().Hex():
-		contract_types.HandleRideCompletedEvent(s.abi, vLog, s.firestoreService)
+		completedEvent := contract_types.NewRideCompleted(s.abi, vLog)
+		contract_types.HandleRideCompletedEvent(completedEvent, s.firestoreService)
 	case contract_types.RideStartedHash().Hex():
-		contract_types.HandleRideStartedEvent(s.abi, vLog, s.firestoreService)
+		startedEvent := contract_types.NewRideStarted(s.abi, vLog)
+		contract_types.HandleRideStartedEvent(startedEvent, s.firestoreService)
 	default:
 		slog.Error("Unknown event with topic", "topic", vLog.Topics[0].Hex())
 	}
