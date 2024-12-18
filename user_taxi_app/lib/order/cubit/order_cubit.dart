@@ -2,12 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 import 'package:shared/repositories/ride_contract/ride_contract.dart';
 import 'package:shared/repositories/ride_contract/ride_contract_abstract.dart';
-import 'package:taxiapp/ride/cubit/ride_state.dart';
+import 'package:taxiapp/order/cubit/order_state.dart';
 
-class RideCubit extends Cubit<RideState> {
+class OrderCubit extends Cubit<OrderState> {
   final RideContractAbstract rideRepository = RideContract();
 
-  RideCubit() : super(RideInitial());
+  OrderCubit() : super(OrderInitial());
   Future<void> createRide(
     ReownAppKitModal modal,
     double price,
@@ -15,14 +15,25 @@ class RideCubit extends Cubit<RideState> {
     String destination,
     int distance,
   ) async {
-    emit(RideLoading());
+    emit(OrderLoading());
     final response = await rideRepository.createRide(modal, distance, source,
         destination, BigInt.from(price * 1000000000000000000));
-
+    print(response);
     if (response) {
-      emit(RideInitial());
+      emit(OrderWaiting());
     } else {
       // emit(RideError());
     }
+  }
+
+  Future<void> cancelRide(ReownAppKitModal modal) async {
+    // emit(OrderLoading());
+    // final response = await rideRepository.cancelRide(modal);
+
+    // if (response) {
+    //   emit(OrderInitial());
+    // } else {
+    //   // emit(RideError());
+    // }
   }
 }

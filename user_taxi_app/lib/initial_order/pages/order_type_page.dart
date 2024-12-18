@@ -10,7 +10,7 @@ import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_state.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/location/cubit/location_state.dart';
-import 'package:taxiapp/ride/cubit/ride_cubit.dart';
+import 'package:taxiapp/order/cubit/order_cubit.dart';
 
 class OrderTypePage extends StatefulWidget {
   const OrderTypePage({super.key});
@@ -30,7 +30,7 @@ class _OrderTypePageState extends State<OrderTypePage> {
   String destinationAddress = "";
   int distance = 0;
 
-  late ReownAppKitModal _appKitModal;
+  late  ReownAppKitModal _appKitModal;
 
   @override
   void initState() {
@@ -40,12 +40,9 @@ class _OrderTypePageState extends State<OrderTypePage> {
     destinationAddress =
         (context.read<InitialOrderCubit>().state as OrderWithPoints)
             .destinationAddress;
-    final appKit = context.read<AuthCubit>().appKit;
-    final testNetworks = ReownAppKitModalNetworks.test['eip155'] ?? [];
-    ReownAppKitModalNetworks.addNetworks('eip155', testNetworks);
     _appKitModal = ReownAppKitModal(
       context: context,
-      appKit: appKit,
+      appKit: context.read<AuthCubit>().appKit,
     );
     _appKitModal.init();
   }
@@ -290,7 +287,7 @@ class _OrderTypePageState extends State<OrderTypePage> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
-                          await context.read<RideCubit>().createRide(
+                          await context.read<OrderCubit>().createRide(
                               _appKitModal,
                               prices[_selectedTaxiIndex].price,
                               sourceAddress,

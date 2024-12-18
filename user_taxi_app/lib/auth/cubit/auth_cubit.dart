@@ -12,6 +12,9 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> init() async {
     emit(AuthLoadingState());
     try {
+    final testNetworks = ReownAppKitModalNetworks.test['eip155'] ?? [];
+    ReownAppKitModalNetworks.addNetworks('eip155', testNetworks);
+
       appKit = await ReownAppKit.createInstance(
         projectId: '121c0fdfdd60ce21ad8ce7bd40ab8d5b',
         metadata: const PairingMetadata(
