@@ -24,9 +24,9 @@ void main() async {
   );
   // only for development ---
   // [TODO] uncomment for check on ios
-  if (const bool.fromEnvironment('dart.vm.product') == false) {
-    HttpOverrides.global = CustomHttpOverrides();
-  }
+  // if (const bool.fromEnvironment('dart.vm.product') == false) {
+  //   HttpOverrides.global = CustomHttpOverrides();
+  // }
   // ---
   runApp(MyApp(router: appRouter.router));
 }
