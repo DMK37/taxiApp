@@ -35,7 +35,7 @@ enum CarType {
       case CarType.comfort:
         return Icon(Icons.local_taxi);
       case CarType.premium:
-        return Icon(Icons.directions_car_filled);
+        return Icon(Icons.local_taxi_rounded);
     }
   }
 

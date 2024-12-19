@@ -1,3 +1,4 @@
+import 'package:shared/models/car_type.dart';
 import 'package:shared/models/driver_model.dart';
 import 'package:shared/repositories/driver/driver_repository_abstract.dart';
 import 'package:http/http.dart' as http;
@@ -6,7 +7,11 @@ import 'dart:convert';
 class DriverRepository implements DriverRepositoryAbstract {
   // mac: 192.168.18.81
   // change for your local ip
-  final String apiUrl = "http://192.168.18.81:5112/api/driver";
+  //---- dima
+  //final String apiUrl = "http://192.168.18.81:5112/api/driver";
+
+  //----- alina
+  final String apiUrl = "https://192.168.1.10:5112/api/driver";
 
   @override
   Future<DriverModel?> createDriver(DriverModel driver) async {
@@ -71,5 +76,22 @@ class DriverRepository implements DriverRepositoryAbstract {
       print("Error: $e");
     }
     return null;
+  }
+
+  Future<List<CarType>> getCarTypes() async {
+    try {
+      final response = await http.get(Uri.parse('$apiUrl/car-types'));
+
+      if (response.statusCode == 200) {
+        print("Car types fetched successfully");
+        final json = jsonDecode(response.body);
+        return json.map<CarType>((type) => type).toList();
+      } else {
+        print("Failed to fetch client: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+    return [];
   }
 }

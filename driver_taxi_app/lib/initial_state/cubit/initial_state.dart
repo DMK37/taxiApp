@@ -14,6 +14,10 @@ class DriverOfflineState extends DriverInitState{
   DriverOfflineState({this.current, this.currentAddress});
 }
 
+class DriverLoadingState extends DriverInitState{
+  
+}
+
 class ErrorState extends DriverInitState{
   
 }

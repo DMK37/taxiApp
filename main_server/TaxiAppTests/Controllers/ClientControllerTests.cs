@@ -24,8 +24,6 @@ public class ClientControllerTests
 
         var controller = new ClientController(mockClientRepository.Object, new PricingService());
 
-
-
         // Act
         var result = await controller.CreateProfile(client);
 

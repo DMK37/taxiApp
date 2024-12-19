@@ -5,8 +5,16 @@ using TaxiServer.Models.Price;
 
 namespace TaxiServer.Services;
 
-public class PricingService : IPricingService
-{
+public class PricingService : IPricingService { 
+    public async Task<List<CarType>> GetCarTypeList()
+    {
+        return
+        [
+            CarType.Basic,
+            CarType.Comfort,
+            CarType.Premium,
+        ];
+    }
     public async Task<List<RidePrice>> CalculateTaxiPrice(LatLng source, LatLng destination, int distance)
     {
         // calculate distance to price
