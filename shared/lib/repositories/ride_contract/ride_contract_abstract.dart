@@ -1,8 +1,14 @@
 import 'package:reown_appkit/reown_appkit.dart';
 
 abstract class RideContractAbstract {
-  Future<bool> createRide(ReownAppKitModal modal, int distance, String source,
-      String destination, BigInt price);
+  Future<bool> createRide(
+      ReownAppKitModal modal,
+      int distance,
+      String source,
+      String destination,
+      String sourceLocation,
+      String destinationLocation,
+      BigInt price);
   Future<void> confirmRide(ReownAppKitModal modal, int rideId);
   Future<void> confirmSourceArrivalByClient(ReownAppKitModal modal, int rideId);
   Future<void> confirmDestinationArrivalByClient(

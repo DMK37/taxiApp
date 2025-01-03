@@ -27,10 +27,12 @@ class _OrderTypePageState extends State<OrderTypePage> {
   List<RidePriceModel> prices = [];
   int _selectedTaxiIndex = 0;
   String sourceAddress = "";
+  String sourceLocation = "";
+  String destinationLocation = "";
   String destinationAddress = "";
   int distance = 0;
 
-  late  ReownAppKitModal _appKitModal;
+  late ReownAppKitModal _appKitModal;
 
   @override
   void initState() {
@@ -40,6 +42,11 @@ class _OrderTypePageState extends State<OrderTypePage> {
     destinationAddress =
         (context.read<InitialOrderCubit>().state as OrderWithPoints)
             .destinationAddress;
+    sourceLocation =
+        "${(context.read<InitialOrderCubit>().state as OrderWithPoints).source.latitude},${(context.read<InitialOrderCubit>().state as OrderWithPoints).source.longitude}";
+    destinationLocation =
+        "${(context.read<InitialOrderCubit>().state as OrderWithPoints).destination.latitude},${(context.read<InitialOrderCubit>().state as OrderWithPoints).destination.longitude}";
+
     _appKitModal = ReownAppKitModal(
       context: context,
       appKit: context.read<AuthCubit>().appKit,
@@ -292,6 +299,8 @@ class _OrderTypePageState extends State<OrderTypePage> {
                               prices[_selectedTaxiIndex].price,
                               sourceAddress,
                               destinationAddress,
+                              sourceLocation,
+                              destinationLocation,
                               distance);
                         },
                         style: ElevatedButton.styleFrom(

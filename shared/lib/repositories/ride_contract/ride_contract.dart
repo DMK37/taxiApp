@@ -7,13 +7,15 @@ import 'package:url_launcher/url_launcher.dart';
 class RideContract implements RideContractAbstract {
   @override
   Future<void> cancelRide(ReownAppKitModal modal, int rideId) async {
+    final address =
+        modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
         functionName: "cancelRide",
         transaction: Transaction(
-          from: EthereumAddress.fromHex(modal.session!.address!),
+          from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [rideId]);
   }
@@ -21,13 +23,15 @@ class RideContract implements RideContractAbstract {
   @override
   Future<void> confirmDestinationArrivalByClient(
       ReownAppKitModal modal, int rideId) async {
+    final address =
+        modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
         functionName: "confirmDestinationArrivalByClient",
         transaction: Transaction(
-          from: EthereumAddress.fromHex(modal.session!.address!),
+          from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [rideId]);
   }
@@ -35,26 +39,30 @@ class RideContract implements RideContractAbstract {
   @override
   Future<void> confirmDestinationArrivalByDriver(
       ReownAppKitModal modal, int rideId) async {
+    final address =
+        modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
         functionName: "confirmDestinationArrivalByDriver",
         transaction: Transaction(
-          from: EthereumAddress.fromHex(modal.session!.address!),
+          from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [rideId]);
   }
 
   @override
   Future<void> confirmRide(ReownAppKitModal modal, int rideId) async {
+    final address =
+        modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
         functionName: "confirmRide",
         transaction: Transaction(
-          from: EthereumAddress.fromHex(modal.session!.address!),
+          from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [rideId]);
   }
@@ -62,13 +70,15 @@ class RideContract implements RideContractAbstract {
   @override
   Future<void> confirmSourceArrivalByClient(
       ReownAppKitModal modal, int rideId) async {
+    final address =
+        modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
         functionName: "confirmSourceArrivalByClient",
         transaction: Transaction(
-          from: EthereumAddress.fromHex(modal.session!.address!),
+          from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [rideId]);
   }
@@ -76,36 +86,45 @@ class RideContract implements RideContractAbstract {
   @override
   Future<void> confirmSourceArrivalByDriver(
       ReownAppKitModal modal, int rideId) async {
+    final address =
+        modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
         functionName: "confirmSourceArrivalByDriver",
         transaction: Transaction(
-          from: EthereumAddress.fromHex(modal.session!.address!),
+          from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [rideId]);
   }
 
   @override
-  Future<bool> createRide(ReownAppKitModal modal, int distance, String source,
-      String destination, BigInt price) async {
+  Future<bool> createRide(
+      ReownAppKitModal modal,
+      int distance,
+      String source,
+      String destination,
+      String sourceLocation,
+      String destinationLocation,
+      BigInt price) async {
     if (await canLaunchUrl(Uri.parse("metamask://"))) {
       await launchUrl(Uri.parse("metamask://"));
     } else {
       throw 'Could not launch metamask://';
     }
-
+    final address =
+        modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     final resp = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
         functionName: "createRide",
         transaction: Transaction(
-          from: EthereumAddress.fromHex(modal.session!.address!),
+          from: EthereumAddress.fromHex(address ?? "0x00000000"),
           value: EtherAmount.inWei(price),
         ),
-        parameters: [BigInt.from(distance), source, destination]);
+        parameters: [BigInt.from(distance), source, destination, sourceLocation, destinationLocation]);
 
     return resp != null;
   }
@@ -190,6 +209,30 @@ class RideContract implements RideContractAbstract {
               "internalType": "uint256",
               "name": "cost",
               "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "_source",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "_destination",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "_sourceLocation",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "_destinationLocation",
+              "type": "string"
             }
           ],
           "name": "RideCreated",
@@ -272,7 +315,21 @@ class RideContract implements RideContractAbstract {
           "inputs": [
             {"internalType": "uint64", "name": "_distance", "type": "uint64"},
             {"internalType": "string", "name": "_source", "type": "string"},
-            {"internalType": "string", "name": "_destination", "type": "string"}
+            {
+              "internalType": "string",
+              "name": "_destination",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "_sourceLocation",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "_destinationLocation",
+              "type": "string"
+            }
           ],
           "name": "createRide",
           "outputs": [
@@ -311,6 +368,16 @@ class RideContract implements RideContractAbstract {
             {"internalType": "string", "name": "source", "type": "string"},
             {"internalType": "string", "name": "destination", "type": "string"},
             {
+              "internalType": "string",
+              "name": "sourceLocation",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "destinationLocation",
+              "type": "string"
+            },
+            {
               "internalType": "uint256",
               "name": "confirmationTime",
               "type": "uint256"
@@ -329,6 +396,6 @@ class RideContract implements RideContractAbstract {
       ]), // ABI object
       'ETH',
     ),
-    EthereumAddress.fromHex('0x01fC6D67e0d121e00643e82Ea03bd6206a1bf39a'),
+    EthereumAddress.fromHex('0x9A841D91a524BBc413c688b6aF5BB7bAca0b510f'),
   );
 }

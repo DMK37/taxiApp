@@ -76,6 +76,30 @@
                 "internalType": "uint256",
                 "name": "cost",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "_source",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "_destination",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "_sourceLocation",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "_destinationLocation",
+                "type": "string"
             }
         ],
         "name": "RideCreated",
@@ -194,6 +218,16 @@
                 "internalType": "string",
                 "name": "_destination",
                 "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_sourceLocation",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_destinationLocation",
+                "type": "string"
             }
         ],
         "name": "createRide",
@@ -258,6 +292,16 @@
             {
                 "internalType": "string",
                 "name": "destination",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "sourceLocation",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "destinationLocation",
                 "type": "string"
             },
             {

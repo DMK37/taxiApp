@@ -13,11 +13,13 @@ class OrderCubit extends Cubit<OrderState> {
     double price,
     String source,
     String destination,
+    String sourceLocation,
+    String destinationLocation,
     int distance,
   ) async {
     emit(OrderLoading());
     final response = await rideRepository.createRide(modal, distance, source,
-        destination, BigInt.from(price * 1000000000000000000));
+        destination, sourceLocation, destinationLocation, BigInt.from(price * 1000000000000000000));
     print(response);
     if (response) {
       emit(OrderWaiting());

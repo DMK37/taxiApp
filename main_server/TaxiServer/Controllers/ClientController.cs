@@ -1,7 +1,7 @@
 ﻿using Google.Type;
 using Microsoft.AspNetCore.Mvc;
 using TaxiServer.Abstractions;
-using TaxiServer.Models.Price;
+using TaxiServer.Models.Ride;
 using TaxiServer.Models.Users;
 
 namespace TaxiServer.Controllers
