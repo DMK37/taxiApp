@@ -1,10 +1,7 @@
-using Google.Type;
 using Microsoft.AspNetCore.Mvc;
 using TaxiServer.Abstractions;
-using TaxiServer.Models.Price;
 using TaxiServer.Models.Users;
 using TaxiServer.Models.Vehicle;
-using TaxiServer.Services;
 
 namespace TaxiServer.Controllers;
 
@@ -57,4 +54,10 @@ public class DriverController: Controller
         var prices = await _pricingService.GetCarTypeList();
         return Ok(prices);
     }
+
+    // [HttpGet("active-drivers/{source}")]
+    // public async Task<ActionResult<List<Driver>>> GetActiveDrivers(string source)
+    // {
+    //     
+    // }
 }

@@ -21,6 +21,8 @@ contract Ride {
         uint64 distance;
         string source;
         string destination;
+        string sourceLocation;
+        string destinationLocation;
         uint256 confirmationTime;
         uint256 startTime;
         uint256 endTime;
@@ -30,7 +32,15 @@ contract Ride {
     mapping(uint64 => RideDetails) public rides;
     uint64 public rideCounter;
 
-    event RideCreated(uint64 indexed rideId, address indexed client, uint256 indexed cost);
+    event RideCreated(
+        uint64 indexed rideId,
+        address indexed client,
+        uint256 indexed cost,
+        string _source,
+        string _destination,
+        string _sourceLocation,
+        string _destinationLocation
+    );
     event RideConfirmed(
         uint64 indexed rideId,
         address indexed driver,
@@ -43,7 +53,9 @@ contract Ride {
     function createRide(
         uint64 _distance,
         string memory _source,
-        string memory _destination
+        string memory _destination,
+        string memory _sourceLocation,
+        string memory _destinationLocation
     ) external payable returns (uint64) {
         require(msg.value > 0, "Cost should be greater than 0");
         rideCounter++;
@@ -54,12 +66,22 @@ contract Ride {
             _distance,
             _source,
             _destination,
+            _sourceLocation,
+            _destinationLocation,
             0,
             0,
             0,
             RideStatus.Requested
         );
-        emit RideCreated(rideCounter, msg.sender, msg.value);
+        emit RideCreated(
+            rideCounter,
+            msg.sender,
+            msg.value,
+            _source,
+            _destination,
+            _sourceLocation,
+            _destinationLocation
+        );
 
         return rideCounter;
     }
@@ -151,10 +173,7 @@ contract Ride {
             rides[_rideId].endTime = block.timestamp;
             rides[_rideId].status = RideStatus.Completed;
             rides[_rideId].driver.transfer(rides[_rideId].cost);
-            emit RideCompleted(
-                _rideId,
-                rides[_rideId].endTime
-            );
+            emit RideCompleted(_rideId, rides[_rideId].endTime);
         }
     }
 
@@ -172,10 +191,7 @@ contract Ride {
             rides[_rideId].endTime = block.timestamp;
             rides[_rideId].status = RideStatus.Completed;
             rides[_rideId].driver.transfer(rides[_rideId].cost);
-            emit RideCompleted(
-                _rideId,
-                rides[_rideId].endTime
-            );
+            emit RideCompleted(_rideId, rides[_rideId].endTime);
         }
     }
 

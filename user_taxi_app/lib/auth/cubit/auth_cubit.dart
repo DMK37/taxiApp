@@ -12,8 +12,15 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> init() async {
     emit(AuthLoadingState());
     try {
-    final testNetworks = ReownAppKitModalNetworks.test['eip155'] ?? [];
-    ReownAppKitModalNetworks.addNetworks('eip155', testNetworks);
+      ReownAppKitModalNetworks.addSupportedNetworks('eip155', [
+        ReownAppKitModalNetworkInfo(
+            name: "Sepolia",
+            chainId: '11155111',
+            currency: "ETH",
+            rpcUrl: "https://rpc.sepolia.dev",
+            explorerUrl: "https://sepolia.etherscan.io",
+            isTestNetwork: true)
+      ]);
 
       appKit = await ReownAppKit.createInstance(
         projectId: '121c0fdfdd60ce21ad8ce7bd40ab8d5b',
@@ -29,19 +36,17 @@ class AuthCubit extends Cubit<AuthState> {
       );
       appKit.onSessionConnect.subscribe((event) async {
         print('Session connected');
-        final address = event?.session.namespaces['eip155']?.accounts[0].split(':')[2];
-        final client = await clientRepository.getClient(
-            address ?? "0x1234567890");
+        final address =
+            event.session.namespaces['eip155']?.accounts[0].split(':')[2];
+        final client =
+            await clientRepository.getClient(address ?? "0x1234567890");
         if (client == null) {
           // emit first login
           print('First login');
-          emit(FirstLoginState(
-              address: address ??
-                  "0x1234567890"));
+          emit(FirstLoginState(address: address ?? "0x1234567890"));
           return;
         }
-        emit(AuthenticatedState(
-            user: client));
+        emit(AuthenticatedState(user: client));
       });
       appKit.onSessionExpire.subscribe((event) {
         print('Session expired');
@@ -61,9 +66,10 @@ class AuthCubit extends Cubit<AuthState> {
   void isConnected(ReownAppKitModal modal) {
     emit(AuthLoadingState());
     if (modal.isConnected) {
+      print(modal.session?.userName);
       emit(AuthenticatedState(
           user: ClientModel(
-              id: modal.session?.address ?? "0x1234567890",
+              id: modal.session?.userName ?? "0x1234567890",
               firstName: "John",
               lastName: "Doe")));
     } else {
@@ -71,34 +77,30 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> createAccount(String id, String firstName, String lastName) async {
+  Future<void> createAccount(
+      String id, String firstName, String lastName) async {
     emit(AuthLoadingState());
-    final client = ClientModel(
-        id: id,
-        firstName: firstName,
-        lastName: lastName);
+    final client =
+        ClientModel(id: id, firstName: firstName, lastName: lastName);
     final response = await clientRepository.createClient(client);
     if (response == null) {
       emit(AuthFailureState(errorMessage: 'Failed to create account'));
       return;
     }
     print("emit auth");
-    emit(AuthenticatedState(
-        user: client));
+    emit(AuthenticatedState(user: client));
   }
 
-  Future<void> updateAccount(String id, String firstName, String lastName) async {
+  Future<void> updateAccount(
+      String id, String firstName, String lastName) async {
     emit(AuthLoadingState());
-    final client = ClientModel(
-        id: id,
-        firstName: firstName,
-        lastName: lastName);
+    final client =
+        ClientModel(id: id, firstName: firstName, lastName: lastName);
     final response = await clientRepository.updateClient(client);
     if (response == null) {
       emit(AuthFailureState(errorMessage: 'Failed to update account'));
       return;
     }
-    emit(AuthenticatedState(
-        user: client));
+    emit(AuthenticatedState(user: client));
   }
 }

@@ -1,6 +1,6 @@
 using Google.Type;
 using TaxiServer.Models.Vehicle;
-using TaxiServer.Models.Price;
+using TaxiServer.Models.Ride;
 using TaxiServer.Services;
 
 namespace TaxiAppTests.Services;

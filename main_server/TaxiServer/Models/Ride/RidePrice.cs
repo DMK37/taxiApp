@@ -1,6 +1,6 @@
 using TaxiServer.Models.Vehicle;
 
-namespace TaxiServer.Models.Price;
+namespace TaxiServer.Models.Ride;
 
 public class RidePrice
 {

@@ -1,7 +1,7 @@
 using Google.Type;
 using TaxiServer.Abstractions;
 using TaxiServer.Models.Vehicle;
-using TaxiServer.Models.Price;
+using TaxiServer.Models.Ride;
 
 namespace TaxiServer.Services;
 

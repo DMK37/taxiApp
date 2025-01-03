@@ -25,6 +25,12 @@ builder.Services.AddSingleton<IDriverRepository>(s =>
     return new DriverRepository(firestoreService);
 });
 
+builder.Services.AddSingleton<IRideRepository>(s =>
+{
+    var firestoreService = s.GetRequiredService<IFirestoreService>();
+    return new RideRepository(firestoreService);
+});
+
 builder.Services.AddSingleton<IPricingService>(s => new PricingService());
 
 builder.Services.AddControllers();

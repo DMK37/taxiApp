@@ -10,32 +10,32 @@ PODS:
   - connectivity_plus (0.0.1):
     - Flutter
     - FlutterMacOS
-  - Firebase/CoreOnly (11.0.0):
-    - FirebaseCore (= 11.0.0)
-  - Firebase/Database (11.0.0):
+  - Firebase/CoreOnly (11.4.0):
+    - FirebaseCore (= 11.4.0)
+  - Firebase/Database (11.4.0):
     - Firebase/CoreOnly
-    - FirebaseDatabase (~> 11.0.0)
-  - firebase_core (3.4.0):
-    - Firebase/CoreOnly (= 11.0.0)
+    - FirebaseDatabase (~> 11.4.0)
+  - firebase_core (3.9.0):
+    - Firebase/CoreOnly (= 11.4.0)
     - Flutter
   - firebase_database (11.1.1):
-    - Firebase/Database (= 11.0.0)
+    - Firebase/Database (= 11.4.0)
     - firebase_core
     - Flutter
-  - FirebaseAppCheckInterop (11.5.0)
-  - FirebaseCore (11.0.0):
+  - FirebaseAppCheckInterop (11.6.0)
+  - FirebaseCore (11.4.0):
     - FirebaseCoreInternal (~> 11.0)
     - GoogleUtilities/Environment (~> 8.0)
     - GoogleUtilities/Logger (~> 8.0)
-  - FirebaseCoreInternal (11.4.2):
+  - FirebaseCoreInternal (11.6.0):
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseDatabase (11.0.0):
+  - FirebaseDatabase (11.4.0):
     - FirebaseAppCheckInterop (~> 11.0)
     - FirebaseCore (~> 11.0)
     - FirebaseSharedSwift (~> 11.0)
     - GoogleUtilities/UserDefaults (~> 8.0)
     - leveldb-library (~> 1.22)
-  - FirebaseSharedSwift (11.5.0)
+  - FirebaseSharedSwift (11.6.0)
   - Flutter (1.0.0)
   - geocoding_ios (1.0.5):
     - Flutter
@@ -144,15 +144,15 @@ SPEC CHECKSUMS:
   appcheck: e1ab9d4e03736f03e0401554a134d1ed502d7629
   coinbase_wallet_sdk: 7ccd4e1a7940deba6ba9bd81beece999a2268c15
   CoinbaseWalletSDK: ea1f37512bbc69ebe07416e3b29bf840f5cc3152
-  connectivity_plus: 4c41c08fc6d7c91f63bc7aec70ffe3730b04f563
-  Firebase: 9f574c08c2396885b5e7e100ed4293d956218af9
-  firebase_core: ceec591a66629daaee82d3321551692c4a871493
-  firebase_database: 49a20e6b57093edcf3ce3b0221af85131196110d
-  FirebaseAppCheckInterop: d265d9f4484e7ec1c591086408840fdd383d1213
-  FirebaseCore: 3cf438f431f18c12cdf2aaf64434648b63f7e383
-  FirebaseCoreInternal: 35731192cab10797b88411be84940d2beb33a238
-  FirebaseDatabase: 47b021386877846d30a7f3527c4f4fad8fd04b19
-  FirebaseSharedSwift: 302ac5967857ad7e7388b15382d705b8c8d892aa
+  connectivity_plus: 18382e7311ba19efcaee94442b23b32507b20695
+  Firebase: cf1b19f21410b029b6786a54e9764a0cacad3c99
+  firebase_core: b62a5080210edad3f2934314a8b2c6f5124e8e10
+  firebase_database: 2f9d99bd1d04042b85f6d69a7428300c20f112f5
+  FirebaseAppCheckInterop: 347aa09a805219a31249b58fc956888e9fcb314b
+  FirebaseCore: e0510f1523bc0eb21653cac00792e1e2bd6f1771
+  FirebaseCoreInternal: d98ab91e2d80a56d7b246856a8885443b302c0c2
+  FirebaseDatabase: ccd11f02c170076ffeeef40020cbb2f6d33e718c
+  FirebaseSharedSwift: a4e5dfca3e210633bb3a3dfb94176c019211948b
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   geocoding_ios: d7460f56e80e118d57678efe5c2cdc888739ff18
   geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
@@ -160,7 +160,7 @@ SPEC CHECKSUMS:
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   leveldb-library: cc8b8f8e013647a295ad3f8cd2ddf49a6f19be19
-  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
+  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d

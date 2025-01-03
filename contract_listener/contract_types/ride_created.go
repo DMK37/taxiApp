@@ -22,6 +22,10 @@ type RideCreated struct {
 	RideId uint64         `json:"rideId"`
 	Client common.Address `json:"client"`
 	Cost   *big.Int       `json:"cost"`
+	Source string         `json:"source"`
+	Destination string    `json:"destination"`
+	SourceLocation string `json:"sourceLocation"`
+	DestinationLocation string `json:"destinationLocation"`
 }
 
 func (r *RideCreated) UnmarshalJSON(data []byte) error {
@@ -89,6 +93,6 @@ func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreServ
 }
 
 func RideCreatedHash() common.Hash {
-	bytes := []byte("RideCreated(uint64,address,uint256)")
+	bytes := []byte("RideCreated(uint64,address,uint256,string,string,string,string)")
 	return crypto.Keccak256Hash(bytes)
 }

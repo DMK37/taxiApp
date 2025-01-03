@@ -46,7 +46,7 @@ class _UserPageState extends State<UserPage> {
             children: [
               Center(
                   child: AppKitModalAccountButton(
-                appKit: _appKitModal,
+                appKitModal: _appKitModal,
                 size: BaseButtonSize.big,
               )),
               const SizedBox(height: 20),
