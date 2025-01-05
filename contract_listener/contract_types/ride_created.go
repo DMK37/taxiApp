@@ -19,13 +19,13 @@ import (
 )
 
 type RideCreated struct {
-	RideId uint64         `json:"rideId"`
-	Client common.Address `json:"client"`
-	Cost   *big.Int       `json:"cost"`
-	Source string         `json:"source"`
-	Destination string    `json:"destination"`
-	SourceLocation string `json:"sourceLocation"`
-	DestinationLocation string `json:"destinationLocation"`
+	RideId              uint64         `json:"rideId"`
+	Client              common.Address `json:"client"`
+	Cost                *big.Int       `json:"cost"`
+	Source              string         `json:"source"`
+	Destination         string         `json:"destination"`
+	SourceLocation      string         `json:"sourceLocation"`
+	DestinationLocation string         `json:"destinationLocation"`
 }
 
 func (r *RideCreated) UnmarshalJSON(data []byte) error {
@@ -68,16 +68,21 @@ func NewRideCreated(parsedABI abi.ABI, vLog types.Log) RideCreated {
 }
 
 func (r *RideCreated) ToJSON() string {
-	return fmt.Sprintf(`{"rideId":%d,"client":"%s","cost":"%s"}`, r.RideId, r.Client.Hex(), r.Cost.String())
+	return fmt.Sprintf(`{"rideId":%d,"client":"%s","cost":"%s","source":"%s","destination":"%s","sourceLocation":"%s","destinationLocation":"%s"}`,
+		r.RideId, r.Client.Hex(), r.Cost.String(), r.Source, r.Destination, r.SourceLocation, r.DestinationLocation)
 }
 
 func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreService, sqsClient services.SQSClient, queueURL string) {
 
 	fmt.Printf("Ride created: %d, client: %s, cost: %s\n", event.RideId, event.Client.Hex(), event.Cost.String())
 	firestoreService.AddDocument(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), map[string]interface{}{
-		"client": event.Client.Hex(),
-		"cost":   event.Cost.String(),
-		"status": "created",
+		"client":              event.Client.Hex(),
+		"cost":                event.Cost.String(),
+		"source":              event.Source,
+		"destination":         event.Destination,
+		"sourceLocation":      event.SourceLocation,
+		"destinationLocation": event.DestinationLocation,
+		"status":              "created",
 	})
 
 	res, err := sqsClient.SendMessage(context.Background(), &sqs.SendMessageInput{

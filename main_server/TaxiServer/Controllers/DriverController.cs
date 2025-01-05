@@ -7,7 +7,7 @@ namespace TaxiServer.Controllers;
 
 [ApiController]
 [Route("api/driver")]
-public class DriverController: Controller
+public class DriverController : Controller
 {
     private readonly IDriverRepository _driverRepository;
     private readonly IPricingService _pricingService;
@@ -17,7 +17,7 @@ public class DriverController: Controller
         _driverRepository = driverRepository;
         _pricingService = pricingService;
     }
-    
+
     [HttpGet("{id}")]
     public async Task<ActionResult<Driver>> GetProfile(string id)
     {
@@ -54,10 +54,4 @@ public class DriverController: Controller
         var prices = await _pricingService.GetCarTypeList();
         return Ok(prices);
     }
-
-    // [HttpGet("active-drivers/{source}")]
-    // public async Task<ActionResult<List<Driver>>> GetActiveDrivers(string source)
-    // {
-    //     
-    // }
 }

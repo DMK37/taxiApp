@@ -3,11 +3,10 @@ package main
 import (
 	"context"
 	"log/slog"
-	"order_server/cloud_message"
 	conf "order_server/config"
 	"order_server/server"
 
-	firebase "firebase.google.com/go"
+	firebase "firebase.google.com/go/v4"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/joho/godotenv"
@@ -31,20 +30,19 @@ func main() {
 	queueURL := conf.AWS_QUEUE_URL
 
 	opt := option.WithCredentialsFile(conf.FIREBASE_JSON_PATH)
-
-	app, err := firebase.NewApp(ctx, nil, opt)
+	cnf := &firebase.Config{DatabaseURL: conf.FIREBASE_DB_URL}
+	app, err := firebase.NewApp(ctx, cnf, opt)
 	if err != nil {
 		slog.Error("error initializing app", "error", err)
 	}
 
-	client, err := app.Messaging(ctx)
+	client, err := app.Database(ctx)
 	if err != nil {
-		slog.Error("error getting messaging client", "error", err)
+		slog.Error("error initializing database", "error", err)
+		return
 	}
 
-	firebaseCloudMessage := cloud_message.NewFirebaseCloudMessageService(client)
-
-	server := server.NewServer(sqsClient, queueURL, firebaseCloudMessage)
+	server := server.NewServer(sqsClient, queueURL, client)
 
 	server.Start()
 }
