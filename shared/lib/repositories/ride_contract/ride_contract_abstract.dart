@@ -16,5 +16,5 @@ abstract class RideContractAbstract {
   Future<void> confirmSourceArrivalByDriver(ReownAppKitModal modal, int rideId);
   Future<void> confirmDestinationArrivalByDriver(
       ReownAppKitModal modal, int rideId);
-  Future<void> cancelRide(ReownAppKitModal modal, int rideId);
+  Future<bool> cancelRide(ReownAppKitModal modal, int rideId);
 }

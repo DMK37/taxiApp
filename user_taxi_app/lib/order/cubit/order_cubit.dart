@@ -30,14 +30,14 @@ class OrderCubit extends Cubit<OrderState> {
     return false;
   }
 
-  Future<void> cancelRide(ReownAppKitModal modal) async {
-    // emit(OrderLoading());
-    // final response = await rideRepository.cancelRide(modal);
+  Future<void> cancelRide(ReownAppKitModal modal, int rideId) async {
+    emit(OrderLoading());
+    final response = await rideRepository.cancelRide(modal, rideId);
 
-    // if (response) {
-    //   emit(OrderInitial());
-    // } else {
-    //   // emit(RideError());
-    // }
+    if (response) {
+      emit(OrderInitial());
+    } else {
+      // emit(RideError());
+    }
   }
 }

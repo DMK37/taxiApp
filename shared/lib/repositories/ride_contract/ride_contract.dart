@@ -6,10 +6,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class RideContract implements RideContractAbstract {
   @override
-  Future<void> cancelRide(ReownAppKitModal modal, int rideId) async {
+  Future<bool> cancelRide(ReownAppKitModal modal, int rideId) async {
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
-    await modal.requestWriteContract(
+    final resp = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
@@ -18,6 +18,7 @@ class RideContract implements RideContractAbstract {
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [rideId]);
+    return resp != null;
   }
 
   @override
@@ -124,7 +125,13 @@ class RideContract implements RideContractAbstract {
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
           value: EtherAmount.inWei(price),
         ),
-        parameters: [BigInt.from(distance), source, destination, sourceLocation, destinationLocation]);
+        parameters: [
+          BigInt.from(distance),
+          source,
+          destination,
+          sourceLocation,
+          destinationLocation
+        ]);
 
     return resp != null;
   }

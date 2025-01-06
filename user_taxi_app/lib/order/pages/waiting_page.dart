@@ -20,6 +20,7 @@ class WaitingPage extends StatefulWidget {
 
 class _WaitingPageState extends State<WaitingPage> {
   late DatabaseReference _databaseRef;
+  late int rideId;
   bool _isButtonEnabled = false;
   final initTime = DateTime.now().millisecondsSinceEpoch;
 
@@ -47,6 +48,7 @@ class _WaitingPageState extends State<WaitingPage> {
       final childData = event.snapshot.value as Map;
       if (initTime > childData['timestamp']) {
         setState(() {
+          rideId = childData['id'];
           _isButtonEnabled = true;
         });
       }
@@ -131,7 +133,7 @@ class _WaitingPageState extends State<WaitingPage> {
                             ? () async {
                                 await context
                                     .read<OrderCubit>()
-                                    .cancelRide(_appKitModal);
+                                    .cancelRide(_appKitModal, rideId);
                               }
                             : null, // Disable the button if `_isButtonEnabled` is false
                         style: ElevatedButton.styleFrom(
