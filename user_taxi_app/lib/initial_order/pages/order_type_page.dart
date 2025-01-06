@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 import 'package:shared/models/ride_price_model.dart';
@@ -294,7 +295,7 @@ class _OrderTypePageState extends State<OrderTypePage> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
-                          await context.read<OrderCubit>().createRide(
+                          final resp = await context.read<OrderCubit>().createRide(
                               _appKitModal,
                               prices[_selectedTaxiIndex].price,
                               sourceAddress,
@@ -302,6 +303,9 @@ class _OrderTypePageState extends State<OrderTypePage> {
                               sourceLocation,
                               destinationLocation,
                               distance);
+                          if (resp) {
+                            context.go("/order");
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:

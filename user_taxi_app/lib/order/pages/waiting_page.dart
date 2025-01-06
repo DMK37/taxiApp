@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
+import 'package:taxiapp/auth/cubit/auth_state.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/location/cubit/location_state.dart';
 import 'package:taxiapp/order/cubit/order_cubit.dart';
@@ -17,6 +19,10 @@ class WaitingPage extends StatefulWidget {
 }
 
 class _WaitingPageState extends State<WaitingPage> {
+  late DatabaseReference _databaseRef;
+  bool _isButtonEnabled = false;
+  final initTime = DateTime.now().millisecondsSinceEpoch;
+
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -24,12 +30,27 @@ class _WaitingPageState extends State<WaitingPage> {
   @override
   void initState() {
     super.initState();
-
-     _appKitModal = ReownAppKitModal(
+    print((context.read<AuthCubit>().state as AuthenticatedState).user.id);
+    _databaseRef = FirebaseDatabase.instance.ref(
+        "notifications/ride_created/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
+    _appKitModal = ReownAppKitModal(
       context: context,
       appKit: context.read<AuthCubit>().appKit,
     );
     _appKitModal.init();
+    _listenForNewItems();
+  }
+
+  void _listenForNewItems() {
+    _databaseRef.onChildAdded.listen((event) {
+      print(event.snapshot.value);
+      final childData = event.snapshot.value as Map;
+      if (initTime > childData['timestamp']) {
+        setState(() {
+          _isButtonEnabled = true;
+        });
+      }
+    });
   }
 
   Future<void> _goToTheLocation(LatLng location) async {
@@ -98,26 +119,26 @@ class _WaitingPageState extends State<WaitingPage> {
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
                       Text(
-                        'Select a car type',
+                        'Waiting for the driver',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      Expanded(
-                        child: CircularProgressIndicator()
-                        ),
-                      
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 30),
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 30),
                       ElevatedButton(
-                        onPressed: () async {
-                          await context.read<OrderCubit>().cancelRide(
-                              _appKitModal);
-                        },
+                        onPressed: _isButtonEnabled
+                            ? () async {
+                                await context
+                                    .read<OrderCubit>()
+                                    .cancelRide(_appKitModal);
+                              }
+                            : null, // Disable the button if `_isButtonEnabled` is false
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                          backgroundColor: _isButtonEnabled
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors
+                                  .grey, // Optional: Change color when disabled
                           foregroundColor:
                               Theme.of(context).colorScheme.surface,
                           padding: const EdgeInsets.symmetric(
@@ -127,10 +148,11 @@ class _WaitingPageState extends State<WaitingPage> {
                           ),
                         ),
                         child: Text(
-                          'Confirm',
+                          'Cancel Ride',
                           style: TextStyle(
-                              fontSize: 18,
-                              color: Theme.of(context).colorScheme.surface),
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),

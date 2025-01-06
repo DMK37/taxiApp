@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
@@ -72,11 +73,11 @@ func (r *RideCreated) ToJSON() string {
 		r.RideId, r.Client.Hex(), r.Cost.String(), r.Source, r.Destination, r.SourceLocation, r.DestinationLocation)
 }
 
-func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreService, sqsClient services.SQSClient, queueURL string) {
+func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreService, sqsClient services.SQSClient, queueURL string, realtimeDatabase db.RealtimeDatabaseService) {
 
 	fmt.Printf("Ride created: %d, client: %s, cost: %s\n", event.RideId, event.Client.Hex(), event.Cost.String())
 	firestoreService.AddDocument(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), map[string]interface{}{
-		"client":              event.Client.Hex(),
+		"client":              strings.ToLower(event.Client.Hex()),
 		"cost":                event.Cost.String(),
 		"source":              event.Source,
 		"destination":         event.Destination,
@@ -94,6 +95,11 @@ func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreServ
 	if err != nil {
 		log.Fatalf("Failed to send message to SQS: %v", err)
 	}
+	err = realtimeDatabase.PushRideCreatedNotification(strings.ToLower(event.Client.Hex()), event.RideId)
+	if err != nil {
+		log.Fatalf("Failed to push ride created notification to Realtime Database: %v", err)
+	}
+
 	fmt.Printf("Message sent: %s\n", *res.MessageId)
 }
 

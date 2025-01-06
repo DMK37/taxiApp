@@ -9,11 +9,13 @@ import (
 	"os"
 	"strings"
 
+	firebase "firebase.google.com/go/v4"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/joho/godotenv"
+	"google.golang.org/api/option"
 )
 
 func main() {
@@ -47,8 +49,24 @@ func main() {
 
 	sqsClient := sqs.NewFromConfig(cfg)
 
+	opt := option.WithCredentialsFile(conf.FIREBASE_JSON_PATH)
+	cnf := &firebase.Config{DatabaseURL: conf.FIREBASE_DB_URL}
+	app, err := firebase.NewApp(ctx, cnf, opt)
+	if err != nil {
+		slog.Error("Failed to initialize app", "error", err)
+		return
+	}
+
+	dbClient, err := app.Database(ctx)
+	if err != nil {
+		slog.Error("Failed to initialize database", "error", err)
+		return
+	}
+
+	rds := db.NewFirebaseRealtimeDatabaseService(dbClient)
+
 	server := server.NewServer(sqsClient, conf.AWS_QUEUE_URL, client,
-		firestoreService, contractABI, conf.CONTRACT_ADDRESS)
+		firestoreService, contractABI, conf.CONTRACT_ADDRESS, rds)
 
 	server.Start()
 }

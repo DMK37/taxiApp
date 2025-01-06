@@ -37,7 +37,7 @@ func (s *Server) Start() {
 	for {
 		input := &sqs.ReceiveMessageInput{
 			QueueUrl:            aws.String(s.queueURL),
-			MaxNumberOfMessages: 1,
+			MaxNumberOfMessages: 5,
 			WaitTimeSeconds:     10,
 		}
 
@@ -134,17 +134,17 @@ func (s *Server) processMessage(rideMessage RideMessage) {
 
 	// remove send to drivers
 	ref = s.databaseClient.NewRef("rides/" + fmt.Sprint(rideMessage.RideId) + "/send_to")
-	var rawData2 map[string]interface{}
-	if err := ref.Get(ctx, &rawData2); err != nil {
+	var sendTo []string
+	if err := ref.Get(ctx, &sendTo); err != nil {
 		slog.Error("could not get send to drivers from database", "error", err.Error())
 		return
 	}
 
-	var sendTo SendToMessage
-	sendToJSON, _ := json.Marshal(rawData2)
-	json.Unmarshal(sendToJSON, &sendTo)
+	// var sendTo []string
+	// sendToJSON, _ := json.Marshal(rawData2)
+	// json.Unmarshal(sendToJSON, &sendTo)
 	fmt.Println(sendTo)
-	for _, id := range sendTo.Ids {
+	for _, id := range sendTo {
 		for i, driver := range drivers {
 			if driver.DriverId == id {
 				drivers = append(drivers[:i], drivers[i+1:]...)
@@ -200,7 +200,7 @@ func (s *Server) processMessage(rideMessage RideMessage) {
 	}
 
 	// update send to
-	sendTo.Ids = append(sendTo.Ids, closestDriver.DriverId)
+	sendTo = append(sendTo, closestDriver.DriverId)
 	ref = s.databaseClient.NewRef("rides/" + fmt.Sprint(rideMessage.RideId) + "/send_to")
 	if err := ref.Set(ctx, sendTo); err != nil {
 		slog.Error("could not set send to drivers to database", "error", err.Error())

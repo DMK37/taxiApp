@@ -8,7 +8,7 @@ class OrderCubit extends Cubit<OrderState> {
   final RideContractAbstract rideRepository = RideContract();
 
   OrderCubit() : super(OrderInitial());
-  Future<void> createRide(
+  Future<bool> createRide(
     ReownAppKitModal modal,
     double price,
     String source,
@@ -20,12 +20,14 @@ class OrderCubit extends Cubit<OrderState> {
     emit(OrderLoading());
     final response = await rideRepository.createRide(modal, distance, source,
         destination, sourceLocation, destinationLocation, BigInt.from(price * 1000000000000000000));
-    print(response);
     if (response) {
       emit(OrderWaiting());
+      return true;
     } else {
       // emit(RideError());
     }
+
+    return false;
   }
 
   Future<void> cancelRide(ReownAppKitModal modal) async {

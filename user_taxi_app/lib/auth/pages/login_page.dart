@@ -16,22 +16,13 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     final appKit = context.read<AuthCubit>().appKit;
-    ReownAppKitModalNetworks.addSupportedNetworks('eip155', [
-      ReownAppKitModalNetworkInfo(
-          name: "Sepolia",
-          chainId: '11155111',
-          currency: "ETH",
-          rpcUrl: "https://rpc.sepolia.dev",
-          explorerUrl: "https://sepolia.etherscan.io",
-          isTestNetwork: true)
-    ]);
     _appKitModal = ReownAppKitModal(
       context: context,
       appKit: appKit,
     );
-    _appKitModal.init();
 
-    context.read<AuthCubit>().isConnected(_appKitModal);
+    _appKitModal.init();
+    _appKitModal.disconnect();
   }
 
   @override

@@ -19,12 +19,13 @@ type Server struct {
 	queueURL         string
 	ethClient        *ethclient.Client
 	firestoreService db.FirestoreService
+	realtimeDatabase *db.FirebaseRealtimeDatabaseService
 	abi              abi.ABI
 	address          common.Address
 }
 
 func NewServer(sqsClient services.SQSClient, queueURL string, ethClient *ethclient.Client,
-	firestoreService db.FirestoreService, abi abi.ABI, address common.Address) *Server {
+	firestoreService db.FirestoreService, abi abi.ABI, address common.Address, realtimeDatabase *db.FirebaseRealtimeDatabaseService) *Server {
 	return &Server{
 		sqsClient:        sqsClient,
 		queueURL:         queueURL,
@@ -32,6 +33,7 @@ func NewServer(sqsClient services.SQSClient, queueURL string, ethClient *ethclie
 		abi:              abi,
 		address:          address,
 		firestoreService: firestoreService,
+		realtimeDatabase: realtimeDatabase,
 	}
 }
 
@@ -62,7 +64,7 @@ func (s *Server) handleEvent(vLog types.Log) {
 	switch vLog.Topics[0].Hex() {
 	case contract_types.RideCreatedHash().Hex():
 		createdEvent := contract_types.NewRideCreated(s.abi, vLog)
-		contract_types.HandleRideCreatedEvent(createdEvent, s.firestoreService, s.sqsClient, s.queueURL)
+		contract_types.HandleRideCreatedEvent(createdEvent, s.firestoreService, s.sqsClient, s.queueURL, s.realtimeDatabase)
 	case contract_types.RideConfirmedHash().Hex():
 		confirmedEvent := contract_types.NewRideConfirmed(s.abi, vLog)
 		contract_types.HandleRideConfirmedEvent(confirmedEvent, s.firestoreService)

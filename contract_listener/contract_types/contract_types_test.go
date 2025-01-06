@@ -13,6 +13,7 @@ import (
 
 	cfg "contract_listener/config"
 	"contract_listener/db"
+	"contract_listener/db/mock"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -91,6 +92,7 @@ func TestIntegrationEventRetrieving(t *testing.T) {
 	firestoreService, err := db.NewFirestoreAccessor(cfg.FIREBASE_PROJECT_ID)
 	require.NoError(t, err)
 
+	dbClientMock := mock.NewMockRealtimeDatabase()
 	t.Run("Test RideCreated event", func(t *testing.T) {
 		// Send a test message
 		event := RideCreated{
@@ -98,7 +100,7 @@ func TestIntegrationEventRetrieving(t *testing.T) {
 			Client: common.Address(common.FromHex("0x1234567890123456789012345678901234567890")),
 			Cost:   big.NewInt(100),
 		}
-		HandleRideCreatedEvent(event, firestoreService, client, queueURL)
+		HandleRideCreatedEvent(event, firestoreService, client, queueURL, dbClientMock)
 
 		// Receive the test message
 		receiveMessageOutput, err := client.ReceiveMessage(ctx, &sqs.ReceiveMessageInput{
@@ -157,7 +159,7 @@ func TestIntegrationEventRetrieving(t *testing.T) {
 			Cost:      createEvent.Cost,
 		}
 
-		HandleRideCreatedEvent(createEvent, firestoreService, client, queueURL)
+		HandleRideCreatedEvent(createEvent, firestoreService, client, queueURL, dbClientMock)
 		HandleRideStartedEvent(event, firestoreService)
 
 		dbEventSnapshot, err := firestoreService.GetDocument(ctx, "rides", fmt.Sprintf("%d", event.RideId))

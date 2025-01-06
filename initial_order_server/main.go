@@ -34,6 +34,7 @@ func main() {
 	app, err := firebase.NewApp(ctx, cnf, opt)
 	if err != nil {
 		slog.Error("error initializing app", "error", err)
+		return
 	}
 
 	client, err := app.Database(ctx)

@@ -34,6 +34,7 @@ class AuthCubit extends Cubit<AuthState> {
               linkMode: true,
             )),
       );
+      emit(UnauthenticatedState());
       appKit.onSessionConnect.subscribe((event) async {
         print('Session connected');
         final address =
@@ -48,15 +49,11 @@ class AuthCubit extends Cubit<AuthState> {
         }
         emit(AuthenticatedState(user: client));
       });
-      appKit.onSessionExpire.subscribe((event) {
-        print('Session expired');
-        emit(UnauthenticatedState());
-      });
       appKit.onSessionDelete.subscribe((event) {
         print('Session deleted');
         emit(UnauthenticatedState());
       });
-      emit(UnauthenticatedState());
+      
     } catch (e) {
       print(e);
       emit(AuthFailureState(errorMessage: e.toString()));
