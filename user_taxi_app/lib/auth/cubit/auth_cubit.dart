@@ -19,7 +19,15 @@ class AuthCubit extends Cubit<AuthState> {
             currency: "ETH",
             rpcUrl: "https://rpc.sepolia.dev",
             explorerUrl: "https://sepolia.etherscan.io",
-            isTestNetwork: true)
+            isTestNetwork: true),
+        ReownAppKitModalNetworkInfo(
+          name: "Ride Hardhat",
+          chainId: '1337',
+          currency: "ETH",
+          rpcUrl: "http://192.168.18.81:8545",
+          explorerUrl: "https://sepolia.etherscan.io",
+          isTestNetwork: false,
+        ),
       ]);
 
       appKit = await ReownAppKit.createInstance(
@@ -53,7 +61,6 @@ class AuthCubit extends Cubit<AuthState> {
         print('Session deleted');
         emit(UnauthenticatedState());
       });
-      
     } catch (e) {
       print(e);
       emit(AuthFailureState(errorMessage: e.toString()));

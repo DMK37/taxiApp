@@ -13,11 +13,17 @@ module.exports = {
         mnemonic:
           "auction just pulp assault cattle jungle gift absurd junior notice scatter orbit",
       },
+      loggingEnabled: true,
+      gas: 10000000,
     },
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
       accounts: [SEPOLIA_PRIVATE_KEY],
-    }
+    },
+    local: {
+      url: "http://192.168.18.81:8545",
+      gas: 10000000,
+    },
   },
 
   etherscan: {

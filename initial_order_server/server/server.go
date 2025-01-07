@@ -34,6 +34,8 @@ func NewServer(client SQSClient, queueURL string, databaseClient *db.Client) *Se
 
 func (s *Server) Start() {
 
+	slog.Info("Initial Order Server started")
+
 	for {
 		input := &sqs.ReceiveMessageInput{
 			QueueUrl:            aws.String(s.queueURL),

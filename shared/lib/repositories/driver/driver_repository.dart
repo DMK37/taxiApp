@@ -5,13 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class DriverRepository implements DriverRepositoryAbstract {
-  // mac: 192.168.18.81
-  // change for your local ip
-  //---- dima
-  //final String apiUrl = "http://192.168.18.81:5112/api/driver";
 
-  //----- alina
-  final String apiUrl = "https://192.168.1.10:5112/api/driver";
+  final String apiUrl = "http://192.168.18.81:5112/api/driver";
 
   @override
   Future<DriverModel?> createDriver(DriverModel driver) async {

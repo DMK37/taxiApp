@@ -14,12 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      // --- old data ---
       "applicationUrl": "http://192.168.18.81:5112",
-      // -------
-      // ---- alina's working data -----
-//      "applicationUrl": "http://0.0.0.0:5112;https://0.0.0.0:5112",
-      // ------
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -29,12 +24,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      // --- old data ----
-      //"applicationUrl": "https://localhost:7169;http://localhost:5112",
-      // ----
-      // ----alina's data---
-      "applicationUrl": "http://0.0.0.0:7169;https://0.0.0.0:5112",
-      // ---
+      "applicationUrl": "https://localhost:7169;http://localhost:5112",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

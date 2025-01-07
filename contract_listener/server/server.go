@@ -5,6 +5,7 @@ import (
 	"contract_listener/contract_types"
 	"contract_listener/db"
 	"contract_listener/services"
+	"fmt"
 	"log/slog"
 
 	"github.com/ethereum/go-ethereum"
@@ -61,6 +62,7 @@ func (s *Server) Start() {
 }
 
 func (s *Server) handleEvent(vLog types.Log) {
+	fmt.Println("Received event", vLog)
 	switch vLog.Topics[0].Hex() {
 	case contract_types.RideCreatedHash().Hex():
 		createdEvent := contract_types.NewRideCreated(s.abi, vLog)
