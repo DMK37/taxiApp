@@ -14,6 +14,24 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
   Future<void> init() async {
     emit(DriverAuthLoadingState());
     try {
+      ReownAppKitModalNetworks.addSupportedNetworks('eip155', [
+        ReownAppKitModalNetworkInfo(
+            name: "Sepolia",
+            chainId: '11155111',
+            currency: "ETH",
+            rpcUrl: "https://rpc.sepolia.dev",
+            explorerUrl: "https://sepolia.etherscan.io",
+            isTestNetwork: true),
+        ReownAppKitModalNetworkInfo(
+          name: "Ride Hardhat",
+          chainId: '1337',
+          currency: "ETH",
+          rpcUrl: "http://192.168.18.81:8545",
+          explorerUrl: "https://sepolia.etherscan.io",
+          isTestNetwork: false,
+        ),
+      ]);
+
       appKit = await ReownAppKit.createInstance(
         projectId: '121c0fdfdd60ce21ad8ce7bd40ab8d5b',
         metadata: const PairingMetadata(
@@ -26,9 +44,10 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
               linkMode: true,
             )),
       );
+      emit(DriverUnauthenticatedState());
       appKit.onSessionConnect.subscribe((event) async {
         print('Session connected');
-        final address = event?.session.namespaces['eip155']?.accounts[0].split(':')[2];
+        final address = event.session.namespaces['eip155']?.accounts[0].split(':')[2];
         final driver = await repository.getDriver(
             address ?? "0x1234567890");
         if (driver == null) {
@@ -41,10 +60,6 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
         }
         emit(DriverAuthenticatedState(
             driver: driver));
-      });
-      appKit.onSessionExpire.subscribe((event) {
-        print('Session expired');
-        emit(DriverUnauthenticatedState());
       });
       appKit.onSessionDelete.subscribe((event) {
         print('Session deleted');
@@ -91,38 +106,4 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
     emit(DriverAuthenticatedState(
         driver: driver));
   }
-
-  // Future<void> signIn() async {
-  //   emit(DriverAuthLoadingState());
-  //   try {
-  //     final driver = await repository.signIn();
-  //     emit(DriverAuthenticatedState(driver: driver));
-  //   } catch (e) {
-  //     emit(DriverAuthFailureState(errorMessage: e.toString()));
-  //   }
-  // }
-
-  // Future<void> signOut() async {
-  //   emit(DriverAuthLoadingState());
-  //   try {
-  //       emit(DriverUnauthenticatedState());
-  //   } catch (e) {
-  //     emit(DriverAuthFailureState(errorMessage: e.toString()));
-  //   }
-  // }
-
-  // Future<void> isAuthenticated() async {
-  //   emit(DriverAuthLoadingState());
-  //   try {
-  //     final isAuth = await repository.isAuthenticated();
-  //     if(isAuth) {
-  //       emit(DriverAuthenticatedState(driver: DriverModel(walletId: "1234", name: "Alina")));
-  //     }
-  //     else{
-  //       emit(DriverUnauthenticatedState());
-  //     }
-  //   } catch (e) {
-  //     emit(DriverAuthFailureState(errorMessage: e.toString()));
-  //   }
-  // }
 }

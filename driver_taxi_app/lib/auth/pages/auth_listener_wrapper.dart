@@ -25,9 +25,11 @@ class AuthListenerWrapper extends StatelessWidget {
               errorMessage: state.errorMessage,
             ),
           ));
+          print("driver failure");
           context.go('/login');
         }
         if (state is DriverUnauthenticatedState) {
+          print("driver unauth");
           context.go('/login');
         }
         if (state is DriverAuthenticatedState) {
@@ -39,7 +41,7 @@ class AuthListenerWrapper extends StatelessWidget {
 
         switch (state) {
           case DriverAuthLoadingState():
-            return const Center(child: CircularProgressIndicator());
+            return const Scaffold(body: Center(child: CircularProgressIndicator()));
           case DriverAuthenticatedState():
             return child;
           case DriverUnauthenticatedState():
@@ -48,7 +50,11 @@ class AuthListenerWrapper extends StatelessWidget {
           case DriverFirstLoginState(address: String address):
             return RegisterPage(address: address);
           default:
-            return const SizedBox.shrink();
+            return const Scaffold(
+              body: Center(
+                child: Text('Something went wrong!'),
+              ),
+            );
         }
       }),
     );

@@ -4,7 +4,7 @@ import 'package:reown_appkit/reown_appkit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DriverLoginPage extends StatefulWidget {
-  DriverLoginPage({super.key});
+  const DriverLoginPage({super.key});
 
   @override
   State<DriverLoginPage> createState() => _DriverLoginPageState();
@@ -17,16 +17,14 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
   void initState() {
     super.initState();
     final appKit = context.read<DriverAuthCubit>().appKit;
-    //final testNetworks = ReownAppKitModalNetworks.test['eip155'] ?? [];
-    //ReownAppKitModalNetworks.addNetworks('eip155', testNetworks);
+
     _appKitModal = ReownAppKitModal(
       context: context,
       appKit: appKit,
       
     );
     _appKitModal.init();
-
-    context.read<DriverAuthCubit>().isConnected(_appKitModal);
+    _appKitModal.disconnect();
   }
 
   @override
