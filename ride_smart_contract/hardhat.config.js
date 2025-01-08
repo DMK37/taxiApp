@@ -21,7 +21,7 @@ module.exports = {
       accounts: [SEPOLIA_PRIVATE_KEY],
     },
     local: {
-      url: "http://192.168.18.81:8545",
+      url: "http://192.168.18.108:8545",
       gas: 10000000,
     },
   },

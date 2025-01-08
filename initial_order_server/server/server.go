@@ -156,7 +156,7 @@ func (s *Server) processMessage(rideMessage RideMessage) {
 	}
 
 	if len(drivers) == 0 {
-		slog.Error("no drivers available")
+		slog.Info("no drivers available")
 		return
 	}
 
@@ -194,7 +194,7 @@ func (s *Server) processMessage(rideMessage RideMessage) {
 		"destination":         rideMessage.Destination,
 		"sourceLocation":      rideMessage.SourceLocation,
 		"destinationLocation": rideMessage.DestinationLocation,
-		"validUntil":          time.Now().Add(1 * time.Minute).Format(time.RFC3339),
+		"validUntil":          fmt.Sprint(time.Now().Add(1 * time.Minute).UnixMilli()),
 	})
 	if err != nil {
 		slog.Error("could not push to database", "error", err.Error())

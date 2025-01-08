@@ -6,7 +6,7 @@ import 'dart:convert';
 
 class DriverRepository implements DriverRepositoryAbstract {
 
-  final String apiUrl = "http://192.168.18.81:5112/api/driver";
+  final String apiUrl = "http://192.168.18.108:5112/api/driver";
 
   @override
   Future<DriverModel?> createDriver(DriverModel driver) async {

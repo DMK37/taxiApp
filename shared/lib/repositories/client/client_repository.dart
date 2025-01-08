@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class ClientRepository implements ClientRepositoryAbstract {
 
-  final String apiUrl = "http://192.168.18.81:5112/api/client";
+  final String apiUrl = "http://192.168.18.108:5112/api/client";
 
   @override
   Future<ClientModel?> createClient(ClientModel client) async {

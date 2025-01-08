@@ -13,7 +13,7 @@ class InitialPageBuilder extends StatelessWidget {
       builder: (context, state) {
         switch(state) {
           case DriverInitState():
-            return InitialDriverPage();
+            return const InitialDriverPage();
           // case DriverLoadingState():
           //   return CircularProgressIndicator();
         }

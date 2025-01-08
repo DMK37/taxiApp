@@ -4,6 +4,7 @@ import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
 import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -20,6 +21,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
   final Completer<GoogleMapController> _googleMapController = Completer<GoogleMapController>();
   final TextEditingController _currentAddressController = TextEditingController();
   bool isOnline = false;
+  late DatabaseReference _databaseRef;
 
   LatLng? _currentAddress;
   late String driverId;
@@ -29,6 +31,21 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
     super.initState();
     _currentAddressController.text = (context.read<DriverLocationCubit>().state as DriverLocationSuccessState).address;
     driverId = (context.read<DriverAuthCubit>().state as DriverAuthenticatedState).driver.id;
+        _databaseRef = FirebaseDatabase.instance.ref(
+        "notifications/${driverId}");
+    _listenForNewItems();
+  }
+
+  void _listenForNewItems() {
+    _databaseRef.onChildAdded.listen((event) {
+      final timenow = DateTime.now().toUtc().millisecondsSinceEpoch;
+      final childData = event.snapshot.value as Map;
+      final int until = int.parse(childData['validUntil']);
+      if (timenow < until && isOnline) {
+        // update state
+        print("New ride request");
+      }
+    });
   }
 
   @override
