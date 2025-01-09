@@ -22,9 +22,11 @@ class _DriverPageState extends State<DriverPage> {
 
   late ReownAppKitModal _appKitModal;
 
-    @override
+  @override
   void initState() {
-    final driver = (context.read<DriverAuthCubit>().state as DriverAuthenticatedState).driver;
+    final driver =
+        (context.read<DriverAuthCubit>().state as DriverAuthenticatedState)
+            .driver;
     super.initState();
     _firstNameController.text = driver.firstName;
     _lastNameController.text = driver.lastName;
@@ -116,50 +118,73 @@ class _DriverPageState extends State<DriverPage> {
               Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: _carNameController,
-                      decoration: const InputDecoration(labelText: "Car Name"),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter car name';
-                        }
-                        return null;
-                      },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Car Name',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _carNameController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter car name';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: DropdownButtonFormField<CarType>(
-                      value: selectedCarType,
-                      decoration: const InputDecoration(
-                        labelText: 'Select Car Type',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: CarType.values.map((CarType carType) {
-                        return DropdownMenuItem<CarType>(
-                          value: carType,
-                          child: Row(
-                            children: [
-                              Icon(
-                                carType.getIcon().icon,
-                                size: 20,
-                                color: Colors.black,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(carType.toString()),
-                            ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Car Type',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        DropdownButtonFormField<CarType>(
+                          value: selectedCarType,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (CarType? newValue) {
-                        setState(() {
-                          selectedCarType = newValue;
-                        });
-                      },
-                      validator: (value) =>
-                          value == null ? 'Please select a car type' : null,
+                          items: CarType.values.map((CarType carType) {
+                            return DropdownMenuItem<CarType>(
+                              value: carType,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    carType.getIcon().icon,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(carType.toString()),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (CarType? newValue) {
+                            setState(() {
+                              selectedCarType = newValue;
+                            });
+                          },
+                          validator: (value) =>
+                              value == null ? 'Please select a car type' : null,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -195,6 +220,4 @@ class _DriverPageState extends State<DriverPage> {
       ),
     );
   }
-
-
 }
