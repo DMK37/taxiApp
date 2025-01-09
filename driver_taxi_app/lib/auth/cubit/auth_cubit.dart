@@ -106,4 +106,21 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
     emit(DriverAuthenticatedState(
         driver: driver));
   }
+
+  Future<void> updateAccount(String id, String firstName, String lastName, String carName, CarType carType) async {
+    emit(DriverAuthLoadingState());
+    final driver = DriverModel(
+        id: id,
+        firstName: firstName,
+        lastName: lastName,
+        car: CarModel(carName: carName, carType: carType)
+        );
+    final response = await repository.updateDriver(driver);
+    if (response == null) {
+      emit(DriverAuthFailureState(errorMessage: 'Failed to update account'));
+      return;
+    }
+    emit(DriverAuthenticatedState(
+        driver: driver));
+  }
 }

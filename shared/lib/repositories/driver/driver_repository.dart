@@ -53,7 +53,7 @@ class DriverRepository implements DriverRepositoryAbstract {
   Future<DriverModel?> updateDriver(DriverModel driver) async {
     try {
       final response = await http.put(
-        Uri.parse('$apiUrl/${driver.id}'),
+        Uri.parse('$apiUrl'),
         headers: {
           'Content-Type': 'application/json',
         },

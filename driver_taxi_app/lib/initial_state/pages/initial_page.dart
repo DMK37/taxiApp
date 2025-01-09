@@ -7,6 +7,7 @@ import 'package:driver_taxi_app/location/cubit/location_state.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -44,6 +45,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
       if (timenow < until && isOnline) {
         // update state
         print("New ride request");
+        context.read<DriverInitCubit>().messageReceived();
       }
     });
   }
@@ -90,6 +92,27 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
                   },
                 ),
               ],
+            ),
+          ),
+          Positioned(
+            top: 45,
+            left: 16,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: FloatingActionButton(
+                heroTag: 'user-page',
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                onPressed: () {
+                  context.push('/driver');
+                },
+                child: Icon(
+                  Icons.person,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
             ),
           ),
           Positioned(

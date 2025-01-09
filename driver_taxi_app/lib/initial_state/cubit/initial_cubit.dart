@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared/models/car_type.dart';
 import 'package:shared/repositories/driver/driver_repository.dart';
 
-class DriverInitCubit extends Cubit<DriverInitState> {
+class DriverInitCubit extends Cubit<DriverState> {
   DriverInitCubit() : super(DriverOfflineState());
 
   Timer? _locationTimer;
@@ -30,5 +30,9 @@ class DriverInitCubit extends Cubit<DriverInitState> {
   Future<List<CarType>> getCarTypeList() async {
     final res = await repository.getCarTypes();
     return res;
+  }
+
+  void messageReceived() {
+    emit(DriverMessagedState());
   }
 }

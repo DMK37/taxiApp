@@ -9,15 +9,25 @@ class InitialPageBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DriverInitCubit, DriverInitState>(
+    return BlocBuilder<DriverInitCubit, DriverState>(
       builder: (context, state) {
-        switch(state) {
-          case DriverInitState():
+        switch (state) {
+          case DriverOfflineState() || DriverOnlineState():
             return const InitialDriverPage();
-          // case DriverLoadingState():
-          //   return CircularProgressIndicator();
+          case DriverMessagedState():
+            return const Scaffold(
+              body: Center(
+                child: Text('Driver has been messaged'),
+              ),
+            );
+          default:
+            return const Scaffold(
+              body: Center(
+                child: Text('Something went wrong!'),
+              ),
+            );
         }
-    },
+      },
     );
   }
 }

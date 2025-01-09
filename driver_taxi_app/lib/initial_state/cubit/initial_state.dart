@@ -1,23 +1,27 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-abstract class DriverInitState {}
+abstract class DriverState {}
 
-class DriverOnlineState extends DriverInitState{
+class DriverOnlineState extends DriverState{
   LatLng? current;
   String? currentAddress;
   DriverOnlineState({this.current, this.currentAddress});
 }
 
-class DriverOfflineState extends DriverInitState{
+class DriverOfflineState extends DriverState{
   LatLng? current;
   String? currentAddress;
   DriverOfflineState({this.current, this.currentAddress});
 }
 
-class DriverLoadingState extends DriverInitState{
+class DriverLoadingState extends DriverState{
   
 }
 
-class ErrorState extends DriverInitState{
+class DriverMessagedState extends DriverState{
+
+}
+
+class ErrorState extends DriverState{
   
 }

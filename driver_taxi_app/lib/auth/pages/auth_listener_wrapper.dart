@@ -37,16 +37,17 @@ class AuthListenerWrapper extends StatelessWidget {
           context.go('/');
         }
       },
-      child: BlocBuilder<DriverAuthCubit, DriverAuthState>(builder: (context, state) {
-
+      child: BlocBuilder<DriverAuthCubit, DriverAuthState>(
+          builder: (context, state) {
         switch (state) {
           case DriverAuthLoadingState():
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            return const Scaffold(
+                body: Center(child: CircularProgressIndicator()));
           case DriverAuthenticatedState():
             return child;
           case DriverUnauthenticatedState():
-              return DriverLoginPage();
-              //return child;
+            return const DriverLoginPage();
+
           case DriverFirstLoginState(address: String address):
             return RegisterPage(address: address);
           default:
