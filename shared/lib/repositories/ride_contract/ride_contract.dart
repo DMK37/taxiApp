@@ -17,7 +17,7 @@ class RideContract implements RideContractAbstract {
         transaction: Transaction(
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
-        parameters: [rideId]);
+        parameters: [BigInt.from(rideId)]);
     return resp != null;
   }
 
@@ -34,7 +34,7 @@ class RideContract implements RideContractAbstract {
         transaction: Transaction(
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
-        parameters: [rideId]);
+        parameters: [BigInt.from(rideId)]);
   }
 
   @override
@@ -50,14 +50,14 @@ class RideContract implements RideContractAbstract {
         transaction: Transaction(
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
-        parameters: [rideId]);
+        parameters: [BigInt.from(rideId)]);
   }
 
   @override
-  Future<void> confirmRide(ReownAppKitModal modal, int rideId) async {
+  Future<bool> confirmRide(ReownAppKitModal modal, int rideId) async {
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
-    await modal.requestWriteContract(
+    final result = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
@@ -65,7 +65,8 @@ class RideContract implements RideContractAbstract {
         transaction: Transaction(
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
-        parameters: [rideId]);
+        parameters: [BigInt.from(rideId)]);
+    return result != null;
   }
 
   @override
@@ -81,7 +82,7 @@ class RideContract implements RideContractAbstract {
         transaction: Transaction(
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
-        parameters: [rideId]);
+        parameters: [BigInt.from(rideId)]);
   }
 
   @override
@@ -97,7 +98,7 @@ class RideContract implements RideContractAbstract {
         transaction: Transaction(
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
-        parameters: [rideId]);
+        parameters: [BigInt.from(rideId)]);
   }
 
   @override

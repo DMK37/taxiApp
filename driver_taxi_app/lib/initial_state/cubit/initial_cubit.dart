@@ -5,8 +5,10 @@ import 'package:driver_taxi_app/initial_state/cubit/initial_state.dart';
 import 'package:driver_taxi_app/models/order_message.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:reown_appkit/reown_appkit.dart';
 import 'package:shared/models/car_type.dart';
 import 'package:shared/repositories/driver/driver_repository.dart';
+import 'package:shared/repositories/ride_contract/ride_contract.dart';
 
 class DriverInitCubit extends Cubit<DriverState> {
   DriverInitCubit() : super(DriverOfflineState());
@@ -14,6 +16,7 @@ class DriverInitCubit extends Cubit<DriverState> {
   Timer? _locationTimer;
   DriverLocationDataProvider provider = DriverLocationDataProvider();
   DriverRepository repository = DriverRepository();
+  RideContract rideContract = RideContract();
 
   startLocationUpdate(LatLng driverLocation, String driverId) async {
     provider.setDriverCurrenLocation(driverLocation, driverId);
@@ -35,5 +38,14 @@ class DriverInitCubit extends Cubit<DriverState> {
   void messageReceived(String driverId, OrderMessageModel message) {
     stopLocationUpdate(driverId);
     emit(DriverMessagedState(message: message));
+  }
+
+  Future<bool> confirmRide(ReownAppKitModal modal, int rideId, ) async {
+    final res = await rideContract.confirmRide(modal, rideId);
+    return res;
+  }
+
+  void cancelRide() {
+    emit(DriverOfflineState());
   }
 }

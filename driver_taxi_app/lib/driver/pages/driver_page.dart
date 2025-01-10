@@ -37,7 +37,7 @@ class _DriverPageState extends State<DriverPage> {
       context: context,
       appKit: appKit,
     );
-    _appKitModal.init();
+    _appKitModal.init().then((value) => setState(() {}));
   }
 
   @override
