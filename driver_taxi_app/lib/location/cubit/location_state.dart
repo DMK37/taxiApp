@@ -1,14 +1,14 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-abstract class DriverLocationState {}
+abstract class LocationState {}
 
-class DriverLocationLoadingState extends DriverLocationState {}
+class LocationLoadingState extends LocationState {}
 
-class DriverLocationSuccessState extends DriverLocationState {
+class LocationSuccessState extends LocationState {
   final LatLng location;
   final String address;
 
-  DriverLocationSuccessState({required this.location, required this.address});
+  LocationSuccessState({required this.location, required this.address});
 }
 
-class DriverNoPermissionState extends DriverLocationState {}
+class NoPermissionState extends LocationState {}

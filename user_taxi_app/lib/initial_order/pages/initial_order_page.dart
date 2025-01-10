@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared/utils/map_utils.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
 import 'package:taxiapp/components/main_draggable_scrollable_sheet.dart';
@@ -24,6 +25,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
       Completer<GoogleMapController>();
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _sourceController = TextEditingController();
+  final mapUtils = MapUtils();
 
   bool _isDestination = true;
 
@@ -62,7 +64,8 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
       }
     });
 
-    final clientId = (context.read<AuthCubit>().state as AuthenticatedState).user.id;
+    final clientId =
+        (context.read<AuthCubit>().state as AuthenticatedState).user.id;
     context.read<LocationCubit>().startLocationUpdate(clientId);
   }
 
@@ -73,15 +76,10 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
     _sourceFocusNode.dispose();
     _destinationFocusNode.dispose();
 
-    final clientId = (context.read<AuthCubit>().state as AuthenticatedState).user.id;
+    final clientId =
+        (context.read<AuthCubit>().state as AuthenticatedState).user.id;
     context.read<LocationCubit>().stopLocationUpdate(clientId);
     super.dispose();
-  }
-
-  Future<void> _goToTheLocation(LatLng location) async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: location, zoom: 17)));
   }
 
   @override
@@ -173,7 +171,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                 onPressed: () async {
                   final location =
                       await context.read<LocationCubit>().getLocation();
-                  _goToTheLocation(location.$1);
+                  mapUtils.goToTheLocation(location.$1, _controller);
                 },
                 child: Icon(
                   Icons.gps_fixed,

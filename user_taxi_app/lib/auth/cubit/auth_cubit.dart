@@ -42,7 +42,7 @@ class AuthCubit extends Cubit<AuthState> {
               linkMode: true,
             )),
       );
-      emit(UnauthenticatedState());
+      
       appKit.onSessionConnect.subscribe((event) async {
         print('Session connected');
         final address =
@@ -61,23 +61,12 @@ class AuthCubit extends Cubit<AuthState> {
         print('Session deleted');
         emit(UnauthenticatedState());
       });
+      await appKit.init();
+      emit(UnauthenticatedState());
+
     } catch (e) {
       print(e);
       emit(AuthFailureState(errorMessage: e.toString()));
-    }
-  }
-
-  void isConnected(ReownAppKitModal modal) {
-    emit(AuthLoadingState());
-    if (modal.isConnected) {
-      print(modal.session?.userName);
-      emit(AuthenticatedState(
-          user: ClientModel(
-              id: modal.session?.userName ?? "0x1234567890",
-              firstName: "John",
-              lastName: "Doe")));
-    } else {
-      emit(UnauthenticatedState());
     }
   }
 

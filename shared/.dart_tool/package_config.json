@@ -87,13 +87,13 @@
     },
     {
       "name": "collection",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/collection-1.18.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/collection-1.19.0",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.4"
     },
     {
       "name": "connectivity_plus",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -135,7 +135,7 @@
     },
     {
       "name": "custom_sliding_segmented_control",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/custom_sliding_segmented_control-1.8.4",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/custom_sliding_segmented_control-1.8.5",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -195,7 +195,7 @@
     },
     {
       "name": "firebase_core_platform_interface",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-5.3.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-5.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -237,7 +237,7 @@
     },
     {
       "name": "flutter_plugin_android_lifecycle",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.23",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.24",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -249,7 +249,7 @@
     },
     {
       "name": "flutter_svg",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/flutter_svg-2.0.14",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/flutter_svg-2.0.17",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -309,7 +309,7 @@
     },
     {
       "name": "geolocator_apple",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/geolocator_apple-2.3.7",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/geolocator_apple-2.3.8+1",
       "packageUri": "lib/",
       "languageVersion": "2.15"
     },
@@ -339,9 +339,9 @@
     },
     {
       "name": "go_router",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/go_router-14.3.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/go_router-14.6.3",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.4"
     },
     {
       "name": "google_maps",
@@ -351,7 +351,7 @@
     },
     {
       "name": "google_maps_flutter",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/google_maps_flutter-2.9.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/google_maps_flutter-2.10.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -363,7 +363,7 @@
     },
     {
       "name": "google_maps_flutter_ios",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/google_maps_flutter_ios-2.13.1",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/google_maps_flutter_ios-2.13.2",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -393,9 +393,9 @@
     },
     {
       "name": "http_parser",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/http_parser-4.0.2",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/http_parser-4.1.2",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "3.4"
     },
     {
       "name": "js",
@@ -417,13 +417,13 @@
     },
     {
       "name": "leak_tracker",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/leak_tracker-10.0.5",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/leak_tracker-10.0.7",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "leak_tracker_flutter_testing",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.5",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.8",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -489,13 +489,13 @@
     },
     {
       "name": "package_info_plus",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/package_info_plus-8.1.1",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/package_info_plus-8.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
     {
       "name": "package_info_plus_platform_interface",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/package_info_plus_platform_interface-3.0.1",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/package_info_plus_platform_interface-3.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.18"
     },
@@ -519,15 +519,15 @@
     },
     {
       "name": "path_provider_android",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/path_provider_android-2.2.12",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/path_provider_android-2.2.15",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
     {
       "name": "path_provider_foundation",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.1",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.3"
     },
     {
       "name": "path_provider_linux",
@@ -627,21 +627,21 @@
     },
     {
       "name": "shared_preferences",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/shared_preferences-2.3.3",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/shared_preferences-2.3.5",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.5"
     },
     {
       "name": "shared_preferences_android",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/shared_preferences_android-2.3.3",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
     {
       "name": "shared_preferences_foundation",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.3",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.4",
       "packageUri": "lib/",
-      "languageVersion": "3.3"
+      "languageVersion": "3.4"
     },
     {
       "name": "shared_preferences_linux",
@@ -705,13 +705,13 @@
     },
     {
       "name": "sqflite_common",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/sqflite_common-2.5.4+5",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/sqflite_common-2.5.4+6",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
     {
       "name": "sqflite_darwin",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/sqflite_darwin-2.4.1",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/sqflite_darwin-2.4.1+1",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -723,9 +723,9 @@
     },
     {
       "name": "stack_trace",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/stack_trace-1.11.1",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/stack_trace-1.12.0",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.4"
     },
     {
       "name": "stream_channel",
@@ -735,15 +735,15 @@
     },
     {
       "name": "stream_transform",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/stream_transform-2.1.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/stream_transform-2.1.1",
       "packageUri": "lib/",
-      "languageVersion": "2.14"
+      "languageVersion": "3.1"
     },
     {
       "name": "string_scanner",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/string_scanner-1.2.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/string_scanner-1.3.0",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.1"
     },
     {
       "name": "synchronized",
@@ -759,9 +759,9 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/test_api-0.7.2",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/test_api-0.7.3",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.4"
     },
     {
       "name": "typed_data",
@@ -783,19 +783,19 @@
     },
     {
       "name": "url_launcher_ios",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.1",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.2",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.3"
     },
     {
       "name": "url_launcher_linux",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.1",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
     {
       "name": "url_launcher_macos",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.1",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.2",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -825,19 +825,19 @@
     },
     {
       "name": "vector_graphics",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/vector_graphics-1.1.14",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/vector_graphics-1.1.15",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "vector_graphics_codec",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/vector_graphics_codec-1.1.12",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/vector_graphics_codec-1.1.13",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
     {
       "name": "vector_graphics_compiler",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.15",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/vector_graphics_compiler-1.1.16",
       "packageUri": "lib/",
       "languageVersion": "3.4"
     },
@@ -849,7 +849,7 @@
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/vm_service-14.2.5",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/vm_service-14.3.0",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
@@ -897,13 +897,13 @@
     },
     {
       "name": "webview_flutter_wkwebview",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.16.2",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/webview_flutter_wkwebview-3.17.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
     {
       "name": "win32",
-      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/win32-5.8.0",
+      "rootUri": "file:///Users/dmytrotolstoi/.pub-cache/hosted/pub.dev/win32-5.10.0",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -932,10 +932,10 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2025-01-03T10:16:45.057229Z",
+  "generated": "2025-01-09T19:47:57.820553Z",
   "generator": "pub",
-  "generatorVersion": "3.5.4",
+  "generatorVersion": "3.6.0",
   "flutterRoot": "file:///Users/dmytrotolstoi/flutter",
-  "flutterVersion": "3.24.4",
+  "flutterVersion": "3.27.1",
   "pubCache": "file:///Users/dmytrotolstoi/.pub-cache"
 }

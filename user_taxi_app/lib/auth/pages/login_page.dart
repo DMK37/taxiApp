@@ -21,7 +21,10 @@ class _LoginPageState extends State<LoginPage> {
       appKit: appKit,
     );
 
-    _appKitModal.init();
+    _appKitModal.init().then((value) => setState(() {}));
+    _appKitModal.onModalError.subscribe((event) {
+      print('Error: ${event.message}');
+    });
     _appKitModal.disconnect();
   }
 

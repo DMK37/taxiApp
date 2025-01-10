@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => DriverLocationCubit()..checkPerrmissionsAndGetLocation(),
+            create: (context) => LocationCubit()..checkPerrmissionsAndGetLocation(),
           ),
           BlocProvider(
             create: (context) => DriverAuthCubit(DriverRepository())..init(),

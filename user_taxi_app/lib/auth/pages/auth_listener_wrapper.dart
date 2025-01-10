@@ -39,14 +39,14 @@ class AuthListenerWrapper extends StatelessWidget {
         }
       },
       child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-
         switch (state) {
           case AuthLoadingState():
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            return const Scaffold(
+                body: Center(child: CircularProgressIndicator()));
           case AuthenticatedState():
             return child;
           case UnauthenticatedState():
-            return  const LoginPage();
+            return const LoginPage();
           case FirstLoginState(address: String address):
             return FirstLoginPage(address: address);
           default:

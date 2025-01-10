@@ -11,14 +11,14 @@ class LocationListenerWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<DriverLocationCubit, DriverLocationState>(
+    return BlocListener<LocationCubit, LocationState>(
       listener: (context, state) {
         switch (state) {
-          case DriverLocationLoadingState():
+          case LocationLoadingState():
             // display a loading indicator
             break;
 
-          case DriverNoPermissionState():
+          case NoPermissionState():
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               behavior: SnackBarBehavior.floating,
               backgroundColor: Colors.transparent,
@@ -31,16 +31,16 @@ class LocationListenerWrapper extends StatelessWidget {
         }
       },
       child:
-          BlocBuilder<DriverLocationCubit, DriverLocationState>(builder: (context, state) {
+          BlocBuilder<LocationCubit, LocationState>(builder: (context, state) {
         switch (state) {
-          case DriverLocationLoadingState() || DriverNoPermissionState():
+          case LocationLoadingState() || NoPermissionState():
             return const Scaffold(
               body: Center(
                 child: CircularProgressIndicator(),
               ),
             );
 
-          case DriverLocationSuccessState():
+          case LocationSuccessState():
             return child;
 
           default:

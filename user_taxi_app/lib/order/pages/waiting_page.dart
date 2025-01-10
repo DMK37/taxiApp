@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/modal/appkit_modal_impl.dart';
+import 'package:shared/utils/map_utils.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
@@ -23,11 +24,13 @@ class _WaitingPageState extends State<WaitingPage> {
   late int rideId;
   bool _isButtonEnabled = false;
   final initTime = DateTime.now().millisecondsSinceEpoch;
+  final mapUtils = MapUtils();
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
   late ReownAppKitModal _appKitModal;
+
   @override
   void initState() {
     super.initState();
@@ -53,12 +56,6 @@ class _WaitingPageState extends State<WaitingPage> {
         });
       }
     });
-  }
-
-  Future<void> _goToTheLocation(LatLng location) async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: location, zoom: 17)));
   }
 
   @override
@@ -97,7 +94,7 @@ class _WaitingPageState extends State<WaitingPage> {
                   onPressed: () async {
                     final location =
                         await context.read<LocationCubit>().getLocation();
-                    _goToTheLocation(location.$1);
+                    mapUtils.goToTheLocation(location.$1, _controller);
                   },
                   child: Icon(
                     Icons.gps_fixed,

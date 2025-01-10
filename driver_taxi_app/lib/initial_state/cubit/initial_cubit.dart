@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:driver_taxi_app/firebase/data_providers/driver_location_dp.dart';
 import 'package:driver_taxi_app/initial_state/cubit/initial_state.dart';
+import 'package:driver_taxi_app/models/order_message.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared/models/car_type.dart';
@@ -14,12 +15,11 @@ class DriverInitCubit extends Cubit<DriverState> {
   DriverLocationDataProvider provider = DriverLocationDataProvider();
   DriverRepository repository = DriverRepository();
 
-  startLocationUpdate(LatLng driverLocation, String driverId) async
-  {
+  startLocationUpdate(LatLng driverLocation, String driverId) async {
     provider.setDriverCurrenLocation(driverLocation, driverId);
-     _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-    provider.setDriverCurrenLocation(driverLocation, driverId);
-  });
+    _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      provider.setDriverCurrenLocation(driverLocation, driverId);
+    });
   }
 
   stopLocationUpdate(String driverId) async {
@@ -32,7 +32,8 @@ class DriverInitCubit extends Cubit<DriverState> {
     return res;
   }
 
-  void messageReceived() {
-    emit(DriverMessagedState());
+  void messageReceived(String driverId, OrderMessageModel message) {
+    stopLocationUpdate(driverId);
+    emit(DriverMessagedState(message: message));
   }
 }

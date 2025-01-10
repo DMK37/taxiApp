@@ -4,6 +4,7 @@ import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
 import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
+import 'package:driver_taxi_app/models/order_message.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,8 +20,10 @@ class InitialDriverPage extends StatefulWidget {
 }
 
 class _InitialDriverPageState extends State<InitialDriverPage> {
-  final Completer<GoogleMapController> _googleMapController = Completer<GoogleMapController>();
-  final TextEditingController _currentAddressController = TextEditingController();
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
+  final TextEditingController _currentAddressController =
+      TextEditingController();
   bool isOnline = false;
   late DatabaseReference _databaseRef;
 
@@ -30,22 +33,24 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
   @override
   void initState() {
     super.initState();
-    _currentAddressController.text = (context.read<DriverLocationCubit>().state as DriverLocationSuccessState).address;
-    driverId = (context.read<DriverAuthCubit>().state as DriverAuthenticatedState).driver.id;
-        _databaseRef = FirebaseDatabase.instance.ref(
-        "notifications/${driverId}");
+    _currentAddressController.text =
+        (context.read<LocationCubit>().state as LocationSuccessState).address;
+    driverId =
+        (context.read<DriverAuthCubit>().state as DriverAuthenticatedState)
+            .driver
+            .id;
+    _databaseRef = FirebaseDatabase.instance.ref("notifications/$driverId");
     _listenForNewItems();
   }
 
   void _listenForNewItems() {
     _databaseRef.onChildAdded.listen((event) {
       final timenow = DateTime.now().toUtc().millisecondsSinceEpoch;
-      final childData = event.snapshot.value as Map;
+      final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final int until = int.parse(childData['validUntil']);
       if (timenow < until && isOnline) {
-        // update state
-        print("New ride request");
-        context.read<DriverInitCubit>().messageReceived();
+        final message = OrderMessageModel.fromMap(childData);
+        context.read<DriverInitCubit>().messageReceived(driverId, message);
       }
     });
   }
@@ -53,11 +58,6 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  Future<void> _goToTheLocation(LatLng location) async {
-    final GoogleMapController controller = await _googleMapController.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: location, zoom: 17)));
   }
 
   @override
@@ -73,10 +73,12 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
                   tiltGesturesEnabled: false,
                   mapType: MapType.normal,
                   onMapCreated: (GoogleMapController controller) {
-                    _googleMapController.complete(controller);
+                    _controller.complete(controller);
                   },
                   initialCameraPosition: CameraPosition(
-                    target: (context.read<DriverLocationCubit>().state as DriverLocationSuccessState).location,
+                    target: (context.read<LocationCubit>().state
+                            as LocationSuccessState)
+                        .location,
                     zoom: 17.0,
                   ),
                   myLocationEnabled: true,
@@ -85,8 +87,10 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
                     setState(() {});
                     final loc = _currentAddress;
                     if (loc != null) {
-                      final places = await placemarkFromCoordinates(loc.latitude, loc.longitude);
-                      final address = "${places[0].street}, ${places[0].locality}";
+                      final places = await placemarkFromCoordinates(
+                          loc.latitude, loc.longitude);
+                      final address =
+                          "${places[0].street}, ${places[0].locality}";
                       _currentAddressController.text = address;
                     }
                   },
@@ -105,7 +109,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
                 backgroundColor: Theme.of(context).colorScheme.surface,
-                onPressed: () {
+                onPressed: () async {
                   context.push('/driver');
                 },
                 child: Icon(
@@ -124,8 +128,11 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
               child: FloatingActionButton(
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 onPressed: () async {
-                  final location = await context.read<DriverLocationCubit>().getLocation();
-                  _goToTheLocation(location.$1);
+                  final location =
+                      await context.read<LocationCubit>().getLocation();
+                  context
+                      .read<LocationCubit>()
+                      .goToTheLocation(location.$1, _controller);
                 },
                 child: Icon(
                   Icons.gps_fixed,
@@ -159,11 +166,15 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        isOnline ? showGoOfflineDialog(context) : showGoOnlineDialog(context);
+                        isOnline
+                            ? showGoOfflineDialog(context)
+                            : showGoOnlineDialog(context);
                       },
                       style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        backgroundColor: isOnline ? Colors.red[800] : Colors.green[800],
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
+                        backgroundColor:
+                            isOnline ? Colors.red[800] : Colors.green[800],
                       ),
                       child: Text(
                         isOnline ? 'Go offline' : 'Go online',
@@ -186,7 +197,8 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("You are online!"),
-          content: const Text("You are now online and clients can see your localization."),
+          content: const Text(
+              "You are now online and clients can see your localization."),
           actions: [
             TextButton(
               child: const Text("OK"),
@@ -201,8 +213,10 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
         );
       },
     );
-    final location = await context.read<DriverLocationCubit>().getLocation();
-    await context.read<DriverInitCubit>().startLocationUpdate(location.$1, driverId);
+    final location = await context.read<LocationCubit>().getLocation();
+    await context
+        .read<DriverInitCubit>()
+        .startLocationUpdate(location.$1, driverId);
   }
 
   void showGoOfflineDialog(BuildContext context) async {
@@ -211,7 +225,8 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("You are offline!"),
-          content: const Text("You are now offline and clients can't see your localization."),
+          content: const Text(
+              "You are now offline and clients can't see your localization."),
           actions: [
             TextButton(
               child: const Text("OK"),

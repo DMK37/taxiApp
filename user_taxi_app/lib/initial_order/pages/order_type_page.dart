@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 import 'package:shared/models/ride_price_model.dart';
+import 'package:shared/utils/map_utils.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_state.dart';
@@ -34,6 +35,7 @@ class _OrderTypePageState extends State<OrderTypePage> {
   int distance = 0;
 
   late ReownAppKitModal _appKitModal;
+  MapUtils mapUtils = MapUtils();
 
   @override
   void initState() {
@@ -62,31 +64,6 @@ class _OrderTypePageState extends State<OrderTypePage> {
     markers[markerId] = marker;
   }
 
-  LatLngBounds _calculateBounds(List<LatLng> polylineCoordinates) {
-    double southWestLat = polylineCoordinates.first.latitude;
-    double southWestLng = polylineCoordinates.first.longitude;
-    double northEastLat = polylineCoordinates.first.latitude;
-    double northEastLng = polylineCoordinates.first.longitude;
-
-    for (LatLng point in polylineCoordinates) {
-      if (point.latitude < southWestLat) southWestLat = point.latitude;
-      if (point.longitude < southWestLng) southWestLng = point.longitude;
-      if (point.latitude > northEastLat) northEastLat = point.latitude;
-      if (point.longitude > northEastLng) northEastLng = point.longitude;
-    }
-
-    return LatLngBounds(
-      southwest: LatLng(southWestLat, southWestLng),
-      northeast: LatLng(northEastLat, northEastLng),
-    );
-  }
-
-  Future<void> _goToTheLocation(LatLng location) async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: location, zoom: 17)));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,9 +84,8 @@ class _OrderTypePageState extends State<OrderTypePage> {
                   final destination = (context.read<InitialOrderCubit>().state
                           as OrderWithPoints)
                       .destination;
-                  final (polyline, dist) = await context
-                      .read<LocationCubit>()
-                      .getPolyline(source, destination);
+                  final (polyline, dist) = await mapUtils.getPolyline(
+                      source, destination);
                   prices = await context
                       .read<InitialOrderCubit>()
                       .getPrices(source, destination, dist);
@@ -121,7 +97,8 @@ class _OrderTypePageState extends State<OrderTypePage> {
                   _addMarker(destination, "Destination",
                       BitmapDescriptor.defaultMarkerWithHue(90));
 
-                  LatLngBounds bounds = _calculateBounds(polyline.points);
+                  LatLngBounds bounds =
+                      mapUtils.calculateBounds(polyline.points);
                   final GoogleMapController ctr = await _controller.future;
                   await ctr
                       .animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
@@ -169,7 +146,7 @@ class _OrderTypePageState extends State<OrderTypePage> {
                   onPressed: () async {
                     final location =
                         await context.read<LocationCubit>().getLocation();
-                    _goToTheLocation(location.$1);
+                    mapUtils.goToTheLocation(location.$1, _controller);
                   },
                   child: Icon(
                     Icons.gps_fixed,
@@ -295,14 +272,16 @@ class _OrderTypePageState extends State<OrderTypePage> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
-                          final resp = await context.read<OrderCubit>().createRide(
-                              _appKitModal,
-                              prices[_selectedTaxiIndex].price,
-                              sourceAddress,
-                              destinationAddress,
-                              sourceLocation,
-                              destinationLocation,
-                              distance);
+                          final resp = await context
+                              .read<OrderCubit>()
+                              .createRide(
+                                  _appKitModal,
+                                  prices[_selectedTaxiIndex].price,
+                                  sourceAddress,
+                                  destinationAddress,
+                                  sourceLocation,
+                                  destinationLocation,
+                                  distance);
                           if (resp) {
                             context.go("/order");
                           }
