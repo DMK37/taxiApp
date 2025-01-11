@@ -18,8 +18,14 @@ class OrderCubit extends Cubit<OrderState> {
     int distance,
   ) async {
     emit(OrderLoading());
-    final response = await rideRepository.createRide(modal, distance, source,
-        destination, sourceLocation, destinationLocation, BigInt.from(price * 1000000000000000000));
+    final response = await rideRepository.createRide(
+        modal,
+        distance,
+        source,
+        destination,
+        sourceLocation,
+        destinationLocation,
+        BigInt.from(price * 1000000000000000000));
     if (response) {
       emit(OrderWaiting());
       return true;
@@ -31,11 +37,11 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   Future<void> cancelRide(ReownAppKitModal modal, int rideId) async {
-    emit(OrderLoading());
+    // emit(OrderLoading());
     final response = await rideRepository.cancelRide(modal, rideId);
 
     if (response) {
-      emit(OrderInitial());
+      emit(OrderCancelled());
     } else {
       // emit(RideError());
     }

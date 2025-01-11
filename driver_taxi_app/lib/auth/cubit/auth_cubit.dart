@@ -40,7 +40,7 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
             url: 'https://taxiApp.com/',
             icons: ['https://reown.com/logo.png'],
             redirect: Redirect(
-              native: 'taxiapp://',
+              native: 'taxiappdriver://',
               linkMode: true,
             )),
       );

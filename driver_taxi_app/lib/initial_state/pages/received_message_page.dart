@@ -2,19 +2,18 @@ import 'dart:async';
 
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
-import 'package:driver_taxi_app/initial_state/cubit/initial_state.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
 import 'package:driver_taxi_app/models/order_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:shared/utils/map_utils.dart';
 
 class ReceivedMessagePage extends StatefulWidget {
-  const ReceivedMessagePage({super.key});
+  const ReceivedMessagePage({super.key, required this.message});
+  final OrderMessageModel message;
 
   @override
   State<ReceivedMessagePage> createState() => _ReceivedMessagePageState();
@@ -26,7 +25,6 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage>
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   final mapUtils = MapUtils();
-  late OrderMessageModel message;
   late double cost;
 
   late ReownAppKitModal _appKitModal;
@@ -37,14 +35,15 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage>
   @override
   void initState() {
     super.initState();
-    message =
-        (context.read<DriverInitCubit>().state as DriverMessagedState).message;
-    cost = double.parse(message.cost) / 1000000000000000000;
+
+    cost = double.parse(widget.message.cost) / 1000000000000000000;
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 60),
     )..addListener(() {
-        setState(() {}); // Update the UI as the animation progresses
+      if (mounted) {
+        setState(() {});
+      }
       });
 
     _animationController.forward().whenComplete(() {
@@ -53,6 +52,14 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage>
       context.read<DriverInitCubit>().cancelRide();
     });
   }
+
+  @override
+void dispose() {
+  _animationController.stop(canceled: false);
+  _animationController.dispose();
+  _controller.future.then((value) => value.dispose());
+  super.dispose();
+}
 
   _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
     MarkerId markerId = MarkerId(id);
@@ -83,14 +90,16 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage>
                   onMapCreated: (GoogleMapController controller) async {
                     _controller.complete(controller);
                     final (polyline, dist) = await mapUtils.getPolyline(
-                        message.sourceLocation, message.destinationLocation);
+                        widget.message.sourceLocation,
+                        widget.message.destinationLocation);
 
                     polylines[polyline.polylineId] = polyline;
 
-                    print(polyline.points);
-                    _addMarker(message.sourceLocation, "Source",
+                    _addMarker(widget.message.sourceLocation, "Source",
                         BitmapDescriptor.defaultMarker);
-                    _addMarker(message.destinationLocation, "Destination",
+                    _addMarker(
+                        widget.message.destinationLocation,
+                        "Destination",
                         BitmapDescriptor.defaultMarkerWithHue(90));
                     setState(() {});
                     LatLngBounds bounds =
@@ -173,7 +182,7 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage>
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              "Pickup: ${message.source}",
+                              "Pickup: ${widget.message.source}",
                               style: const TextStyle(fontSize: 16),
                             ),
                           ),
@@ -187,7 +196,7 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage>
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              "Drop-off: ${message.destination}",
+                              "Drop-off: ${widget.message.destination}",
                               style: const TextStyle(fontSize: 16),
                             ),
                           ),
@@ -207,12 +216,10 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage>
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () async {
-                          final resp = await context
+                          await context
                               .read<DriverInitCubit>()
-                              .confirmRide(_appKitModal, message.rideId);
-                          if (resp) {
-                            context.go("/order");
-                          }
+                              .confirmRide(_appKitModal, widget.message.rideId);
+                        
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:

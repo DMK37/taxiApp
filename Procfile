@@ -1,0 +1,1 @@
+web: cd main_server/TaxiServer/bin/publish/; ./TaxiServer --urls http://*:$PORT

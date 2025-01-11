@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
+import 'package:driver_taxi_app/order/cubit/order_cubit.dart';
 import 'package:driver_taxi_app/router_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,14 +37,14 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => LocationCubit()..checkPerrmissionsAndGetLocation(),
+            create: (context) =>
+                LocationCubit()..checkPerrmissionsAndGetLocation(),
           ),
           BlocProvider(
             create: (context) => DriverAuthCubit(DriverRepository())..init(),
           ),
-          BlocProvider(create: 
-          (context) => DriverInitCubit()
-          ),
+          BlocProvider(create: (context) => DriverInitCubit()),
+          BlocProvider(create: (context) => OrderCubit()),
         ],
         child: MaterialApp.router(
           routerConfig: router,

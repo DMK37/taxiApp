@@ -1,58 +1,75 @@
 import 'dart:async';
 
+import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
+import 'package:driver_taxi_app/location/cubit/location_state.dart';
+import 'package:driver_taxi_app/models/order_message.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:shared/utils/map_utils.dart';
-import 'package:taxiapp/auth/cubit/auth_cubit.dart';
-import 'package:taxiapp/auth/cubit/auth_state.dart';
-import 'package:taxiapp/location/cubit/location_cubit.dart';
-import 'package:taxiapp/location/cubit/location_state.dart';
-import 'package:taxiapp/order/cubit/order_cubit.dart';
 
-class WaitingPage extends StatefulWidget {
-  const WaitingPage({super.key});
-
+class OrderUpcomingPage extends StatefulWidget {
+  const OrderUpcomingPage({super.key, required this.message});
+  final OrderMessageModel message;
   @override
-  State<WaitingPage> createState() => _WaitingPageState();
+  State<OrderUpcomingPage> createState() => _OrderUpcomingPageState();
 }
 
-class _WaitingPageState extends State<WaitingPage> {
-  late DatabaseReference _databaseRef;
-  late int rideId;
-  bool _isButtonEnabled = false;
-  final initTime = DateTime.now().millisecondsSinceEpoch / 1000;
-  final mapUtils = MapUtils();
-
+class _OrderUpcomingPageState extends State<OrderUpcomingPage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  late DatabaseReference _databaseRef;
+  final mapUtils = MapUtils();
 
-  late ReownAppKitModal _appKitModal;
+  Map<MarkerId, Marker> markers = {};
+  Map<PolylineId, Polyline> polylines = {};
 
   @override
   void initState() {
     super.initState();
-    _databaseRef = FirebaseDatabase.instance.ref(
-        "notifications/ride_created/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
-    _appKitModal = ReownAppKitModal(
-      context: context,
-      appKit: context.read<AuthCubit>().appKit,
-    );
-    _appKitModal.init();
+    _databaseRef =
+        FirebaseDatabase.instance.ref("notifications/${widget.message.client}");
     _listenForNewItems();
+    _startLocationUpdates();
   }
 
   void _listenForNewItems() {
-    _databaseRef.onChildAdded.listen((event) {
+    _databaseRef.onChildChanged.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
-      final int time = childData['timestamp'];
-      if (initTime < time) {
-        setState(() {
-          rideId = childData['id'];
-          _isButtonEnabled = true;
-        });
+      final position = LatLng(double.parse(childData['latitude']),
+          double.parse(childData['longitude']));
+      markers[const MarkerId('client')] = Marker(
+        markerId: const MarkerId('client'),
+        position: position,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      );
+      setState(() {});
+    });
+  }
+
+  void _startLocationUpdates() {
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.bestForNavigation,
+      distanceFilter: 50,
+    );
+
+    Geolocator.getPositionStream(locationSettings: locationSettings)
+        .listen((Position? position) async {
+      if (position != null) {
+        final ctr = await _controller.future;
+
+        final (polyline, _) = await mapUtils.getPolyline(
+            LatLng(position.latitude, position.longitude),
+            widget.message.sourceLocation);
+        polylines[const PolylineId('route')] = polyline;
+
+        ctr.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+            target: LatLng(position.latitude, position.longitude), zoom: 17)));
+        if (mounted) {
+          setState(() {});
+        }
       }
     });
   }
@@ -80,6 +97,8 @@ class _WaitingPageState extends State<WaitingPage> {
                 ),
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
+                markers: Set<Marker>.of(markers.values),
+                polylines: Set<Polyline>.of(polylines.values),
               ),
             ),
             Positioned(
@@ -93,7 +112,9 @@ class _WaitingPageState extends State<WaitingPage> {
                   onPressed: () async {
                     final location =
                         await context.read<LocationCubit>().getLocation();
-                    mapUtils.goToTheLocation(location.$1, _controller);
+                    context
+                        .read<LocationCubit>()
+                        .goToTheLocation(location.$1, _controller);
                   },
                   child: Icon(
                     Icons.gps_fixed,
@@ -107,7 +128,7 @@ class _WaitingPageState extends State<WaitingPage> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
+                  height: MediaQuery.of(context).size.height * 0.4,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: const BorderRadius.only(
@@ -117,26 +138,21 @@ class _WaitingPageState extends State<WaitingPage> {
                   ),
                   child: Column(
                     children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Text(
-                        'Waiting for the driver',
+                        'Source arrival',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      const SizedBox(height: 30),
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 25),
+                      const Spacer(),
+                      const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: _isButtonEnabled
-                            ? () async {
-                                await context
-                                    .read<OrderCubit>()
-                                    .cancelRide(_appKitModal, rideId);
-                              }
-                            : null, // Disable the button if `_isButtonEnabled` is false
+                        onPressed: () async {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _isButtonEnabled
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors
-                                  .grey, // Optional: Change color when disabled
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           foregroundColor:
                               Theme.of(context).colorScheme.surface,
                           padding: const EdgeInsets.symmetric(
@@ -146,14 +162,13 @@ class _WaitingPageState extends State<WaitingPage> {
                           ),
                         ),
                         child: Text(
-                          'Cancel Ride',
+                          'Confirm source arrival',
                           style: TextStyle(
-                            fontSize: 18,
-                            color: Theme.of(context).colorScheme.surface,
-                          ),
+                              fontSize: 18,
+                              color: Theme.of(context).colorScheme.surface),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ))

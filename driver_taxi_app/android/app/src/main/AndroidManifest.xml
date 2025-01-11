@@ -48,12 +48,12 @@
                 android:value="AIzaSyAJI-buaRrNN3x2RASJk6yv_UltK2fePzM" 
             /> -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                                <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="driver_taxi_app" android:host="connect"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="taxiappdriver" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.
