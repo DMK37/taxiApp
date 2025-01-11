@@ -21,7 +21,7 @@ module.exports = {
       accounts: [SEPOLIA_PRIVATE_KEY],
     },
     local: {
-      url: "http://192.168.18.108:8545",
+      url: "https://backend-deploy-asp-62fbd6e3f3d1.herokuapp.com",
       gas: 10000000,
     },
   },

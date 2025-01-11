@@ -1,1 +1,1 @@
-web: cd main_server/TaxiServer/bin/publish/; ./TaxiServer --urls http://*:$PORT
+web: cd main_server/TaxiServer/ && dotnet publish -c Release -o publish; cd bin/publish/; ./TaxiServer --urls http://*:$PORT

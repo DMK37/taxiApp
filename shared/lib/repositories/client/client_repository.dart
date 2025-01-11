@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class ClientRepository implements ClientRepositoryAbstract {
 
-  final String apiUrl = "http://192.168.18.108:5112/api/client";
+  final String apiUrl = "https://backend-deploy-asp-62fbd6e3f3d1.herokuapp.com/api/client";
 
   @override
   Future<ClientModel?> createClient(ClientModel client) async {

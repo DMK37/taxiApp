@@ -1,7 +1,13 @@
 import socket
 import psutil
 import os
+import sys
 
+if len(sys.argv) < 2:
+    print("Usage: python3 private_ip.py <local or remote>")
+    sys.exit(1)
+
+variable = sys.argv[1]
 
 def get_private_ip():
     for interface, addrs in psutil.net_if_addrs().items():
@@ -22,8 +28,8 @@ def modify_line_in_file(file_path, line_number, new_content):
     # Write the modified lines back to the file
     with open(file_path, 'w') as file:
         file.writelines(lines)
-
-private_ip = get_private_ip()
+remote = "https://backend-deploy-asp-62fbd6e3f3d1.herokuapp.com"
+private_ip = "http://" + get_private_ip()
 if private_ip:
     print("Private IP address:", private_ip)
     
@@ -31,27 +37,42 @@ if private_ip:
     file_path = parent_path + "/main_server/TaxiServer/Properties/launchSettings.json"
     if os.name == 'nt':
         file_path = parent_directory.replace("/", "\\")
-    
-    modify_line_in_file(file_path, 16, f"      \"applicationUrl\": \"http://{private_ip}:5112\",")
+    if variable == "remote":
+        modify_line_in_file(file_path, 16, f"      \"applicationUrl\": \"{remote}\",")
+    else:
+        modify_line_in_file(file_path, 16, f"      \"applicationUrl\": \"{private_ip}:5112\",")
 
     shared_client_path = parent_path + "/shared/lib/repositories/client/client_repository.dart"
     if os.name == 'nt':
         shared_client_path = shared_client_path.replace("/", "\\")
-    modify_line_in_file(shared_client_path, 9, f"  final String apiUrl = \"http://{private_ip}:5112/api/client\";")
+    
+    if variable == "remote":
+        modify_line_in_file(shared_client_path, 9, f"  final String apiUrl = \"{remote}/api/client\";")
+    else:
+        modify_line_in_file(shared_client_path, 9, f"  final String apiUrl = \"{private_ip}:5112/api/client\";")
 
     shared_driver_path = parent_path + "/shared/lib/repositories/driver/driver_repository.dart"
     if os.name == 'nt':
         shared_driver_path = shared_driver_path.replace("/", "\\")
-    modify_line_in_file(shared_driver_path, 8, f"  final String apiUrl = \"http://{private_ip}:5112/api/driver\";")
+    if variable == "remote":
+        modify_line_in_file(shared_driver_path, 8, f"  final String apiUrl = \"{remote}/api/driver\";")
+    else:
+        modify_line_in_file(shared_driver_path, 8, f"  final String apiUrl = \"{private_ip}:5112/api/driver\";")
 
     init_order_path = parent_path + "/initial_order_server/config/config.go"
     if os.name == 'nt':
         init_order_path = init_order_path.replace("/", "\\")
-    modify_line_in_file(init_order_path, 6, f"	BACKEND_URL         = \"http://{private_ip}:5112/api\"")
+    if variable == "remote":
+        modify_line_in_file(init_order_path, 6, f"	BACKEND_URL         = \"{remote}/api\"")
+    else:
+        modify_line_in_file(init_order_path, 6, f"	BACKEND_URL         = \"{private_ip}:5112/api\"")
 
     contract_path = parent_path + "/ride_smart_contract/hardhat.config.js"
     if os.name == 'nt':
         contract_path = contract_path.replace("/", "\\")
-    modify_line_in_file(contract_path, 23, f"      url: \"http://{private_ip}:8545\",")
+    if variable == "remote":
+        modify_line_in_file(contract_path, 23, f"      url: \"{remote}\",")
+    else:
+        modify_line_in_file(contract_path, 23, f"      url: \"{private_ip}:8545\",")
 else:
     print("Private IP address not found.")
