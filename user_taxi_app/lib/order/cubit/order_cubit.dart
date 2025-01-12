@@ -46,4 +46,8 @@ class OrderCubit extends Cubit<OrderState> {
       // emit(RideError());
     }
   }
+
+  void sourceArrival(String driverId, int rideId) {
+    emit(OrderSourceArrival(driverId: driverId, rideId: rideId));
+  }
 }

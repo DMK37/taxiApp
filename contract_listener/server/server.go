@@ -69,7 +69,7 @@ func (s *Server) handleEvent(vLog types.Log) {
 		contract_types.HandleRideCreatedEvent(createdEvent, s.firestoreService, s.sqsClient, s.queueURL, s.realtimeDatabase)
 	case contract_types.RideConfirmedHash().Hex():
 		confirmedEvent := contract_types.NewRideConfirmed(s.abi, vLog)
-		contract_types.HandleRideConfirmedEvent(confirmedEvent, s.firestoreService)
+		contract_types.HandleRideConfirmedEvent(confirmedEvent, s.firestoreService, s.realtimeDatabase)
 	case contract_types.RideCancelledHash().Hex():
 		cancelledEvent := contract_types.NewRideCancelled(s.abi, vLog)
 		contract_types.HandleRideCancelledEvent(cancelledEvent, s.firestoreService)

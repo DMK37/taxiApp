@@ -5,8 +5,17 @@ import 'package:shared/repositories/ride_contract/ride_contract_abstract.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RideContract implements RideContractAbstract {
+  Future<void> _navigateToMetamask() async {
+    if (await canLaunchUrl(Uri.parse("metamask://"))) {
+      await launchUrl(Uri.parse("metamask://"));
+    } else {
+      throw 'Could not launch metamask://';
+    }
+  }
+
   @override
   Future<bool> cancelRide(ReownAppKitModal modal, int rideId) async {
+    await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     final resp = await modal.requestWriteContract(
@@ -40,6 +49,7 @@ class RideContract implements RideContractAbstract {
   @override
   Future<void> confirmDestinationArrivalByDriver(
       ReownAppKitModal modal, int rideId) async {
+    await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
@@ -55,6 +65,7 @@ class RideContract implements RideContractAbstract {
 
   @override
   Future<bool> confirmRide(ReownAppKitModal modal, int rideId) async {
+    await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     final result = await modal.requestWriteContract(
@@ -72,6 +83,7 @@ class RideContract implements RideContractAbstract {
   @override
   Future<void> confirmSourceArrivalByClient(
       ReownAppKitModal modal, int rideId) async {
+    await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
@@ -88,6 +100,7 @@ class RideContract implements RideContractAbstract {
   @override
   Future<void> confirmSourceArrivalByDriver(
       ReownAppKitModal modal, int rideId) async {
+    await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     await modal.requestWriteContract(
@@ -110,11 +123,7 @@ class RideContract implements RideContractAbstract {
       String sourceLocation,
       String destinationLocation,
       BigInt price) async {
-    if (await canLaunchUrl(Uri.parse("metamask://"))) {
-      await launchUrl(Uri.parse("metamask://"));
-    } else {
-      throw 'Could not launch metamask://';
-    }
+    await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     final resp = await modal.requestWriteContract(

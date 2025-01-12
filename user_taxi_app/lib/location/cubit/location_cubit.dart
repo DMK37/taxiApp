@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
@@ -15,7 +16,6 @@ class LocationCubit extends Cubit<LocationState> {
   PolylinePoints polylinePoints = PolylinePoints();
   static const String placesApiKey = "AIzaSyAJI-buaRrNN3x2RASJk6yv_UltK2fePzM";
   Timer? _locationTimer;
-  ClientLocationDataProvider provider = ClientLocationDataProvider();
 
   Future<void> checkPermissionsAndGetLocation() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -111,8 +111,10 @@ class LocationCubit extends Cubit<LocationState> {
     return null;
   }
 
-  startLocationUpdate(String clientId) async {
+  startLocationUpdate(String clientId, String ref) async {
     final clientLocation = await getLocation();
+    ClientLocationDataProvider provider =
+        ClientLocationDataProvider(db: FirebaseDatabase.instance.ref(ref));
 
     provider.setClientCurrenLocation(clientLocation.$1, clientId);
     _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
@@ -120,7 +122,10 @@ class LocationCubit extends Cubit<LocationState> {
     });
   }
 
-  stopLocationUpdate(String clientId) async {
+  stopLocationUpdate(String clientId, String ref) async {
+    ClientLocationDataProvider provider =
+        ClientLocationDataProvider(db: FirebaseDatabase.instance.ref(ref));
+
     _locationTimer?.cancel();
     provider.removeActiveClient(clientId);
   }

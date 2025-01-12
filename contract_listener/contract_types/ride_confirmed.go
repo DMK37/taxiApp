@@ -34,7 +34,7 @@ func NewRideConfirmed(parsedABI abi.ABI, vLog types.Log) RideConfirmed {
 	return event
 }
 
-func HandleRideConfirmedEvent(event RideConfirmed, firestoreService db.FirestoreService) {
+func HandleRideConfirmedEvent(event RideConfirmed, firestoreService db.FirestoreService, realtimeDatabase db.RealtimeDatabaseService) {
 
 	fmt.Printf("Ride confirmed: %d, driver: %s, confirmation time: %d\n", event.RideId, event.Driver.Hex(), event.ConfirmationTime)
 
@@ -46,6 +46,26 @@ func HandleRideConfirmedEvent(event RideConfirmed, firestoreService db.Firestore
 
 	if err != nil {
 		log.Fatalf("Failed to add fields to Firestore: %v", err)
+	}
+
+	doc, err := firestoreService.GetDocument(context.Background(), "rides", fmt.Sprintf("%d", event.RideId))
+	if err != nil {
+		log.Fatalf("Failed to get document from Firestore: %v", err)
+	}
+
+	ride := struct {
+		client string `firestore:"client"`
+	} {}
+	data := doc.Data()
+	if client, ok := data["client"].(string); ok {
+		ride.client = client
+	} else {
+		log.Fatalf("Failed to get client from Firestore: %v", err)
+	}
+
+	err = realtimeDatabase.PushRideConfirmedNotification(ride.client, event.RideId, event.Driver.Hex())
+	if err != nil {
+		log.Fatalf("Failed to push ride confirmed notification: %v", err)
 	}
 }
 

@@ -216,7 +216,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
     final location = await context.read<LocationCubit>().getLocation();
     await context
         .read<DriverInitCubit>()
-        .startLocationUpdate(location.$1, driverId);
+        .startLocationUpdate(location.$1, driverId, "drivers");
   }
 
   void showGoOfflineDialog(BuildContext context) async {
@@ -241,6 +241,6 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
         );
       },
     );
-    await context.read<DriverInitCubit>().stopLocationUpdate(driverId);
+    await context.read<DriverInitCubit>().stopLocationUpdate(driverId, "drivers");
   }
 }

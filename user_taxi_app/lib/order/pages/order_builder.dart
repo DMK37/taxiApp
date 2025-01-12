@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/order/cubit/order_cubit.dart';
 import 'package:taxiapp/order/cubit/order_state.dart';
+import 'package:taxiapp/order/pages/upcoming_page.dart';
 import 'package:taxiapp/order/pages/waiting_page.dart';
 
 class OrderBuilder extends StatelessWidget {
@@ -27,8 +28,11 @@ class OrderBuilder extends StatelessWidget {
             case OrderLoading():
               return const Scaffold(
                   body: Center(child: CircularProgressIndicator()));
-            // case OrderSourceArrival():
-            //   return const SourceArrivalPage();
+            case OrderSourceArrival(
+                rideId: int rideId,
+                driverId: String driverId
+              ):
+              return UpcomingPage(rideId: rideId, driverId: driverId);
 
             // case OrderDestinationArrival():
             //   return const DestinationArrivalPage();
