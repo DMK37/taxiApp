@@ -1,86 +1,56 @@
 import 'dart:async';
 
-import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
-import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
-import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
-import 'package:driver_taxi_app/location/cubit/location_state.dart';
-import 'package:driver_taxi_app/models/order_message.dart';
-import 'package:driver_taxi_app/order/cubit/order_cubit.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:shared/utils/map_utils.dart';
+import 'package:taxiapp/auth/cubit/auth_cubit.dart';
+import 'package:taxiapp/auth/cubit/auth_state.dart';
+import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
+import 'package:taxiapp/initial_order/cubit/initial_order_state.dart';
+import 'package:taxiapp/location/cubit/location_cubit.dart';
+import 'package:taxiapp/location/cubit/location_state.dart';
+import 'package:taxiapp/order/cubit/order_cubit.dart';
 
-class OrderInProgressPage extends StatefulWidget {
-  const OrderInProgressPage({super.key, required this.message});
-  final OrderMessageModel message;
+class InProgressPage extends StatefulWidget {
+  final int rideId;
+  const InProgressPage({super.key, required this.rideId});
 
   @override
-  State<OrderInProgressPage> createState() => _OrderInProgressPageState();
+  State<InProgressPage> createState() => _InProgressPageState();
 }
 
-class _OrderInProgressPageState extends State<OrderInProgressPage> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+class _InProgressPageState extends State<InProgressPage> {
+  final _controller = Completer<GoogleMapController>();
   final mapUtils = MapUtils();
   final initTime = DateTime.now().millisecondsSinceEpoch / 1000;
-  Map<MarkerId, Marker> markers = {};
+  late ReownAppKitModal _appKitModal;
   Map<PolylineId, Polyline> polylines = {};
-  String? driverId;
+  Map<MarkerId, Marker> markers = {};
   DatabaseReference? _databaseRef;
   StreamSubscription? _subscrition;
 
   @override
   void initState() {
     super.initState();
-    driverId =
-        (context.read<DriverAuthCubit>().state as DriverAuthenticatedState)
-            .driver
-            .id;
-    markers[const MarkerId('destination')] = Marker(
-      markerId: const MarkerId('destination'),
-      position: widget.message.destinationLocation,
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    _appKitModal = ReownAppKitModal(
+      context: context,
+      appKit: context.read<AuthCubit>().appKit,
     );
-    _databaseRef =
-        FirebaseDatabase.instance.ref("notifications/ride_completed/$driverId");
+    _appKitModal.init();
+    _databaseRef = FirebaseDatabase.instance.ref(
+        "notifications/ride_completed/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
     _completedListener();
-    _startLocationUpdates();
   }
 
-  void _completedListener() {
+    void _completedListener() {
     _subscrition = _databaseRef?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final int time = childData['timestamp'];
-      if (initTime < time && childData['rideId'] == widget.message.rideId) {
-        context.read<OrderCubit>().orderCompleted(widget.message);
-      }
-    });
-  }
-
-  void _startLocationUpdates() {
-    const LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.bestForNavigation,
-      distanceFilter: 50,
-    );
-
-    Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position? position) async {
-      if (position != null) {
-        final ctr = await _controller.future;
-
-        final (polyline, _) = await mapUtils.getPolyline(
-            widget.message.destinationLocation,
-            LatLng(position.latitude, position.longitude));
-        polylines[const PolylineId('route')] = polyline;
-
-        ctr.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-            target: LatLng(position.latitude, position.longitude), zoom: 17)));
-        if (mounted) {
-          setState(() {});
-        }
+      if (initTime < time && childData['rideId'] == widget.rideId) {
+        context.read<OrderCubit>().completedOrder();
       }
     });
   }
@@ -89,6 +59,13 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
   void dispose() {
     _subscrition?.cancel();
     super.dispose();
+  }
+
+  _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
+    MarkerId markerId = MarkerId(id);
+    Marker marker =
+        Marker(markerId: markerId, icon: descriptor, position: position);
+    markers[markerId] = marker;
   }
 
   @override
@@ -105,6 +82,24 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
                 mapType: MapType.normal,
                 onMapCreated: (GoogleMapController controller) async {
                   _controller.complete(controller);
+                  final source = (context.read<InitialOrderCubit>().state
+                          as OrderWithPoints)
+                      .source;
+                  final destination = (context.read<InitialOrderCubit>().state
+                          as OrderWithPoints)
+                      .destination;
+                  final (polyline, _) =
+                      await mapUtils.getPolyline(source, destination);
+                  polylines[const PolylineId('polyline')] = polyline;
+                  _addMarker(source, "Source", BitmapDescriptor.defaultMarker);
+                  _addMarker(destination, "Destination",
+                      BitmapDescriptor.defaultMarkerWithHue(90));
+                  setState(() {});
+                  LatLngBounds bounds =
+                      mapUtils.calculateBounds(polyline.points);
+                  final GoogleMapController ctr = await _controller.future;
+                  await ctr
+                      .animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
                 },
                 initialCameraPosition: CameraPosition(
                   target: (context.read<LocationCubit>().state
@@ -129,9 +124,7 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
                   onPressed: () async {
                     final location =
                         await context.read<LocationCubit>().getLocation();
-                    context
-                        .read<LocationCubit>()
-                        .goToTheLocation(location.$1, _controller);
+                    mapUtils.goToTheLocation(location.$1, _controller);
                   },
                   child: Icon(
                     Icons.gps_fixed,
@@ -155,18 +148,20 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
                       Text(
-                        'Destination arrival',
+                        'Waiting for the driver arrival',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      const SizedBox(height: 25),
                       const Spacer(),
-                      const SizedBox(height: 20),
+                      const CircularProgressIndicator(),
+                      const Spacer(),
                       ElevatedButton(
-                        onPressed: () async {},
+                        onPressed: () async {
+                          await context
+                              .read<OrderCubit>()
+                              .confirmDestinationArrival(
+                                  _appKitModal, widget.rideId);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
@@ -179,13 +174,14 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
                           ),
                         ),
                         child: Text(
-                          'Confirm destination arrival',
+                          'Confirm Source Arrival',
                           style: TextStyle(
-                              fontSize: 18,
-                              color: Theme.of(context).colorScheme.surface),
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ))

@@ -160,7 +160,7 @@ func TestIntegrationEventRetrieving(t *testing.T) {
 		}
 
 		HandleRideCreatedEvent(createEvent, firestoreService, client, queueURL, dbClientMock)
-		HandleRideStartedEvent(event, firestoreService)
+		HandleRideStartedEvent(event, firestoreService, dbClientMock)
 
 		dbEventSnapshot, err := firestoreService.GetDocument(ctx, "rides", fmt.Sprintf("%d", event.RideId))
 		require.NoError(t, err)

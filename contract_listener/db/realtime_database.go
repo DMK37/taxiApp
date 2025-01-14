@@ -10,6 +10,8 @@ import (
 type RealtimeDatabaseService interface {
 	PushRideCreatedNotification(id string, rideId uint64) error
 	PushRideConfirmedNotification(id string, rideId uint64, driverId string) error
+	PushRideStartedNotification(id string, rideId uint64) error
+	PushRideCompletedNotification(id string, rideId uint64) error
 }
 
 type FirebaseRealtimeDatabaseService struct {
@@ -34,6 +36,24 @@ func (rds *FirebaseRealtimeDatabaseService) PushRideCreatedNotification(id strin
 func (rds *FirebaseRealtimeDatabaseService) PushRideConfirmedNotification(id string, rideId uint64, driverId string) error {
 	ref := rds.Client.NewRef("notifications/ride_confirmed/" + id)
 	if _, err := ref.Push(context.Background(), map[string]interface{}{"id": rideId, "driverId": driverId, "timestamp": time.Now().Unix()}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rds *FirebaseRealtimeDatabaseService) PushRideStartedNotification(id string, rideId uint64) error {
+	ref := rds.Client.NewRef("notifications/ride_started/" + id)
+	if _, err := ref.Push(context.Background(), map[string]interface{}{"id": rideId, "timestamp": time.Now().Unix()}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (rds *FirebaseRealtimeDatabaseService) PushRideCompletedNotification(id string, rideId uint64) error {
+	ref := rds.Client.NewRef("notifications/ride_completed/" + id)
+	if _, err := ref.Push(context.Background(), map[string]interface{}{"id": rideId, "timestamp": time.Now().Unix()}); err != nil {
 		return err
 	}
 

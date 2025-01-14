@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+	"strings"
 
 	"cloud.google.com/go/firestore"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -28,7 +29,7 @@ func NewRideConfirmed(parsedABI abi.ABI, vLog types.Log) RideConfirmed {
 	}
 
 	event.RideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
-	event.Driver = common.HexToAddress(vLog.Topics[2].Hex())
+	event.Driver = common.HexToAddress(strings.ToLower(vLog.Topics[2].Hex()))
 	event.ConfirmationTime = binary.BigEndian.Uint64(vLog.Topics[3].Bytes()[24:])
 
 	return event

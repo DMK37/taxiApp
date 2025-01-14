@@ -27,7 +27,7 @@ class InitialPageBuilder extends StatelessWidget {
             default:
               return const Scaffold(
                 body: Center(
-                  child: Text('Something went wrong!'),
+                  child: Text('Something went wrong (init)!'),
                 ),
               );
           }

@@ -50,11 +50,11 @@ class _WaitingPageState extends State<WaitingPage> {
       appKit: context.read<AuthCubit>().appKit,
     );
     _appKitModal.init();
-    _listenForNewItems();
+    _createdListener();
     _confirmListener();
   }
 
-  void _listenForNewItems() {
+  void _createdListener() {
     _subscrition = _databaseRef?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final int time = childData['timestamp'];
@@ -63,16 +63,12 @@ class _WaitingPageState extends State<WaitingPage> {
           rideId = childData['id'];
           _isButtonEnabled = true;
         });
-
       }
     });
   }
 
   void _confirmListener() {
-    _databaseRef2 = FirebaseDatabase.instance.ref(
-        "notifications/ride_confirmed/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
     _subscrition2 = _databaseRef2?.onChildAdded.listen((event) {
-      print(event.snapshot.value);
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final int time = childData['timestamp'];
       if (initTime < time && rideId == childData['id']) {
@@ -120,7 +116,7 @@ class _WaitingPageState extends State<WaitingPage> {
                       .destination;
                   final (polyline, _) =
                       await mapUtils.getPolyline(source, destination);
-
+                  polylines[const PolylineId('polyline')] = polyline;
                   _addMarker(source, "Source", BitmapDescriptor.defaultMarker);
                   _addMarker(destination, "Destination",
                       BitmapDescriptor.defaultMarkerWithHue(90));
@@ -178,6 +174,7 @@ class _WaitingPageState extends State<WaitingPage> {
                   ),
                   child: Column(
                     children: [
+                      const SizedBox(height: 20),
                       Text(
                         'Waiting for the confirmation',
                         style: Theme.of(context).textTheme.titleMedium,
@@ -197,7 +194,7 @@ class _WaitingPageState extends State<WaitingPage> {
                           backgroundColor: _isButtonEnabled
                               ? Theme.of(context).colorScheme.primary
                               : Colors
-                                  .grey, // Optional: Change color when disabled
+                                  .grey,
                           foregroundColor:
                               Theme.of(context).colorScheme.surface,
                           padding: const EdgeInsets.symmetric(

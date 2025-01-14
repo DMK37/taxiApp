@@ -25,7 +25,7 @@ class AppRouter {
     ),
     GoRoute(
         path: '/order',
-        builder: (context, state) =>
-            const AuthListenerWrapper(child: OrderBuilder())),
+        builder: (context, state) => const LocationListenerWrapper(
+            child: AuthListenerWrapper(child: OrderBuilder()))),
   ]);
 }

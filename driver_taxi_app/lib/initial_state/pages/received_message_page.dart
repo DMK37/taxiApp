@@ -5,8 +5,10 @@ import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
 import 'package:driver_taxi_app/models/order_message.dart';
+import 'package:driver_taxi_app/order/cubit/order_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:shared/utils/map_utils.dart';
@@ -19,13 +21,14 @@ class ReceivedMessagePage extends StatefulWidget {
   State<ReceivedMessagePage> createState() => _ReceivedMessagePageState();
 }
 
-class _ReceivedMessagePageState extends State<ReceivedMessagePage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
+class _ReceivedMessagePageState extends State<ReceivedMessagePage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   final mapUtils = MapUtils();
   late double cost;
+
+  late Timer _timer;
+  double _progress = 0.0;
 
   late ReownAppKitModal _appKitModal;
 
@@ -35,31 +38,30 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage>
   @override
   void initState() {
     super.initState();
-
     cost = double.parse(widget.message.cost) / 1000000000000000000;
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 60),
-    )..addListener(() {
-      if (mounted) {
-        setState(() {});
-      }
-      });
+    _startLoading();
+  }
 
-    _animationController.forward().whenComplete(() {
-      // Trigger an action when the progress completes
-      print('Animation completed');
-      context.read<DriverInitCubit>().cancelRide();
+  void _startLoading() {
+    const duration = Duration(milliseconds: 100);
+    _timer = Timer.periodic(duration, (timer) {
+      setState(() {
+        _progress += 0.1 / 60;
+        if (_progress >= 1.0) {
+          _progress = 1.0;
+          _timer.cancel();
+          context.read<DriverInitCubit>().cancelRide();
+        }
+      });
     });
   }
 
   @override
-void dispose() {
-  _animationController.stop(canceled: false);
-  _animationController.dispose();
-  _controller.future.then((value) => value.dispose());
-  super.dispose();
-}
+  void dispose() {
+    _timer.cancel();
+
+    super.dispose();
+  }
 
   _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
     MarkerId markerId = MarkerId(id);
@@ -206,8 +208,7 @@ void dispose() {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: LinearProgressIndicator(
-                          value: _animationController
-                              .value, // Progress from 0.0 to 1.0
+                          value: _progress,
                           backgroundColor: Colors.grey[300],
                           valueColor:
                               const AlwaysStoppedAnimation<Color>(Colors.blue),
@@ -216,10 +217,13 @@ void dispose() {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () async {
-                          await context
-                              .read<DriverInitCubit>()
-                              .confirmRide(_appKitModal, widget.message.rideId);
-                        
+                          final res = await context
+                              .read<OrderCubit>()
+                              .confirmRide(_appKitModal, widget.message.rideId,
+                                  widget.message);
+                          if (res) {
+                            context.go('/order');
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:

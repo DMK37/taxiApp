@@ -62,7 +62,7 @@ func NewRideCreated(parsedABI abi.ABI, vLog types.Log) RideCreated {
 	}
 
 	event.RideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
-	event.Client = common.HexToAddress(vLog.Topics[2].Hex())
+	event.Client = common.HexToAddress(strings.ToLower(vLog.Topics[2].Hex()))
 	event.Cost = new(big.Int).SetBytes(vLog.Topics[3].Bytes())
 
 	return event
@@ -77,7 +77,7 @@ func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreServ
 
 	fmt.Printf("Ride created: %d, client: %s, cost: %s\n", event.RideId, event.Client.Hex(), event.Cost.String())
 	firestoreService.AddDocument(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), map[string]interface{}{
-		"client":              strings.ToLower(event.Client.Hex()),
+		"client":              event.Client.Hex(),
 		"cost":                event.Cost.String(),
 		"source":              event.Source,
 		"destination":         event.Destination,

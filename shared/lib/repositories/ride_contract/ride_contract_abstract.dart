@@ -9,12 +9,12 @@ abstract class RideContractAbstract {
       String sourceLocation,
       String destinationLocation,
       BigInt price);
-  Future<void> confirmRide(ReownAppKitModal modal, int rideId);
-  Future<void> confirmSourceArrivalByClient(ReownAppKitModal modal, int rideId);
-  Future<void> confirmDestinationArrivalByClient(
+  Future<bool> confirmRide(ReownAppKitModal modal, int rideId);
+  Future<bool> confirmSourceArrivalByClient(ReownAppKitModal modal, int rideId);
+  Future<bool> confirmDestinationArrivalByClient(
       ReownAppKitModal modal, int rideId);
-  Future<void> confirmSourceArrivalByDriver(ReownAppKitModal modal, int rideId);
-  Future<void> confirmDestinationArrivalByDriver(
+  Future<bool> confirmSourceArrivalByDriver(ReownAppKitModal modal, int rideId);
+  Future<bool> confirmDestinationArrivalByDriver(
       ReownAppKitModal modal, int rideId);
   Future<bool> cancelRide(ReownAppKitModal modal, int rideId);
 }

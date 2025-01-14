@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/reown_appkit.dart';
+import 'package:shared/models/driver_model.dart';
 import 'package:shared/utils/map_utils.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
@@ -28,6 +29,11 @@ class _UpcomingPageState extends State<UpcomingPage> {
   Map<MarkerId, Marker> markers = {};
   late DatabaseReference _databaseRef;
   StreamSubscription? _subscrition;
+  DriverModel? driver;
+  DatabaseReference? _databaseRef2;
+  StreamSubscription? _subscrition2;
+  final initTime = DateTime.now().millisecondsSinceEpoch / 1000;
+
   @override
   void initState() {
     super.initState();
@@ -36,13 +42,32 @@ class _UpcomingPageState extends State<UpcomingPage> {
       appKit: context.read<AuthCubit>().appKit,
     );
     _appKitModal.init();
-    _databaseRef =
-        FirebaseDatabase.instance.ref("rides/${widget.driverId}/driver/${widget.driverId}");
+    _databaseRef = FirebaseDatabase.instance
+        .ref("rides/${widget.driverId}/driver/${widget.driverId}");
     _listenForNewItems();
+    _databaseRef = FirebaseDatabase.instance.ref(
+        "notifications/ride_started/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
+    _startedListener();
     final clientId =
         (context.read<AuthCubit>().state as AuthenticatedState).user.id;
-    context.read<LocationCubit>().startLocationUpdate(
-        clientId, "rides/${widget.rideId}/client/$clientId");
+    context
+        .read<LocationCubit>()
+        .startLocationUpdate(clientId, "rides/${widget.rideId}/client");
+
+    context.read<OrderCubit>().getDriver(widget.driverId).then((value) {
+      driver = value;
+      setState(() {});
+    });
+  }
+
+  void _startedListener() {
+    _subscrition2 = _databaseRef2?.onChildAdded.listen((event) {
+      final childData = (event.snapshot.value as Map).cast<String, dynamic>();
+      final int time = childData['timestamp'];
+      if (initTime < time && childData['rideId'] == widget.rideId) {
+        context.read<OrderCubit>().destinationArrival(widget.rideId);
+      }
+    });
   }
 
   void _listenForNewItems() {
@@ -62,10 +87,12 @@ class _UpcomingPageState extends State<UpcomingPage> {
   @override
   void dispose() {
     _subscrition?.cancel();
+    _subscrition2?.cancel();
     final clientId =
         (context.read<AuthCubit>().state as AuthenticatedState).user.id;
-    context.read<LocationCubit>().stopLocationUpdate(
-        clientId, "rides/${widget.rideId}/client/$clientId");
+    context
+        .read<LocationCubit>()
+        .stopLocationUpdate(clientId, "rides/${widget.rideId}/client");
     super.dispose();
   }
 
@@ -135,11 +162,14 @@ class _UpcomingPageState extends State<UpcomingPage> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const Spacer(),
+                      Text("Driver: ${driver?.firstName} ${driver?.lastName}"),
+                      const SizedBox(height: 20),
+                      Text("Car: ${driver?.car.carName}"),
+                      const Spacer(),
                       ElevatedButton(
                         onPressed: () async {
-                          await context
-                              .read<OrderCubit>()
-                              .cancelRide(_appKitModal, widget.rideId);
+                          await context.read<OrderCubit>().confirmSourceArrival(
+                              _appKitModal, widget.rideId);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
@@ -153,7 +183,7 @@ class _UpcomingPageState extends State<UpcomingPage> {
                           ),
                         ),
                         child: Text(
-                          'Cancel Ride',
+                          'Confirm Source Arrival',
                           style: TextStyle(
                             fontSize: 18,
                             color: Theme.of(context).colorScheme.surface,
