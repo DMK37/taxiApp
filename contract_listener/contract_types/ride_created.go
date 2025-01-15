@@ -62,7 +62,7 @@ func NewRideCreated(parsedABI abi.ABI, vLog types.Log) RideCreated {
 	}
 
 	event.RideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
-	event.Client = common.HexToAddress(vLog.Topics[2].Hex())
+	event.Client = common.HexToAddress(strings.ToLower(vLog.Topics[2].Hex()))
 	event.Cost = new(big.Int).SetBytes(vLog.Topics[3].Bytes())
 
 	return event
@@ -70,7 +70,7 @@ func NewRideCreated(parsedABI abi.ABI, vLog types.Log) RideCreated {
 
 func (r *RideCreated) ToJSON() string {
 	return fmt.Sprintf(`{"rideId":%d,"client":"%s","cost":"%s","source":"%s","destination":"%s","sourceLocation":"%s","destinationLocation":"%s"}`,
-		r.RideId, r.Client.Hex(), r.Cost.String(), r.Source, r.Destination, r.SourceLocation, r.DestinationLocation)
+		r.RideId, strings.ToLower(r.Client.Hex()), r.Cost.String(), r.Source, r.Destination, r.SourceLocation, r.DestinationLocation)
 }
 
 func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreService, sqsClient services.SQSClient, queueURL string, realtimeDatabase db.RealtimeDatabaseService) {

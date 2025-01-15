@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+	"strings"
 
 	"cloud.google.com/go/firestore"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -28,7 +29,7 @@ func NewRideConfirmed(parsedABI abi.ABI, vLog types.Log) RideConfirmed {
 	}
 
 	event.RideId = binary.BigEndian.Uint64(vLog.Topics[1].Bytes()[24:])
-	event.Driver = common.HexToAddress(vLog.Topics[2].Hex())
+	event.Driver = common.HexToAddress(strings.ToLower(vLog.Topics[2].Hex()))
 	event.ConfirmationTime = binary.BigEndian.Uint64(vLog.Topics[3].Bytes()[24:])
 
 	return event
@@ -39,7 +40,7 @@ func HandleRideConfirmedEvent(event RideConfirmed, firestoreService db.Firestore
 	fmt.Printf("Ride confirmed: %d, driver: %s, confirmation time: %d\n", event.RideId, event.Driver.Hex(), event.ConfirmationTime)
 
 	err := firestoreService.AddFields(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), []firestore.Update{
-		{Path: "driver", Value: event.Driver.Hex()},
+		{Path: "driver", Value: strings.ToLower(event.Driver.Hex())},
 		{Path: "confirmationTime", Value: fmt.Sprint(event.ConfirmationTime)},
 		{Path: "status", Value: "confirmed"},
 	})
@@ -63,7 +64,7 @@ func HandleRideConfirmedEvent(event RideConfirmed, firestoreService db.Firestore
 		log.Fatalf("Failed to get client from Firestore: %v", err)
 	}
 
-	err = realtimeDatabase.PushRideConfirmedNotification(ride.client, event.RideId, event.Driver.Hex())
+	err = realtimeDatabase.PushRideConfirmedNotification(ride.client, event.RideId, strings.ToLower(event.Driver.Hex()))
 	if err != nil {
 		log.Fatalf("Failed to push ride confirmed notification: %v", err)
 	}

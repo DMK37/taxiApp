@@ -4,39 +4,33 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:reown_appkit/reown_appkit.dart';
-import 'package:shared/models/driver_model.dart';
+import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:shared/utils/map_utils.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
-import 'package:taxiapp/firebase/data_providers/client_location_dp.dart';
+import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
+import 'package:taxiapp/initial_order/cubit/initial_order_state.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/location/cubit/location_state.dart';
 import 'package:taxiapp/order/cubit/order_cubit.dart';
 
-class UpcomingPage extends StatefulWidget {
+class InProgressPage extends StatefulWidget {
   final int rideId;
-  final String driverId;
-  const UpcomingPage({super.key, required this.rideId, required this.driverId});
+  const InProgressPage({super.key, required this.rideId});
 
   @override
-  State<UpcomingPage> createState() => _UpcomingPageState();
+  State<InProgressPage> createState() => _InProgressPageState();
 }
 
-class _UpcomingPageState extends State<UpcomingPage> {
+class _InProgressPageState extends State<InProgressPage> {
   final _controller = Completer<GoogleMapController>();
   final mapUtils = MapUtils();
-  late ReownAppKitModal _appKitModal;
-  Map<MarkerId, Marker> markers = {};
-  late DatabaseReference _databaseRef;
-  StreamSubscription? _subscrition;
-  DriverModel? driver;
-  DatabaseReference? _databaseRef2;
-  StreamSubscription? _subscrition2;
   final initTime = DateTime.now().millisecondsSinceEpoch / 1000;
-  late BitmapDescriptor _carIcon;
-  late ClientLocationDataProvider provider;
-  late String clientId;
+  late ReownAppKitModal _appKitModal;
+  Map<PolylineId, Polyline> polylines = {};
+  Map<MarkerId, Marker> markers = {};
+  DatabaseReference? _databaseRef;
+  StreamSubscription? _subscrition;
 
   @override
   void initState() {
@@ -46,70 +40,32 @@ class _UpcomingPageState extends State<UpcomingPage> {
       appKit: context.read<AuthCubit>().appKit,
     );
     _appKitModal.init();
-    clientId = (context.read<AuthCubit>().state as AuthenticatedState).user.id;
-    _databaseRef = FirebaseDatabase.instance
-        .ref("rides/${widget.rideId}/driver/${widget.driverId}");
-    _driverLocationListener();
-    _databaseRef2 = FirebaseDatabase.instance.ref(
-        "notifications/ride_started/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
-    _startedListener();
-    context
-        .read<LocationCubit>()
-        .startLocationUpdate(clientId, "rides/${widget.rideId}/client");
-    _loadCarIcon();
-    context.read<OrderCubit>().getDriver(widget.driverId).then((value) {
-      driver = value;
-      setState(() {});
-    });
+    _databaseRef = FirebaseDatabase.instance.ref(
+        "notifications/ride_completed/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
+    _completedListener();
   }
 
-
-  void _startedListener() {
-    _subscrition2 = _databaseRef2?.onChildAdded.listen((event) {
+    void _completedListener() {
+    _subscrition = _databaseRef?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
-      print(childData);
       final int time = childData['timestamp'];
       if (initTime < time && childData['id'] == widget.rideId) {
-        context.read<OrderCubit>().destinationArrival(widget.rideId);
+        context.read<OrderCubit>().completedOrder();
       }
     });
-  }
-
-  void _driverLocationListener() {
-    _subscrition = _databaseRef.onChildChanged.listen((event) async {
-      final parentSnapshot = await _databaseRef.get();
-      if (parentSnapshot.exists) {
-        final childData = (parentSnapshot.value as Map).cast<String, dynamic>();
-        final position = LatLng(childData['latitude'], childData['longitude']);
-        markers[const MarkerId('driver')] = Marker(
-          markerId: const MarkerId('driver'),
-          position: position,
-          icon: _carIcon,
-        );
-        setState(() {});
-      }
-    });
-  }
-
-
-  Future<void> _loadCarIcon() async {
-    _carIcon = await BitmapDescriptor.asset(
-      const ImageConfiguration(size: Size(30, 30)),
-      'assets/images/car_icon.png',
-    );
-    setState(() {});
   }
 
   @override
   void dispose() {
     _subscrition?.cancel();
-    _subscrition2?.cancel();
-    final clientId =
-        (context.read<AuthCubit>().state as AuthenticatedState).user.id;
-    context
-        .read<LocationCubit>()
-        .stopLocationUpdate(clientId, "rides/${widget.rideId}/client");
     super.dispose();
+  }
+
+  _addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
+    MarkerId markerId = MarkerId(id);
+    Marker marker =
+        Marker(markerId: markerId, icon: descriptor, position: position);
+    markers[markerId] = marker;
   }
 
   @override
@@ -126,6 +82,24 @@ class _UpcomingPageState extends State<UpcomingPage> {
                 mapType: MapType.normal,
                 onMapCreated: (GoogleMapController controller) async {
                   _controller.complete(controller);
+                  final source = (context.read<InitialOrderCubit>().state
+                          as OrderWithPoints)
+                      .source;
+                  final destination = (context.read<InitialOrderCubit>().state
+                          as OrderWithPoints)
+                      .destination;
+                  final (polyline, _) =
+                      await mapUtils.getPolyline(source, destination);
+                  polylines[const PolylineId('polyline')] = polyline;
+                  _addMarker(source, "Source", BitmapDescriptor.defaultMarker);
+                  _addMarker(destination, "Destination",
+                      BitmapDescriptor.defaultMarkerWithHue(90));
+                  setState(() {});
+                  LatLngBounds bounds =
+                      mapUtils.calculateBounds(polyline.points);
+                  final GoogleMapController ctr = await _controller.future;
+                  await ctr
+                      .animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
                 },
                 initialCameraPosition: CameraPosition(
                   target: (context.read<LocationCubit>().state
@@ -136,6 +110,7 @@ class _UpcomingPageState extends State<UpcomingPage> {
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
                 markers: Set<Marker>.of(markers.values),
+                polylines: Set<Polyline>.of(polylines.values),
               ),
             ),
             Positioned(
@@ -175,18 +150,18 @@ class _UpcomingPageState extends State<UpcomingPage> {
                     children: [
                       const SizedBox(height: 20),
                       Text(
-                        'Waiting for the driver arrival',
+                        'Ride in Progress',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const Spacer(),
-                      Text("Driver: ${driver?.firstName} ${driver?.lastName}"),
-                      const SizedBox(height: 20),
-                      Text("Car: ${driver?.car.carName}"),
+                      const CircularProgressIndicator(),
                       const Spacer(),
                       ElevatedButton(
                         onPressed: () async {
-                          await context.read<OrderCubit>().confirmSourceArrival(
-                              _appKitModal, widget.rideId);
+                          await context
+                              .read<OrderCubit>()
+                              .confirmDestinationArrival(
+                                  _appKitModal, widget.rideId);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
@@ -200,7 +175,7 @@ class _UpcomingPageState extends State<UpcomingPage> {
                           ),
                         ),
                         child: Text(
-                          'Confirm Source Arrival',
+                          'Confirm Destination Arrival',
                           style: TextStyle(
                             fontSize: 18,
                             color: Theme.of(context).colorScheme.surface,

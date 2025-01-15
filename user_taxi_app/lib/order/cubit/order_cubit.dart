@@ -1,12 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reown_appkit/reown_appkit.dart';
+import 'package:shared/models/driver_model.dart';
+import 'package:shared/repositories/driver/driver_repository.dart';
 import 'package:shared/repositories/ride_contract/ride_contract.dart';
 import 'package:shared/repositories/ride_contract/ride_contract_abstract.dart';
 import 'package:taxiapp/order/cubit/order_state.dart';
 
 class OrderCubit extends Cubit<OrderState> {
   final RideContractAbstract rideRepository = RideContract();
-
+  final driverRepository = DriverRepository();
   OrderCubit() : super(OrderInitial());
   Future<bool> createRide(
     ReownAppKitModal modal,
@@ -45,6 +47,35 @@ class OrderCubit extends Cubit<OrderState> {
     } else {
       // emit(RideError());
     }
+  }
+
+  Future<void> confirmSourceArrival(ReownAppKitModal modal, int rideId) async {
+    await rideRepository.confirmSourceArrivalByClient(modal, rideId);
+  }
+
+  Future<void> confirmDestinationArrival(
+      ReownAppKitModal modal, int rideId) async {
+    // emit(OrderLoading());
+    final response =
+        await rideRepository.confirmDestinationArrivalByClient(modal, rideId);
+
+    if (response) {
+      emit(OrderCompleted());
+    } else {
+      // emit(RideError());
+    }
+  }
+
+  void destinationArrival(int rideId) {
+    emit(OrderDestinationArrival(rideId: rideId));
+  }
+
+  void completedOrder() {
+    emit(OrderCompleted());
+  }
+
+  Future<DriverModel?> getDriver(String driverId) async {
+    return await driverRepository.getDriver(driverId);
   }
 
   void sourceArrival(String driverId, int rideId) {

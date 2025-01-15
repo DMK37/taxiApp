@@ -1,114 +1,93 @@
 import 'dart:async';
 
+import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
+import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
+import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
+import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
+import 'package:driver_taxi_app/location/cubit/location_state.dart';
+import 'package:driver_taxi_app/models/order_message.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:reown_appkit/reown_appkit.dart';
-import 'package:shared/models/driver_model.dart';
 import 'package:shared/utils/map_utils.dart';
-import 'package:taxiapp/auth/cubit/auth_cubit.dart';
-import 'package:taxiapp/auth/cubit/auth_state.dart';
-import 'package:taxiapp/firebase/data_providers/client_location_dp.dart';
-import 'package:taxiapp/location/cubit/location_cubit.dart';
-import 'package:taxiapp/location/cubit/location_state.dart';
-import 'package:taxiapp/order/cubit/order_cubit.dart';
 
-class UpcomingPage extends StatefulWidget {
-  final int rideId;
-  final String driverId;
-  const UpcomingPage({super.key, required this.rideId, required this.driverId});
+class OrderInProgressPage extends StatefulWidget {
+  const OrderInProgressPage({super.key, required this.message});
+  final OrderMessageModel message;
 
   @override
-  State<UpcomingPage> createState() => _UpcomingPageState();
+  State<OrderInProgressPage> createState() => _OrderInProgressPageState();
 }
 
-class _UpcomingPageState extends State<UpcomingPage> {
-  final _controller = Completer<GoogleMapController>();
+class _OrderInProgressPageState extends State<OrderInProgressPage> {
+  final Completer<GoogleMapController> _controller =
+      Completer<GoogleMapController>();
   final mapUtils = MapUtils();
-  late ReownAppKitModal _appKitModal;
-  Map<MarkerId, Marker> markers = {};
-  late DatabaseReference _databaseRef;
-  StreamSubscription? _subscrition;
-  DriverModel? driver;
-  DatabaseReference? _databaseRef2;
-  StreamSubscription? _subscrition2;
   final initTime = DateTime.now().millisecondsSinceEpoch / 1000;
-  late BitmapDescriptor _carIcon;
-  late ClientLocationDataProvider provider;
-  late String clientId;
+  Map<MarkerId, Marker> markers = {};
+  Map<PolylineId, Polyline> polylines = {};
+  String? driverId;
+  DatabaseReference? _databaseRef;
+  StreamSubscription? _subscrition;
 
   @override
   void initState() {
     super.initState();
-    _appKitModal = ReownAppKitModal(
-      context: context,
-      appKit: context.read<AuthCubit>().appKit,
+    driverId =
+        (context.read<DriverAuthCubit>().state as DriverAuthenticatedState)
+            .driver
+            .id;
+    markers[const MarkerId('destination')] = Marker(
+      markerId: const MarkerId('destination'),
+      position: widget.message.destinationLocation,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
     );
-    _appKitModal.init();
-    clientId = (context.read<AuthCubit>().state as AuthenticatedState).user.id;
-    _databaseRef = FirebaseDatabase.instance
-        .ref("rides/${widget.rideId}/driver/${widget.driverId}");
-    _driverLocationListener();
-    _databaseRef2 = FirebaseDatabase.instance.ref(
-        "notifications/ride_started/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
-    _startedListener();
-    context
-        .read<LocationCubit>()
-        .startLocationUpdate(clientId, "rides/${widget.rideId}/client");
-    _loadCarIcon();
-    context.read<OrderCubit>().getDriver(widget.driverId).then((value) {
-      driver = value;
-      setState(() {});
-    });
+    _databaseRef =
+        FirebaseDatabase.instance.ref("notifications/ride_completed/$driverId");
+    _completedListener();
+    _startLocationUpdates();
   }
 
-
-  void _startedListener() {
-    _subscrition2 = _databaseRef2?.onChildAdded.listen((event) {
+  void _completedListener() {
+    _subscrition = _databaseRef?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
-      print(childData);
       final int time = childData['timestamp'];
-      if (initTime < time && childData['id'] == widget.rideId) {
-        context.read<OrderCubit>().destinationArrival(widget.rideId);
+      if (initTime < time && childData['id'] == widget.message.rideId) {
+        context.read<DriverInitCubit>().orderCompleted(widget.message);
       }
     });
   }
 
-  void _driverLocationListener() {
-    _subscrition = _databaseRef.onChildChanged.listen((event) async {
-      final parentSnapshot = await _databaseRef.get();
-      if (parentSnapshot.exists) {
-        final childData = (parentSnapshot.value as Map).cast<String, dynamic>();
-        final position = LatLng(childData['latitude'], childData['longitude']);
-        markers[const MarkerId('driver')] = Marker(
-          markerId: const MarkerId('driver'),
-          position: position,
-          icon: _carIcon,
-        );
-        setState(() {});
-      }
-    });
-  }
-
-
-  Future<void> _loadCarIcon() async {
-    _carIcon = await BitmapDescriptor.asset(
-      const ImageConfiguration(size: Size(30, 30)),
-      'assets/images/car_icon.png',
+  void _startLocationUpdates() {
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.bestForNavigation,
+      distanceFilter: 50,
     );
-    setState(() {});
+
+    Geolocator.getPositionStream(locationSettings: locationSettings)
+        .listen((Position? position) async {
+      if (position != null) {
+        final ctr = await _controller.future;
+
+        final (polyline, _) = await mapUtils.getPolyline(
+            widget.message.destinationLocation,
+            LatLng(position.latitude, position.longitude));
+        polylines[const PolylineId('route')] = polyline;
+
+        ctr.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+            target: LatLng(position.latitude, position.longitude), zoom: 17)));
+        if (mounted) {
+          setState(() {});
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     _subscrition?.cancel();
-    _subscrition2?.cancel();
-    final clientId =
-        (context.read<AuthCubit>().state as AuthenticatedState).user.id;
-    context
-        .read<LocationCubit>()
-        .stopLocationUpdate(clientId, "rides/${widget.rideId}/client");
     super.dispose();
   }
 
@@ -136,6 +115,7 @@ class _UpcomingPageState extends State<UpcomingPage> {
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
                 markers: Set<Marker>.of(markers.values),
+                polylines: Set<Polyline>.of(polylines.values),
               ),
             ),
             Positioned(
@@ -149,7 +129,9 @@ class _UpcomingPageState extends State<UpcomingPage> {
                   onPressed: () async {
                     final location =
                         await context.read<LocationCubit>().getLocation();
-                    mapUtils.goToTheLocation(location.$1, _controller);
+                    context
+                        .read<LocationCubit>()
+                        .goToTheLocation(location.$1, _controller);
                   },
                   child: Icon(
                     Icons.gps_fixed,
@@ -173,21 +155,18 @@ class _UpcomingPageState extends State<UpcomingPage> {
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 20),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Text(
-                        'Waiting for the driver arrival',
+                        'Ride in Progress',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
+                      const SizedBox(height: 25),
                       const Spacer(),
-                      Text("Driver: ${driver?.firstName} ${driver?.lastName}"),
                       const SizedBox(height: 20),
-                      Text("Car: ${driver?.car.carName}"),
-                      const Spacer(),
                       ElevatedButton(
-                        onPressed: () async {
-                          await context.read<OrderCubit>().confirmSourceArrival(
-                              _appKitModal, widget.rideId);
-                        },
+                        onPressed: () async {},
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
@@ -200,14 +179,13 @@ class _UpcomingPageState extends State<UpcomingPage> {
                           ),
                         ),
                         child: Text(
-                          'Confirm Source Arrival',
+                          'Confirm destination arrival',
                           style: TextStyle(
-                            fontSize: 18,
-                            color: Theme.of(context).colorScheme.surface,
-                          ),
+                              fontSize: 18,
+                              color: Theme.of(context).colorScheme.surface),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ))

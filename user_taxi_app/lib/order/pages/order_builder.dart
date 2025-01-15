@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/order/cubit/order_cubit.dart';
 import 'package:taxiapp/order/cubit/order_state.dart';
+import 'package:taxiapp/order/pages/completed_page.dart';
+import 'package:taxiapp/order/pages/in_progress_page.dart';
 import 'package:taxiapp/order/pages/upcoming_page.dart';
 import 'package:taxiapp/order/pages/waiting_page.dart';
 
@@ -34,8 +36,13 @@ class OrderBuilder extends StatelessWidget {
               ):
               return UpcomingPage(rideId: rideId, driverId: driverId);
 
-            // case OrderDestinationArrival():
-            //   return const DestinationArrivalPage();
+            case OrderDestinationArrival(rideId: int rideId):
+              return InProgressPage(
+                rideId: rideId,
+              );
+
+            case OrderCompleted():
+              return const CompletedPage();
 
             default:
               return const SizedBox.shrink();

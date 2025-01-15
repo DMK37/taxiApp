@@ -31,11 +31,11 @@ class RideContract implements RideContractAbstract {
   }
 
   @override
-  Future<void> confirmDestinationArrivalByClient(
+  Future<bool> confirmDestinationArrivalByClient(
       ReownAppKitModal modal, int rideId) async {
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
-    await modal.requestWriteContract(
+    final resp = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
@@ -44,15 +44,16 @@ class RideContract implements RideContractAbstract {
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [BigInt.from(rideId)]);
+    return resp != null;
   }
 
   @override
-  Future<void> confirmDestinationArrivalByDriver(
+  Future<bool> confirmDestinationArrivalByDriver(
       ReownAppKitModal modal, int rideId) async {
     await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
-    await modal.requestWriteContract(
+    final resp = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
@@ -61,6 +62,7 @@ class RideContract implements RideContractAbstract {
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [BigInt.from(rideId)]);
+    return resp != null;
   }
 
   @override
@@ -81,12 +83,12 @@ class RideContract implements RideContractAbstract {
   }
 
   @override
-  Future<void> confirmSourceArrivalByClient(
+  Future<bool> confirmSourceArrivalByClient(
       ReownAppKitModal modal, int rideId) async {
     await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
-    await modal.requestWriteContract(
+    final resp = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
@@ -95,15 +97,16 @@ class RideContract implements RideContractAbstract {
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [BigInt.from(rideId)]);
+    return resp != null;
   }
 
   @override
-  Future<void> confirmSourceArrivalByDriver(
+  Future<bool> confirmSourceArrivalByDriver(
       ReownAppKitModal modal, int rideId) async {
     await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
-    await modal.requestWriteContract(
+    final resp = await modal.requestWriteContract(
         topic: modal.session!.topic,
         chainId: modal.selectedChain!.chainId,
         deployedContract: deployedContract,
@@ -112,6 +115,7 @@ class RideContract implements RideContractAbstract {
           from: EthereumAddress.fromHex(address ?? "0x00000000"),
         ),
         parameters: [BigInt.from(rideId)]);
+    return resp != null;
   }
 
   @override

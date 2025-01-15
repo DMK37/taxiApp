@@ -6,7 +6,7 @@ import 'package:driver_taxi_app/models/order_message.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:reown_appkit/reown_appkit.dart';
+import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:shared/models/car_type.dart';
 import 'package:shared/repositories/driver/driver_repository.dart';
 import 'package:shared/repositories/ride_contract/ride_contract.dart';
@@ -45,15 +45,36 @@ class DriverInitCubit extends Cubit<DriverState> {
     emit(DriverMessagedState(message: message));
   }
 
-  Future<bool> confirmRide(
+  void cancelRide() {
+    emit(DriverOfflineState());
+  }
+
+    Future<bool> confirmRide(
     ReownAppKitModal modal,
     int rideId,
+    OrderMessageModel orderMessageModel,
   ) async {
     final res = await rideContract.confirmRide(modal, rideId);
+    if (res) {
+      emit(UpcomingOrderState(message: orderMessageModel));
+    }
     return res;
   }
 
-  void cancelRide() {
-    emit(DriverOfflineState());
+  Future<bool> confirmSourceArrival(
+    ReownAppKitModal modal,
+    int rideId,
+    OrderMessageModel orderMessageModel,
+  ) async {
+    final res = await rideContract.confirmSourceArrivalByDriver(modal, rideId);
+    return res;
+  }
+
+  void orderCompleted(OrderMessageModel orderMessageModel) {
+    emit(CompletedOrderState(orderMessageModel));
+  }
+
+  void orderInProgress(OrderMessageModel orderMessageModel) {
+    emit(InProgressOrderState(orderMessageModel));
   }
 }

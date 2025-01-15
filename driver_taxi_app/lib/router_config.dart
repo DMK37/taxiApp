@@ -3,7 +3,6 @@ import 'package:driver_taxi_app/auth/pages/login_page.dart';
 import 'package:driver_taxi_app/driver/pages/driver_page.dart';
 import 'package:driver_taxi_app/initial_state/pages/initial_page_builder.dart';
 import 'package:driver_taxi_app/location/pages/location_listener_wrapper.dart';
-import 'package:driver_taxi_app/order/pages/order_builder.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -23,9 +22,9 @@ class AppRouter {
       builder: (context, state) =>
           const AuthListenerWrapper(child: DriverLoginPage()),
     ),
-    GoRoute(
-        path: '/order',
-        builder: (context, state) =>
-            const AuthListenerWrapper(child: OrderBuilder())),
+    // GoRoute(
+    //     path: '/order',
+    //     builder: (context, state) => const LocationListenerWrapper(
+    //         child: AuthListenerWrapper(child: OrderBuilder()))),
   ]);
 }
