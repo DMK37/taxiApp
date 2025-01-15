@@ -412,9 +412,19 @@ class MockDriverInitCubit extends _i1.Mock implements _i11.DriverInitCubit {
       );
 
   @override
+  void cancelRide() => super.noSuchMethod(
+        Invocation.method(
+          #cancelRide,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   _i8.Future<bool> confirmRide(
     _i2.ReownAppKitModal? modal,
     int? rideId,
+    _i13.OrderMessageModel? orderMessageModel,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -422,6 +432,7 @@ class MockDriverInitCubit extends _i1.Mock implements _i11.DriverInitCubit {
           [
             modal,
             rideId,
+            orderMessageModel,
           ],
         ),
         returnValue: _i8.Future<bool>.value(false),
@@ -429,10 +440,40 @@ class MockDriverInitCubit extends _i1.Mock implements _i11.DriverInitCubit {
       ) as _i8.Future<bool>);
 
   @override
-  void cancelRide() => super.noSuchMethod(
+  _i8.Future<bool> confirmSourceArrival(
+    _i2.ReownAppKitModal? modal,
+    int? rideId,
+    _i13.OrderMessageModel? orderMessageModel,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #cancelRide,
-          [],
+          #confirmSourceArrival,
+          [
+            modal,
+            rideId,
+            orderMessageModel,
+          ],
+        ),
+        returnValue: _i8.Future<bool>.value(false),
+        returnValueForMissingStub: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
+  void orderCompleted(_i13.OrderMessageModel? orderMessageModel) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #orderCompleted,
+          [orderMessageModel],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void orderInProgress(_i13.OrderMessageModel? orderMessageModel) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #orderInProgress,
+          [orderMessageModel],
         ),
         returnValueForMissingStub: null,
       );

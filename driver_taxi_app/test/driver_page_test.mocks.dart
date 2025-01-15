@@ -3,27 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i18;
+import 'dart:async' as _i7;
 
-import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart' as _i17;
+import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart' as _i6;
 import 'package:driver_taxi_app/auth/cubit/auth_state.dart' as _i4;
-import 'package:flutter_bloc/flutter_bloc.dart' as _i20;
-import 'package:logger/logger.dart' as _i14;
+import 'package:flutter_bloc/flutter_bloc.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i21;
+import 'package:mockito/src/dummies.dart' as _i10;
 import 'package:reown_appkit/reown_appkit.dart' as _i2;
-import 'package:reown_core/connectivity/i_connectivity.dart' as _i10;
-import 'package:reown_core/crypto/i_crypto.dart' as _i7;
-import 'package:reown_core/echo/i_echo.dart' as _i13;
-import 'package:reown_core/heartbit/i_heartbeat.dart' as _i6;
-import 'package:reown_core/pairing/i_expirer.dart' as _i11;
-import 'package:reown_core/pairing/i_pairing.dart' as _i12;
-import 'package:reown_core/relay_client/i_relay_client.dart' as _i8;
 import 'package:reown_core/store/i_generic_store.dart' as _i5;
-import 'package:reown_core/store/i_store.dart' as _i9;
-import 'package:reown_core/store/link_mode_store.dart' as _i16;
-import 'package:reown_core/verify/i_verify.dart' as _i15;
-import 'package:shared/models/car_type.dart' as _i19;
+import 'package:shared/models/car_type.dart' as _i8;
 import 'package:shared/repositories/driver/driver_repository.dart' as _i3;
 
 // ignore_for_file: type=lint
@@ -166,122 +155,10 @@ class _FakeSessionAuthRequestResponse_11 extends _i1.SmartFake
         );
 }
 
-class _FakeIHeartBeat_12 extends _i1.SmartFake implements _i6.IHeartBeat {
-  _FakeIHeartBeat_12(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeICrypto_13 extends _i1.SmartFake implements _i7.ICrypto {
-  _FakeICrypto_13(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeIRelayClient_14 extends _i1.SmartFake implements _i8.IRelayClient {
-  _FakeIRelayClient_14(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeIStore_15<T> extends _i1.SmartFake implements _i9.IStore<T> {
-  _FakeIStore_15(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeIConnectivity_16 extends _i1.SmartFake
-    implements _i10.IConnectivity {
-  _FakeIConnectivity_16(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeIExpirer_17 extends _i1.SmartFake implements _i11.IExpirer {
-  _FakeIExpirer_17(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeIPairing_18 extends _i1.SmartFake implements _i12.IPairing {
-  _FakeIPairing_18(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeIEcho_19 extends _i1.SmartFake implements _i13.IEcho {
-  _FakeIEcho_19(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeLogger_20 extends _i1.SmartFake implements _i14.Logger {
-  _FakeLogger_20(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeIVerify_21 extends _i1.SmartFake implements _i15.IVerify {
-  _FakeIVerify_21(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeILinkModeStore_22 extends _i1.SmartFake
-    implements _i16.ILinkModeStore {
-  _FakeILinkModeStore_22(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
 /// A class which mocks [DriverAuthCubit].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDriverAuthCubit extends _i1.Mock implements _i17.DriverAuthCubit {
+class MockDriverAuthCubit extends _i1.Mock implements _i6.DriverAuthCubit {
   @override
   _i2.ReownAppKit get appKit => (super.noSuchMethod(
         Invocation.getter(#appKit),
@@ -331,11 +208,11 @@ class MockDriverAuthCubit extends _i1.Mock implements _i17.DriverAuthCubit {
       ) as _i4.DriverAuthState);
 
   @override
-  _i18.Stream<_i4.DriverAuthState> get stream => (super.noSuchMethod(
+  _i7.Stream<_i4.DriverAuthState> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _i18.Stream<_i4.DriverAuthState>.empty(),
-        returnValueForMissingStub: _i18.Stream<_i4.DriverAuthState>.empty(),
-      ) as _i18.Stream<_i4.DriverAuthState>);
+        returnValue: _i7.Stream<_i4.DriverAuthState>.empty(),
+        returnValueForMissingStub: _i7.Stream<_i4.DriverAuthState>.empty(),
+      ) as _i7.Stream<_i4.DriverAuthState>);
 
   @override
   bool get isClosed => (super.noSuchMethod(
@@ -345,14 +222,14 @@ class MockDriverAuthCubit extends _i1.Mock implements _i17.DriverAuthCubit {
       ) as bool);
 
   @override
-  _i18.Future<void> init() => (super.noSuchMethod(
+  _i7.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
           #init,
           [],
         ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
   void isConnected(_i2.ReownAppKitModal? modal) => super.noSuchMethod(
@@ -364,12 +241,12 @@ class MockDriverAuthCubit extends _i1.Mock implements _i17.DriverAuthCubit {
       );
 
   @override
-  _i18.Future<void> createAccount(
+  _i7.Future<void> createAccount(
     String? id,
     String? firstName,
     String? lastName,
     String? carName,
-    _i19.CarType? carType,
+    _i8.CarType? carType,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -382,17 +259,17 @@ class MockDriverAuthCubit extends _i1.Mock implements _i17.DriverAuthCubit {
             carType,
           ],
         ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i18.Future<void> updateAccount(
+  _i7.Future<void> updateAccount(
     String? id,
     String? firstName,
     String? lastName,
     String? carName,
-    _i19.CarType? carType,
+    _i8.CarType? carType,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -405,9 +282,9 @@ class MockDriverAuthCubit extends _i1.Mock implements _i17.DriverAuthCubit {
             carType,
           ],
         ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
   void emit(_i4.DriverAuthState? state) => super.noSuchMethod(
@@ -419,7 +296,7 @@ class MockDriverAuthCubit extends _i1.Mock implements _i17.DriverAuthCubit {
       );
 
   @override
-  void onChange(_i20.Change<_i4.DriverAuthState>? change) => super.noSuchMethod(
+  void onChange(_i9.Change<_i4.DriverAuthState>? change) => super.noSuchMethod(
         Invocation.method(
           #onChange,
           [change],
@@ -460,14 +337,14 @@ class MockDriverAuthCubit extends _i1.Mock implements _i17.DriverAuthCubit {
       );
 
   @override
-  _i18.Future<void> close() => (super.noSuchMethod(
+  _i7.Future<void> close() => (super.noSuchMethod(
         Invocation.method(
           #close,
           [],
         ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 }
 
 /// A class which mocks [ReownAppKit].
@@ -477,11 +354,11 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
   @override
   String get protocol => (super.noSuchMethod(
         Invocation.getter(#protocol),
-        returnValue: _i21.dummyValue<String>(
+        returnValue: _i10.dummyValue<String>(
           this,
           Invocation.getter(#protocol),
         ),
-        returnValueForMissingStub: _i21.dummyValue<String>(
+        returnValueForMissingStub: _i10.dummyValue<String>(
           this,
           Invocation.getter(#protocol),
         ),
@@ -741,17 +618,17 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
       ) as _i5.IGenericStore<String>);
 
   @override
-  _i18.Future<void> init() => (super.noSuchMethod(
+  _i7.Future<void> init() => (super.noSuchMethod(
         Invocation.method(
           #init,
           [],
         ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i18.Future<_i2.ConnectResponse> connect({
+  _i7.Future<_i2.ConnectResponse> connect({
     Map<String, _i2.RequiredNamespace>? requiredNamespaces,
     Map<String, _i2.RequiredNamespace>? optionalNamespaces,
     Map<String, String>? sessionProperties,
@@ -778,7 +655,7 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
           },
         ),
         returnValue:
-            _i18.Future<_i2.ConnectResponse>.value(_FakeConnectResponse_10(
+            _i7.Future<_i2.ConnectResponse>.value(_FakeConnectResponse_10(
           this,
           Invocation.method(
             #connect,
@@ -794,7 +671,7 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
           ),
         )),
         returnValueForMissingStub:
-            _i18.Future<_i2.ConnectResponse>.value(_FakeConnectResponse_10(
+            _i7.Future<_i2.ConnectResponse>.value(_FakeConnectResponse_10(
           this,
           Invocation.method(
             #connect,
@@ -809,10 +686,10 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             },
           ),
         )),
-      ) as _i18.Future<_i2.ConnectResponse>);
+      ) as _i7.Future<_i2.ConnectResponse>);
 
   @override
-  _i18.Future<dynamic> request({
+  _i7.Future<dynamic> request({
     required String? topic,
     required String? chainId,
     required _i2.SessionRequestParams? request,
@@ -827,12 +704,12 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             #request: request,
           },
         ),
-        returnValue: _i18.Future<dynamic>.value(),
-        returnValueForMissingStub: _i18.Future<dynamic>.value(),
-      ) as _i18.Future<dynamic>);
+        returnValue: _i7.Future<dynamic>.value(),
+        returnValueForMissingStub: _i7.Future<dynamic>.value(),
+      ) as _i7.Future<dynamic>);
 
   @override
-  _i18.Future<List<dynamic>> requestReadContract({
+  _i7.Future<List<dynamic>> requestReadContract({
     required _i2.DeployedContract? deployedContract,
     required String? functionName,
     required String? rpcUrl,
@@ -851,13 +728,12 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             #parameters: parameters,
           },
         ),
-        returnValue: _i18.Future<List<dynamic>>.value(<dynamic>[]),
-        returnValueForMissingStub:
-            _i18.Future<List<dynamic>>.value(<dynamic>[]),
-      ) as _i18.Future<List<dynamic>>);
+        returnValue: _i7.Future<List<dynamic>>.value(<dynamic>[]),
+        returnValueForMissingStub: _i7.Future<List<dynamic>>.value(<dynamic>[]),
+      ) as _i7.Future<List<dynamic>>);
 
   @override
-  _i18.Future<dynamic> requestWriteContract({
+  _i7.Future<dynamic> requestWriteContract({
     required String? topic,
     required String? chainId,
     required _i2.DeployedContract? deployedContract,
@@ -880,9 +756,9 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             #parameters: parameters,
           },
         ),
-        returnValue: _i18.Future<dynamic>.value(),
-        returnValueForMissingStub: _i18.Future<dynamic>.value(),
-      ) as _i18.Future<dynamic>);
+        returnValue: _i7.Future<dynamic>.value(),
+        returnValueForMissingStub: _i7.Future<dynamic>.value(),
+      ) as _i7.Future<dynamic>);
 
   @override
   void registerEventHandler({
@@ -907,18 +783,18 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
       );
 
   @override
-  _i18.Future<void> ping({required String? topic}) => (super.noSuchMethod(
+  _i7.Future<void> ping({required String? topic}) => (super.noSuchMethod(
         Invocation.method(
           #ping,
           [],
           {#topic: topic},
         ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i18.Future<void> disconnectSession({
+  _i7.Future<void> disconnectSession({
     required String? topic,
     required _i2.ReownSignError? reason,
   }) =>
@@ -931,9 +807,9 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             #reason: reason,
           },
         ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
   Map<String, _i2.SessionData> getActiveSessions() => (super.noSuchMethod(
@@ -970,17 +846,17 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
       ) as Map<String, _i2.ProposalData>);
 
   @override
-  _i18.Future<void> dispatchEnvelope(String? url) => (super.noSuchMethod(
+  _i7.Future<void> dispatchEnvelope(String? url) => (super.noSuchMethod(
         Invocation.method(
           #dispatchEnvelope,
           [url],
         ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i18.Future<bool> redirectToWallet({
+  _i7.Future<bool> redirectToWallet({
     required String? topic,
     required _i2.Redirect? redirect,
   }) =>
@@ -993,12 +869,12 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             #redirect: redirect,
           },
         ),
-        returnValue: _i18.Future<bool>.value(false),
-        returnValueForMissingStub: _i18.Future<bool>.value(false),
-      ) as _i18.Future<bool>);
+        returnValue: _i7.Future<bool>.value(false),
+        returnValueForMissingStub: _i7.Future<bool>.value(false),
+      ) as _i7.Future<bool>);
 
   @override
-  _i18.Future<_i2.SessionAuthRequestResponse> authenticate({
+  _i7.Future<_i2.SessionAuthRequestResponse> authenticate({
     required _i2.SessionAuthRequestParams? params,
     String? pairingTopic,
     String? walletUniversalLink,
@@ -1017,7 +893,7 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             #methods: methods,
           },
         ),
-        returnValue: _i18.Future<_i2.SessionAuthRequestResponse>.value(
+        returnValue: _i7.Future<_i2.SessionAuthRequestResponse>.value(
             _FakeSessionAuthRequestResponse_11(
           this,
           Invocation.method(
@@ -1032,7 +908,7 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
           ),
         )),
         returnValueForMissingStub:
-            _i18.Future<_i2.SessionAuthRequestResponse>.value(
+            _i7.Future<_i2.SessionAuthRequestResponse>.value(
                 _FakeSessionAuthRequestResponse_11(
           this,
           Invocation.method(
@@ -1046,10 +922,10 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             },
           ),
         )),
-      ) as _i18.Future<_i2.SessionAuthRequestResponse>);
+      ) as _i7.Future<_i2.SessionAuthRequestResponse>);
 
   @override
-  _i18.Future<bool> validateSignedCacao({
+  _i7.Future<bool> validateSignedCacao({
     required _i2.Cacao? cacao,
     required String? projectId,
   }) =>
@@ -1062,9 +938,9 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             #projectId: projectId,
           },
         ),
-        returnValue: _i18.Future<bool>.value(false),
-        returnValueForMissingStub: _i18.Future<bool>.value(false),
-      ) as _i18.Future<bool>);
+        returnValue: _i7.Future<bool>.value(false),
+        returnValueForMissingStub: _i7.Future<bool>.value(false),
+      ) as _i7.Future<bool>);
 
   @override
   String formatAuthMessage({
@@ -1080,7 +956,7 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             #cacaoPayload: cacaoPayload,
           },
         ),
-        returnValue: _i21.dummyValue<String>(
+        returnValue: _i10.dummyValue<String>(
           this,
           Invocation.method(
             #formatAuthMessage,
@@ -1091,7 +967,7 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
             },
           ),
         ),
-        returnValueForMissingStub: _i21.dummyValue<String>(
+        returnValueForMissingStub: _i10.dummyValue<String>(
           this,
           Invocation.method(
             #formatAuthMessage,
@@ -1103,376 +979,4 @@ class MockReownAppKit extends _i1.Mock implements _i2.ReownAppKit {
           ),
         ),
       ) as String);
-}
-
-/// A class which mocks [IReownCore].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockIReownCore extends _i1.Mock implements _i2.IReownCore {
-  @override
-  String get protocol => (super.noSuchMethod(
-        Invocation.getter(#protocol),
-        returnValue: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#protocol),
-        ),
-        returnValueForMissingStub: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#protocol),
-        ),
-      ) as String);
-
-  @override
-  String get version => (super.noSuchMethod(
-        Invocation.getter(#version),
-        returnValue: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#version),
-        ),
-        returnValueForMissingStub: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#version),
-        ),
-      ) as String);
-
-  @override
-  String get relayUrl => (super.noSuchMethod(
-        Invocation.getter(#relayUrl),
-        returnValue: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#relayUrl),
-        ),
-        returnValueForMissingStub: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#relayUrl),
-        ),
-      ) as String);
-
-  @override
-  set relayUrl(String? _relayUrl) => super.noSuchMethod(
-        Invocation.setter(
-          #relayUrl,
-          _relayUrl,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  String get projectId => (super.noSuchMethod(
-        Invocation.getter(#projectId),
-        returnValue: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#projectId),
-        ),
-        returnValueForMissingStub: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#projectId),
-        ),
-      ) as String);
-
-  @override
-  String get pushUrl => (super.noSuchMethod(
-        Invocation.getter(#pushUrl),
-        returnValue: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#pushUrl),
-        ),
-        returnValueForMissingStub: _i21.dummyValue<String>(
-          this,
-          Invocation.getter(#pushUrl),
-        ),
-      ) as String);
-
-  @override
-  _i6.IHeartBeat get heartbeat => (super.noSuchMethod(
-        Invocation.getter(#heartbeat),
-        returnValue: _FakeIHeartBeat_12(
-          this,
-          Invocation.getter(#heartbeat),
-        ),
-        returnValueForMissingStub: _FakeIHeartBeat_12(
-          this,
-          Invocation.getter(#heartbeat),
-        ),
-      ) as _i6.IHeartBeat);
-
-  @override
-  set heartbeat(_i6.IHeartBeat? _heartbeat) => super.noSuchMethod(
-        Invocation.setter(
-          #heartbeat,
-          _heartbeat,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i7.ICrypto get crypto => (super.noSuchMethod(
-        Invocation.getter(#crypto),
-        returnValue: _FakeICrypto_13(
-          this,
-          Invocation.getter(#crypto),
-        ),
-        returnValueForMissingStub: _FakeICrypto_13(
-          this,
-          Invocation.getter(#crypto),
-        ),
-      ) as _i7.ICrypto);
-
-  @override
-  set crypto(_i7.ICrypto? _crypto) => super.noSuchMethod(
-        Invocation.setter(
-          #crypto,
-          _crypto,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i8.IRelayClient get relayClient => (super.noSuchMethod(
-        Invocation.getter(#relayClient),
-        returnValue: _FakeIRelayClient_14(
-          this,
-          Invocation.getter(#relayClient),
-        ),
-        returnValueForMissingStub: _FakeIRelayClient_14(
-          this,
-          Invocation.getter(#relayClient),
-        ),
-      ) as _i8.IRelayClient);
-
-  @override
-  set relayClient(_i8.IRelayClient? _relayClient) => super.noSuchMethod(
-        Invocation.setter(
-          #relayClient,
-          _relayClient,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i9.IStore<Map<String, dynamic>> get storage => (super.noSuchMethod(
-        Invocation.getter(#storage),
-        returnValue: _FakeIStore_15<Map<String, dynamic>>(
-          this,
-          Invocation.getter(#storage),
-        ),
-        returnValueForMissingStub: _FakeIStore_15<Map<String, dynamic>>(
-          this,
-          Invocation.getter(#storage),
-        ),
-      ) as _i9.IStore<Map<String, dynamic>>);
-
-  @override
-  set storage(_i9.IStore<Map<String, dynamic>>? _storage) => super.noSuchMethod(
-        Invocation.setter(
-          #storage,
-          _storage,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i10.IConnectivity get connectivity => (super.noSuchMethod(
-        Invocation.getter(#connectivity),
-        returnValue: _FakeIConnectivity_16(
-          this,
-          Invocation.getter(#connectivity),
-        ),
-        returnValueForMissingStub: _FakeIConnectivity_16(
-          this,
-          Invocation.getter(#connectivity),
-        ),
-      ) as _i10.IConnectivity);
-
-  @override
-  set connectivity(_i10.IConnectivity? _connectivity) => super.noSuchMethod(
-        Invocation.setter(
-          #connectivity,
-          _connectivity,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i11.IExpirer get expirer => (super.noSuchMethod(
-        Invocation.getter(#expirer),
-        returnValue: _FakeIExpirer_17(
-          this,
-          Invocation.getter(#expirer),
-        ),
-        returnValueForMissingStub: _FakeIExpirer_17(
-          this,
-          Invocation.getter(#expirer),
-        ),
-      ) as _i11.IExpirer);
-
-  @override
-  set expirer(_i11.IExpirer? _expirer) => super.noSuchMethod(
-        Invocation.setter(
-          #expirer,
-          _expirer,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i12.IPairing get pairing => (super.noSuchMethod(
-        Invocation.getter(#pairing),
-        returnValue: _FakeIPairing_18(
-          this,
-          Invocation.getter(#pairing),
-        ),
-        returnValueForMissingStub: _FakeIPairing_18(
-          this,
-          Invocation.getter(#pairing),
-        ),
-      ) as _i12.IPairing);
-
-  @override
-  set pairing(_i12.IPairing? _pairing) => super.noSuchMethod(
-        Invocation.setter(
-          #pairing,
-          _pairing,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i13.IEcho get echo => (super.noSuchMethod(
-        Invocation.getter(#echo),
-        returnValue: _FakeIEcho_19(
-          this,
-          Invocation.getter(#echo),
-        ),
-        returnValueForMissingStub: _FakeIEcho_19(
-          this,
-          Invocation.getter(#echo),
-        ),
-      ) as _i13.IEcho);
-
-  @override
-  set echo(_i13.IEcho? _echo) => super.noSuchMethod(
-        Invocation.setter(
-          #echo,
-          _echo,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i14.Logger get logger => (super.noSuchMethod(
-        Invocation.getter(#logger),
-        returnValue: _FakeLogger_20(
-          this,
-          Invocation.getter(#logger),
-        ),
-        returnValueForMissingStub: _FakeLogger_20(
-          this,
-          Invocation.getter(#logger),
-        ),
-      ) as _i14.Logger);
-
-  @override
-  _i15.IVerify get verify => (super.noSuchMethod(
-        Invocation.getter(#verify),
-        returnValue: _FakeIVerify_21(
-          this,
-          Invocation.getter(#verify),
-        ),
-        returnValueForMissingStub: _FakeIVerify_21(
-          this,
-          Invocation.getter(#verify),
-        ),
-      ) as _i15.IVerify);
-
-  @override
-  set verify(_i15.IVerify? _verify) => super.noSuchMethod(
-        Invocation.setter(
-          #verify,
-          _verify,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i16.ILinkModeStore get linkModeStore => (super.noSuchMethod(
-        Invocation.getter(#linkModeStore),
-        returnValue: _FakeILinkModeStore_22(
-          this,
-          Invocation.getter(#linkModeStore),
-        ),
-        returnValueForMissingStub: _FakeILinkModeStore_22(
-          this,
-          Invocation.getter(#linkModeStore),
-        ),
-      ) as _i16.ILinkModeStore);
-
-  @override
-  set linkModeStore(_i16.ILinkModeStore? _linkModeStore) => super.noSuchMethod(
-        Invocation.setter(
-          #linkModeStore,
-          _linkModeStore,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i18.Future<void> start() => (super.noSuchMethod(
-        Invocation.method(
-          #start,
-          [],
-        ),
-        returnValue: _i18.Future<void>.value(),
-        returnValueForMissingStub: _i18.Future<void>.value(),
-      ) as _i18.Future<void>);
-
-  @override
-  void confirmOnlineStateOrThrow() => super.noSuchMethod(
-        Invocation.method(
-          #confirmOnlineStateOrThrow,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i18.Future<bool> addLinkModeSupportedApp(String? universalLink) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #addLinkModeSupportedApp,
-          [universalLink],
-        ),
-        returnValue: _i18.Future<bool>.value(false),
-        returnValueForMissingStub: _i18.Future<bool>.value(false),
-      ) as _i18.Future<bool>);
-
-  @override
-  List<String> getLinkModeSupportedApps() => (super.noSuchMethod(
-        Invocation.method(
-          #getLinkModeSupportedApps,
-          [],
-        ),
-        returnValue: <String>[],
-        returnValueForMissingStub: <String>[],
-      ) as List<String>);
-
-  @override
-  void addLogListener(dynamic Function(String)? callback) => super.noSuchMethod(
-        Invocation.method(
-          #addLogListener,
-          [callback],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  bool removeLogListener(dynamic Function(String)? callback) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #removeLogListener,
-          [callback],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
 }
