@@ -10,7 +10,7 @@ class ClientLocationDataProvider {
       LatLng clientLocation, String clientId) async {
     await db.child(clientId).set({
       'latitude': clientLocation.latitude,
-      'longtitude': clientLocation.longitude,
+      'longitude': clientLocation.longitude,
       'timestamp': DateTime.now().microsecondsSinceEpoch / 1000,
     });
   }

@@ -71,7 +71,6 @@ class _WaitingPageState extends State<WaitingPage> {
     _subscrition2 = _databaseRef2?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final int time = childData['timestamp'];
-      print(childData);
       if (initTime < time && rideId == childData['id']) {
         context.read<OrderCubit>().sourceArrival(
               childData['driverId'],

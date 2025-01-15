@@ -36,7 +36,7 @@ class _OrderUpcomingPageState extends State<OrderUpcomingPage> {
   String? driverId;
   Timer? _locationTimer;
   late ReownAppKitModal _appKitModal;
-
+  late BitmapDescriptor _userIcon;
   @override
   void initState() {
     super.initState();
@@ -67,13 +67,22 @@ class _OrderUpcomingPageState extends State<OrderUpcomingPage> {
     _databaseRef2 =
         FirebaseDatabase.instance.ref("notifications/ride_started/$driverId");
     _startedListener();
+    _loadUserIcon();
+  }
+
+  Future<void> _loadUserIcon() async {
+    final icon = await BitmapDescriptor.asset(
+        const ImageConfiguration(size: Size(30, 30)),
+        'assets/images/user_icon.png');
+    _userIcon = icon;
   }
 
   void _startedListener() {
     _subscrition2 = _databaseRef2?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
+      print(childData);
       final int time = childData['timestamp'];
-      if (initTime < time && childData['rideId'] == widget.message.rideId) {
+      if (initTime < time && childData['id'] == widget.message.rideId) {
         context.read<DriverInitCubit>().orderInProgress(widget.message);
       }
     });
@@ -85,16 +94,20 @@ class _OrderUpcomingPageState extends State<OrderUpcomingPage> {
   }
 
   void _clientLocationListener() {
-    _databaseRef.onChildChanged.listen((event) {
-      final childData = (event.snapshot.value as Map).cast<String, dynamic>();
-      final position = LatLng(double.parse(childData['latitude']),
-          double.parse(childData['longitude']));
-      markers[const MarkerId('client')] = Marker(
-        markerId: const MarkerId('client'),
-        position: position,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-      );
-      setState(() {});
+    _databaseRef.onChildChanged.listen((event) async {
+      print(event.snapshot.value);
+      final parentSnapshot = await _databaseRef.get();
+      if (parentSnapshot.exists) {
+        final childData = (parentSnapshot.value as Map).cast<String, dynamic>();
+
+        final position = LatLng(childData['latitude'], childData['longitude']);
+        markers[const MarkerId('client')] = Marker(
+          markerId: const MarkerId('client'),
+          position: position,
+          icon: _userIcon,
+        );
+        setState(() {});
+      }
     });
   }
 

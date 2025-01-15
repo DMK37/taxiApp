@@ -60,6 +60,12 @@ func HandleRideStartedEvent(event RideStarted, firestoreService db.FirestoreServ
 		log.Fatalf("Failed to get client from Firestore: %v", err)
 	}
 
+	if driver, ok := data["driver"].(string); ok {
+		ride.driver = driver
+	} else {
+		log.Fatalf("Failed to get driver from Firestore: %v", err)
+	}
+
 	err = realtimeDatabase.PushRideStartedNotification(ride.client, event.RideId)
 	if err != nil {
 		log.Fatalf("Failed to push ride started notification: %v", err)

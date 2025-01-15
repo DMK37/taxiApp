@@ -10,7 +10,7 @@ class DriverLocationDataProvider {
       LatLng driverLocation, String driverId) async {
     await db.child(driverId).set({
       'latitude': driverLocation.latitude,
-      'longtitude': driverLocation.longitude,
+      'longitude': driverLocation.longitude,
       'timestamp': DateTime.now().toIso8601String(),
     });
   }

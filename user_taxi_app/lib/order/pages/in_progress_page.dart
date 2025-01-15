@@ -49,7 +49,7 @@ class _InProgressPageState extends State<InProgressPage> {
     _subscrition = _databaseRef?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final int time = childData['timestamp'];
-      if (initTime < time && childData['rideId'] == widget.rideId) {
+      if (initTime < time && childData['id'] == widget.rideId) {
         context.read<OrderCubit>().completedOrder();
       }
     });

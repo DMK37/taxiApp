@@ -70,7 +70,7 @@ func NewRideCreated(parsedABI abi.ABI, vLog types.Log) RideCreated {
 
 func (r *RideCreated) ToJSON() string {
 	return fmt.Sprintf(`{"rideId":%d,"client":"%s","cost":"%s","source":"%s","destination":"%s","sourceLocation":"%s","destinationLocation":"%s"}`,
-		r.RideId, r.Client.Hex(), r.Cost.String(), r.Source, r.Destination, r.SourceLocation, r.DestinationLocation)
+		r.RideId, strings.ToLower(r.Client.Hex()), r.Cost.String(), r.Source, r.Destination, r.SourceLocation, r.DestinationLocation)
 }
 
 func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreService, sqsClient services.SQSClient, queueURL string, realtimeDatabase db.RealtimeDatabaseService) {

@@ -9,6 +9,7 @@ import 'package:shared/models/driver_model.dart';
 import 'package:shared/utils/map_utils.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
+import 'package:taxiapp/firebase/data_providers/client_location_dp.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/location/cubit/location_state.dart';
 import 'package:taxiapp/order/cubit/order_cubit.dart';
@@ -33,6 +34,9 @@ class _UpcomingPageState extends State<UpcomingPage> {
   DatabaseReference? _databaseRef2;
   StreamSubscription? _subscrition2;
   final initTime = DateTime.now().millisecondsSinceEpoch / 1000;
+  late BitmapDescriptor _carIcon;
+  late ClientLocationDataProvider provider;
+  late String clientId;
 
   @override
   void initState() {
@@ -42,46 +46,58 @@ class _UpcomingPageState extends State<UpcomingPage> {
       appKit: context.read<AuthCubit>().appKit,
     );
     _appKitModal.init();
+    clientId = (context.read<AuthCubit>().state as AuthenticatedState).user.id;
     _databaseRef = FirebaseDatabase.instance
-        .ref("rides/${widget.driverId}/driver/${widget.driverId}");
+        .ref("rides/${widget.rideId}/driver/${widget.driverId}");
     _driverLocationListener();
     _databaseRef2 = FirebaseDatabase.instance.ref(
         "notifications/ride_started/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
     _startedListener();
-    final clientId =
-        (context.read<AuthCubit>().state as AuthenticatedState).user.id;
     context
         .read<LocationCubit>()
         .startLocationUpdate(clientId, "rides/${widget.rideId}/client");
-
+    _loadCarIcon();
     context.read<OrderCubit>().getDriver(widget.driverId).then((value) {
       driver = value;
       setState(() {});
     });
   }
 
+
   void _startedListener() {
     _subscrition2 = _databaseRef2?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
+      print(childData);
       final int time = childData['timestamp'];
-      if (initTime < time && childData['rideId'] == widget.rideId) {
+      if (initTime < time && childData['id'] == widget.rideId) {
         context.read<OrderCubit>().destinationArrival(widget.rideId);
       }
     });
   }
 
   void _driverLocationListener() {
-    _subscrition = _databaseRef.onChildChanged.listen((event) {
-      final childData = (event.snapshot.value as Map).cast<String, dynamic>();
-      final position = LatLng(double.parse(childData['latitude']),
-          double.parse(childData['longitude']));
-      markers[const MarkerId('driver')] = Marker(
-        markerId: const MarkerId('driver'),
-        position: position,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
-      );
-      setState(() {});
+    _subscrition = _databaseRef.onChildChanged.listen((event) async {
+      final parentSnapshot = await _databaseRef.get();
+      if (parentSnapshot.exists) {
+        final childData = (parentSnapshot.value as Map).cast<String, dynamic>();
+        final position = LatLng(childData['latitude'], childData['longitude']);
+        markers[const MarkerId('driver')] = Marker(
+          markerId: const MarkerId('driver'),
+          position: position,
+          icon: _carIcon,
+        );
+        setState(() {});
+      }
     });
+  }
+
+
+  Future<void> _loadCarIcon() async {
+    _carIcon = await BitmapDescriptor.asset(
+      const ImageConfiguration(size: Size(30, 30)),
+      'assets/images/car_icon.png',
+    );
+    setState(() {});
   }
 
   @override

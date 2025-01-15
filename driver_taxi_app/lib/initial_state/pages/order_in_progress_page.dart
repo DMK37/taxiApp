@@ -54,7 +54,7 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
     _subscrition = _databaseRef?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final int time = childData['timestamp'];
-      if (initTime < time && childData['rideId'] == widget.message.rideId) {
+      if (initTime < time && childData['id'] == widget.message.rideId) {
         context.read<DriverInitCubit>().orderCompleted(widget.message);
       }
     });

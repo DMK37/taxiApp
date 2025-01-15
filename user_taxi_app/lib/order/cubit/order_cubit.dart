@@ -50,19 +50,11 @@ class OrderCubit extends Cubit<OrderState> {
   }
 
   Future<void> confirmSourceArrival(ReownAppKitModal modal, int rideId) async {
-    // emit(OrderLoading());
-    final response =
-        await rideRepository.confirmSourceArrivalByClient(modal, rideId);
-
-    if (response) {
-      final rideId = (state as OrderSourceArrival).rideId;
-      emit(OrderDestinationArrival(rideId: rideId));
-    } else {
-      // emit(RideError());
-    }
+    await rideRepository.confirmSourceArrivalByClient(modal, rideId);
   }
 
-  Future<void> confirmDestinationArrival(ReownAppKitModal modal, int rideId) async {
+  Future<void> confirmDestinationArrival(
+      ReownAppKitModal modal, int rideId) async {
     // emit(OrderLoading());
     final response =
         await rideRepository.confirmDestinationArrivalByClient(modal, rideId);
