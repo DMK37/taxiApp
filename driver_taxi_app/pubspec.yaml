@@ -49,8 +49,11 @@ dependencies:
   reown_appkit: ^1.2.0
   firebase_database: ^11.1.1
   firebase_core: ^3.9.0
+  mockito: ^5.4.4
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 

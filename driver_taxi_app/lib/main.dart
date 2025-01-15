@@ -12,6 +12,7 @@ import 'package:shared/theme/light_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase/firebase_options.dart';
 import 'package:shared/utils/custom_http_override.dart';
+import 'package:flutter_driver/driver_extension.dart';
 
 void main() async {
   final appRouter = AppRouter();
@@ -23,7 +24,7 @@ void main() async {
   if (const bool.fromEnvironment('dart.vm.product') == false) {
     HttpOverrides.global = CustomHttpOverrides();
   }
-
+  enableFlutterDriverExtension();
   runApp(MyApp(router: appRouter.router));
 }
 
