@@ -2,65 +2,103 @@ import 'dart:async';
 
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
+import 'package:driver_taxi_app/firebase/data_providers/driver_location_dp.dart';
+import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
 import 'package:driver_taxi_app/models/order_message.dart';
-import 'package:driver_taxi_app/order/cubit/order_cubit.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:shared/utils/map_utils.dart';
 
-class OrderInProgressPage extends StatefulWidget {
-  const OrderInProgressPage({super.key, required this.message});
+class OrderUpcomingPage extends StatefulWidget {
+  const OrderUpcomingPage({super.key, required this.message});
   final OrderMessageModel message;
-
   @override
-  State<OrderInProgressPage> createState() => _OrderInProgressPageState();
+  State<OrderUpcomingPage> createState() => _OrderUpcomingPageState();
 }
 
-class _OrderInProgressPageState extends State<OrderInProgressPage> {
+class _OrderUpcomingPageState extends State<OrderUpcomingPage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
-  final mapUtils = MapUtils();
   final initTime = DateTime.now().millisecondsSinceEpoch / 1000;
+  late DatabaseReference _databaseRef;
+  DatabaseReference? _databaseRef2;
+  StreamSubscription? _subscrition2;
+  final mapUtils = MapUtils();
   Map<MarkerId, Marker> markers = {};
   Map<PolylineId, Polyline> polylines = {};
+  late DriverLocationDataProvider provider;
   String? driverId;
-  DatabaseReference? _databaseRef;
-  StreamSubscription? _subscrition;
+  Timer? _locationTimer;
+  late ReownAppKitModal _appKitModal;
 
   @override
   void initState() {
     super.initState();
+
+    final appKit = context.read<DriverAuthCubit>().appKit;
+    _appKitModal = ReownAppKitModal(
+      context: context,
+      appKit: appKit,
+    );
+    _appKitModal.init().then((value) => setState(() {}));
     driverId =
         (context.read<DriverAuthCubit>().state as DriverAuthenticatedState)
             .driver
             .id;
-    markers[const MarkerId('destination')] = Marker(
-      markerId: const MarkerId('destination'),
-      position: widget.message.destinationLocation,
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    _databaseRef = FirebaseDatabase.instance
+        .ref("rides/${widget.message.rideId}/client/${widget.message.client}");
+    provider = DriverLocationDataProvider(
+        db: FirebaseDatabase.instance
+            .ref("rides/${widget.message.rideId}/driver"));
+    markers[const MarkerId('source')] = Marker(
+      markerId: const MarkerId('source'),
+      position: widget.message.sourceLocation,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
     );
-    _databaseRef =
-        FirebaseDatabase.instance.ref("notifications/ride_completed/$driverId");
-    _completedListener();
-    _startLocationUpdates();
+    _clientLocationListener();
+    _driverDirectionUpdates();
+    _showLocation();
+    _databaseRef2 =
+        FirebaseDatabase.instance.ref("notifications/ride_started/$driverId");
+    _startedListener();
   }
 
-  void _completedListener() {
-    _subscrition = _databaseRef?.onChildAdded.listen((event) {
+  void _startedListener() {
+    _subscrition2 = _databaseRef2?.onChildAdded.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final int time = childData['timestamp'];
       if (initTime < time && childData['rideId'] == widget.message.rideId) {
-        context.read<OrderCubit>().orderCompleted(widget.message);
+        context.read<DriverInitCubit>().orderInProgress(widget.message);
       }
     });
   }
 
-  void _startLocationUpdates() {
+  void _showLocation() async {
+    final location = await context.read<LocationCubit>().getLocation();
+    startLocationUpdate(location.$1);
+  }
+
+  void _clientLocationListener() {
+    _databaseRef.onChildChanged.listen((event) {
+      final childData = (event.snapshot.value as Map).cast<String, dynamic>();
+      final position = LatLng(double.parse(childData['latitude']),
+          double.parse(childData['longitude']));
+      markers[const MarkerId('client')] = Marker(
+        markerId: const MarkerId('client'),
+        position: position,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      );
+      setState(() {});
+    });
+  }
+
+  void _driverDirectionUpdates() {
     const LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.bestForNavigation,
       distanceFilter: 50,
@@ -72,8 +110,8 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
         final ctr = await _controller.future;
 
         final (polyline, _) = await mapUtils.getPolyline(
-            widget.message.destinationLocation,
-            LatLng(position.latitude, position.longitude));
+            LatLng(position.latitude, position.longitude),
+            widget.message.sourceLocation);
         polylines[const PolylineId('route')] = polyline;
 
         ctr.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
@@ -85,9 +123,25 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
     });
   }
 
+  void startLocationUpdate(LatLng driverLocation) async {
+    provider.setDriverCurrenLocation(driverLocation, driverId!);
+    _locationTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      provider.setDriverCurrenLocation(driverLocation, driverId!);
+    });
+  }
+
+  void stopLocationUpdate() async {
+    _locationTimer?.cancel();
+    provider.removeActiveDriver(driverId!);
+  }
+
   @override
   void dispose() {
-    _subscrition?.cancel();
+    if (driverId != null) {
+      stopLocationUpdate();
+    }
+    _subscrition2?.cancel();
+
     super.dispose();
   }
 
@@ -159,14 +213,19 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
                         height: 10,
                       ),
                       Text(
-                        'Destination arrival',
+                        'Source arrival',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 25),
                       const Spacer(),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () async {},
+                        onPressed: () async {
+                          await context
+                              .read<DriverInitCubit>()
+                              .confirmSourceArrival(_appKitModal,
+                                  widget.message.rideId, widget.message);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
@@ -179,7 +238,7 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
                           ),
                         ),
                         child: Text(
-                          'Confirm destination arrival',
+                          'Confirm source arrival',
                           style: TextStyle(
                               fontSize: 18,
                               color: Theme.of(context).colorScheme.surface),

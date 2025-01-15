@@ -1,10 +1,12 @@
+import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
+import 'package:driver_taxi_app/models/order_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 
-class CompletedPage extends StatelessWidget {
-  const CompletedPage({super.key});
+class OrderCompletedPage extends StatelessWidget {
+  final OrderMessageModel message;
+  const OrderCompletedPage({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class CompletedPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Thank you for taking a ride with us!',
+                  'Thank you for being with us!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
@@ -52,7 +54,7 @@ class CompletedPage extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.read<InitialOrderCubit>().clearPoints();
+                    context.read<DriverInitCubit>().cancelRide();
                     context.go('/');
                   },
                   style: ElevatedButton.styleFrom(

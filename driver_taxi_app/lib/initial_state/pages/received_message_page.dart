@@ -5,10 +5,8 @@ import 'package:driver_taxi_app/initial_state/cubit/initial_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_cubit.dart';
 import 'package:driver_taxi_app/location/cubit/location_state.dart';
 import 'package:driver_taxi_app/models/order_message.dart';
-import 'package:driver_taxi_app/order/cubit/order_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:reown_appkit/modal/appkit_modal_impl.dart';
 import 'package:shared/utils/map_utils.dart';
@@ -39,6 +37,12 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage> {
   void initState() {
     super.initState();
     cost = double.parse(widget.message.cost) / 1000000000000000000;
+    final appKit = context.read<DriverAuthCubit>().appKit;
+    _appKitModal = ReownAppKitModal(
+      context: context,
+      appKit: appKit,
+    );
+    _appKitModal.init().then((value) => setState(() {}));
     _startLoading();
   }
 
@@ -68,13 +72,6 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage> {
     Marker marker =
         Marker(markerId: markerId, icon: descriptor, position: position);
     markers[markerId] = marker;
-
-    final appKit = context.read<DriverAuthCubit>().appKit;
-    _appKitModal = ReownAppKitModal(
-      context: context,
-      appKit: appKit,
-    );
-    _appKitModal.init().then((value) => setState(() {}));
   }
 
   @override
@@ -218,11 +215,11 @@ class _ReceivedMessagePageState extends State<ReceivedMessagePage> {
                       ElevatedButton(
                         onPressed: () async {
                           final res = await context
-                              .read<OrderCubit>()
+                              .read<DriverInitCubit>()
                               .confirmRide(_appKitModal, widget.message.rideId,
                                   widget.message);
                           if (res) {
-                            context.go('/order');
+                            // context.go('/order');
                           }
                         },
                         style: ElevatedButton.styleFrom(

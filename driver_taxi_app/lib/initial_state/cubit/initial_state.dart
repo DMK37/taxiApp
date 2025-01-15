@@ -25,6 +25,24 @@ class DriverMessagedState extends DriverState{
   DriverMessagedState({required this.message});
 }
 
+class UpcomingOrderState extends DriverState{
+  final OrderMessageModel message;
+
+  UpcomingOrderState({required this.message});
+}
+
+class InProgressOrderState extends DriverState {
+  final OrderMessageModel orderMessageModel;
+
+  InProgressOrderState(this.orderMessageModel);
+}
+
+class CompletedOrderState extends DriverState {
+  final OrderMessageModel orderMessageModel;
+
+  CompletedOrderState(this.orderMessageModel);
+}
+
 class ErrorState extends DriverState{
   
 }

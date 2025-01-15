@@ -148,8 +148,9 @@ class _InProgressPageState extends State<InProgressPage> {
                   ),
                   child: Column(
                     children: [
+                      const SizedBox(height: 20),
                       Text(
-                        'Waiting for the driver arrival',
+                        'Ride in Progress',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const Spacer(),
@@ -174,7 +175,7 @@ class _InProgressPageState extends State<InProgressPage> {
                           ),
                         ),
                         child: Text(
-                          'Confirm Source Arrival',
+                          'Confirm Destination Arrival',
                           style: TextStyle(
                             fontSize: 18,
                             color: Theme.of(context).colorScheme.surface,

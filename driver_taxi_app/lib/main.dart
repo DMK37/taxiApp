@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
             create: (context) => DriverAuthCubit(DriverRepository())..init(),
           ),
           BlocProvider(create: (context) => DriverInitCubit()),
-          BlocProvider(create: (context) => OrderCubit()),
+          // BlocProvider(create: (context) => OrderCubit()),
         ],
         child: MaterialApp.router(
           routerConfig: router,

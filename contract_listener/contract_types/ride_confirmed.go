@@ -40,7 +40,7 @@ func HandleRideConfirmedEvent(event RideConfirmed, firestoreService db.Firestore
 	fmt.Printf("Ride confirmed: %d, driver: %s, confirmation time: %d\n", event.RideId, event.Driver.Hex(), event.ConfirmationTime)
 
 	err := firestoreService.AddFields(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), []firestore.Update{
-		{Path: "driver", Value: event.Driver.Hex()},
+		{Path: "driver", Value: strings.ToLower(event.Driver.Hex())},
 		{Path: "confirmationTime", Value: fmt.Sprint(event.ConfirmationTime)},
 		{Path: "status", Value: "confirmed"},
 	})
@@ -64,7 +64,7 @@ func HandleRideConfirmedEvent(event RideConfirmed, firestoreService db.Firestore
 		log.Fatalf("Failed to get client from Firestore: %v", err)
 	}
 
-	err = realtimeDatabase.PushRideConfirmedNotification(ride.client, event.RideId, event.Driver.Hex())
+	err = realtimeDatabase.PushRideConfirmedNotification(ride.client, event.RideId, strings.ToLower(event.Driver.Hex()))
 	if err != nil {
 		log.Fatalf("Failed to push ride confirmed notification: %v", err)
 	}

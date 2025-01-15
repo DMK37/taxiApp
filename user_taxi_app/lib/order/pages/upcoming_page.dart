@@ -44,8 +44,8 @@ class _UpcomingPageState extends State<UpcomingPage> {
     _appKitModal.init();
     _databaseRef = FirebaseDatabase.instance
         .ref("rides/${widget.driverId}/driver/${widget.driverId}");
-    _listenForNewItems();
-    _databaseRef = FirebaseDatabase.instance.ref(
+    _driverLocationListener();
+    _databaseRef2 = FirebaseDatabase.instance.ref(
         "notifications/ride_started/${(context.read<AuthCubit>().state as AuthenticatedState).user.id}");
     _startedListener();
     final clientId =
@@ -70,7 +70,7 @@ class _UpcomingPageState extends State<UpcomingPage> {
     });
   }
 
-  void _listenForNewItems() {
+  void _driverLocationListener() {
     _subscrition = _databaseRef.onChildChanged.listen((event) {
       final childData = (event.snapshot.value as Map).cast<String, dynamic>();
       final position = LatLng(double.parse(childData['latitude']),
@@ -157,6 +157,7 @@ class _UpcomingPageState extends State<UpcomingPage> {
                   ),
                   child: Column(
                     children: [
+                      const SizedBox(height: 20),
                       Text(
                         'Waiting for the driver arrival',
                         style: Theme.of(context).textTheme.titleMedium,

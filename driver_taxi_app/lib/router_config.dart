@@ -23,9 +23,9 @@ class AppRouter {
       builder: (context, state) =>
           const AuthListenerWrapper(child: DriverLoginPage()),
     ),
-    GoRoute(
-        path: '/order',
-        builder: (context, state) => const LocationListenerWrapper(
-            child: AuthListenerWrapper(child: OrderBuilder()))),
+    // GoRoute(
+    //     path: '/order',
+    //     builder: (context, state) => const LocationListenerWrapper(
+    //         child: AuthListenerWrapper(child: OrderBuilder()))),
   ]);
 }

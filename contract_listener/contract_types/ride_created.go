@@ -77,7 +77,7 @@ func HandleRideCreatedEvent(event RideCreated, firestoreService db.FirestoreServ
 
 	fmt.Printf("Ride created: %d, client: %s, cost: %s\n", event.RideId, event.Client.Hex(), event.Cost.String())
 	firestoreService.AddDocument(context.Background(), "rides", fmt.Sprintf("%d", event.RideId), map[string]interface{}{
-		"client":              event.Client.Hex(),
+		"client":              strings.ToLower(event.Client.Hex()),
 		"cost":                event.Cost.String(),
 		"source":              event.Source,
 		"destination":         event.Destination,
