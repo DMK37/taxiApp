@@ -24,7 +24,8 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    _initializeCarTypes();
+    //_initializeCarTypes();
+    carTypes = [CarType.basic, CarType.comfort, CarType.premium];
   }
 
   @override
