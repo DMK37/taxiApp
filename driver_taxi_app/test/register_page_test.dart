@@ -8,9 +8,11 @@ import 'package:driver_taxi_app/auth/pages/register_page.dart';
 import 'package:shared/models/car_type.dart';
 import 'package:integration_test/integration_test.dart';
 
-class MockDriverInitCubit extends Mock implements DriverInitCubit {}
-class MockDriverAuthCubit extends Mock implements DriverAuthCubit {}
+import 'package:mockito/annotations.dart';
 
+@GenerateNiceMocks([MockSpec<DriverAuthCubit>()])
+@GenerateNiceMocks([MockSpec<DriverInitCubit>()])
+import 'register_page_test.mocks.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   group('RegisterPage Widget Tests', () {
@@ -23,15 +25,12 @@ void main() {
     });
 
     testWidgets('should display the form fields', (WidgetTester tester) async {
-      // when(mockDriverInitCubit.getCarTypeList()).thenAnswer((_) async => [
-      //     CarType.basic,  
-      //     CarType.comfort,
-      //     CarType.premium,
-      //   ],
-      // );
-      // when(mockDriverInitCubit.getCarTypeList()).thenAnswer((_) async => 
-      //    ([ CarType.basic])
-      // );
+      when(mockDriverInitCubit.getCarTypeList()).thenAnswer((_) async => [
+          CarType.basic,  
+          CarType.comfort,
+          CarType.premium,
+        ],
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -50,13 +49,13 @@ void main() {
     });
 
     testWidgets('should show validation error when form is incomplete', (WidgetTester tester) async {
-      // when(mockDriverInitCubit.getCarTypeList()).thenAnswer(
-      //   (_) async => [
-      //     CarType.basic, 
-      //     CarType.comfort,
-      //     CarType.premium,
-      //   ],
-      // );
+      when(mockDriverInitCubit.getCarTypeList()).thenAnswer(
+        (_) async => [
+          CarType.basic, 
+          CarType.comfort,
+          CarType.premium,
+        ],
+      );
 
       await tester.pumpWidget(
         MaterialApp(
@@ -80,24 +79,14 @@ void main() {
     });
 
     testWidgets('should call createAccount method when form is valid', (WidgetTester tester) async {
-      // final future = Future.value([
-      //     CarType.basic, 
-      //     CarType.comfort,
-      //     CarType.premium,
-      //   ],);
-      // when(mockDriverInitCubit.getCarTypeList()).thenAnswer((_) => Future.value([
-      //     CarType.basic,  
-      //     CarType.comfort,
-      //     CarType.premium,
-      //   ],));
-      // when(mockDriverInitCubit.getCarTypeList()).thenAnswer(
-      //   (_) async => [
-      //     CarType.basic, 
-      //     CarType.comfort,
-      //     CarType.premium,
-      //   ],
-      // );
-      //final future = Future.value();
+      when(mockDriverInitCubit.getCarTypeList()).thenAnswer(
+        (_) async => [
+          CarType.basic, 
+          CarType.comfort,
+          CarType.premium,
+        ],
+      );
+
       when(mockDriverAuthCubit.createAccount(
         '0x123456789', 'John', 'Doe', 'Car Name', CarType.basic,
       )).thenAnswer((_) async => Future<void>.value());

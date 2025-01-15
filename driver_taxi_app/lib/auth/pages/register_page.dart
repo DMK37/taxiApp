@@ -24,8 +24,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   void initState() {
     super.initState();
-    //_initializeCarTypes();
-    carTypes = [CarType.basic, CarType.comfort, CarType.premium];
+    _initializeCarTypes();
   }
 
   @override
@@ -66,87 +65,89 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: const Text("Register account"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _firstNameController,
-                decoration: const InputDecoration(labelText: "First Name"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your first name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _lastNameController,
-                decoration: const InputDecoration(labelText: "Last Name"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your last name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _carNameController,
-                decoration: const InputDecoration(labelText: "Car Name"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter car name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<CarType>(
-                value: selectedCarType,
-                decoration: const InputDecoration(
-                  labelText: 'Select Car Type',
-                  border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
+                  controller: _firstNameController,
+                  decoration: const InputDecoration(labelText: "First Name"),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your first name';
+                    }
+                    return null;
+                  },
                 ),
-                items: CarType.values.map((CarType carType) {
-                  return DropdownMenuItem<CarType>(
-                    value: carType,
-                    child: Row(
-                      children: [
-                        Icon(
-                          carType.getIcon().icon,
-                          size: 20,
-                          color: Colors.black,
-                        ),
-                        const SizedBox(width: 10,),
-                        Text(carType.toString()),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (CarType? newValue) {
-                  setState(() {
-                    selectedCarType = newValue;
-                  });
-                },
-                validator: (value) => value == null ? 'Please select a car type' : null,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.surface,
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _lastNameController,
+                  decoration: const InputDecoration(labelText: "Last Name"),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your last name';
+                    }
+                    return null;
+                  },
                 ),
-                child: const Text("Sign Up"),
-              ),
-            ],
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _carNameController,
+                  decoration: const InputDecoration(labelText: "Car Name"),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter car name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                DropdownButtonFormField<CarType>(
+                  value: selectedCarType,
+                  decoration: const InputDecoration(
+                    labelText: 'Select Car Type',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: CarType.values.map((CarType carType) {
+                    return DropdownMenuItem<CarType>(
+                      value: carType,
+                      child: Row(
+                        children: [
+                          Icon(
+                            carType.getIcon().icon,
+                            size: 20,
+                            color: Colors.black,
+                          ),
+                          const SizedBox(width: 10,),
+                          Text(carType.toString()),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (CarType? newValue) {
+                    setState(() {
+                      selectedCarType = newValue;
+                    });
+                  },
+                  validator: (value) => value == null ? 'Please select a car type' : null,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: _submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.surface,
+                  ),
+                  child: const Text("Sign Up"),
+                ),
+              ],
+            ),
           ),
         ),
       ),
