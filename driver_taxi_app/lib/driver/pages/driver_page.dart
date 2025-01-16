@@ -1,9 +1,10 @@
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
+import 'package:driver_taxi_app/theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 import 'package:shared/models/car_type.dart';
+import 'package:provider/provider.dart';
 
 class DriverPage extends StatefulWidget {
   const DriverPage({super.key});
@@ -42,6 +43,7 @@ class _DriverPageState extends State<DriverPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Driver Page'),
@@ -190,6 +192,26 @@ class _DriverPageState extends State<DriverPage> {
                 ],
               ),
               const SizedBox(height: 20),
+              Row(
+                children: <Widget>[
+                  const Text(
+                    'Change theme:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12.0),
+                    child: Switch(
+                      value: themeNotifier.isDarkMode,
+                      onChanged: (value) {
+                        themeNotifier.toggleTheme();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
               Center(
                 child: ElevatedButton(
                   onPressed: () async {

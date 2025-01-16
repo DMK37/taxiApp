@@ -62,7 +62,7 @@ class _MainDraggableScrollableSheetState
                         width: 50,
                         height: 5,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(2.5),
                         ),
                       ),
