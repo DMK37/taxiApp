@@ -179,9 +179,11 @@ class _UpcomingPageState extends State<UpcomingPage> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const Spacer(),
-                      Text("Driver: ${driver?.firstName} ${driver?.lastName}"),
+                      Text("Driver: ${driver?.firstName} ${driver?.lastName}",
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
                       const SizedBox(height: 20),
-                      Text("Car: ${driver?.car.carName}"),
+                      Text("Car: ${driver?.car.carName}",
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
                       const Spacer(),
                       ElevatedButton(
                         onPressed: () async {

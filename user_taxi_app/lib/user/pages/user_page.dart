@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reown_appkit/reown_appkit.dart';
+import 'package:shared/models/client_model.dart';
 import 'package:taxiapp/auth/cubit/auth_cubit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
 import 'package:taxiapp/theme/theme_notifier.dart';
+import 'package:taxiapp/user/widgets/ride_history_widget.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -147,10 +149,16 @@ class _UserPageState extends State<UserPage> {
                   child: const Text('Save Changes'),
                 ),
               ),
+              _buildRideHistoryWidget(context),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+Widget _buildRideHistoryWidget(BuildContext context) {
+  ClientModel client = (context.read<AuthCubit>().state as AuthenticatedState).user;
+  return RideHistoryWidget(context: context, client: client);
 }

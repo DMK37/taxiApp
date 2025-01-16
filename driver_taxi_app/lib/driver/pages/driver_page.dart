@@ -1,10 +1,12 @@
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
+import 'package:driver_taxi_app/driver/wigdets/ride_history_widget.dart';
 import 'package:driver_taxi_app/theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 import 'package:shared/models/car_type.dart';
 import 'package:provider/provider.dart';
+import 'package:shared/models/driver_model.dart';
 
 class DriverPage extends StatefulWidget {
   const DriverPage({super.key});
@@ -236,10 +238,16 @@ class _DriverPageState extends State<DriverPage> {
                   child: const Text('Save Changes'),
                 ),
               ),
+              _buildRideHistoryWidget(context),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildRideHistoryWidget(BuildContext context) {
+  DriverModel driver = (context.read<DriverAuthCubit>().state as DriverAuthenticatedState).driver;
+  return RideHistoryWidget(context: context, driver: driver);
+}
 }
