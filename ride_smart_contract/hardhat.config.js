@@ -20,10 +20,13 @@ module.exports = {
       url: `https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
       accounts: [SEPOLIA_PRIVATE_KEY],
     },
-    local: {
-      url: "https://backend-deploy-asp-62fbd6e3f3d1.herokuapp.com",
-      gas: 10000000,
-    },
+    ganache: {
+      url: "http://192.168.18.115:8545",
+      accounts: [
+        `0x2ace5848714a1da84e858a534552f4d58495c625b40d2f75f5c8373ee0b70652`,
+        `0x3dfab05bece011b26f4c6c25fb8a7dae946c945e5b2fd19f227e5f4e0a61e5f8`
+      ],
+    }
   },
 
   etherscan: {

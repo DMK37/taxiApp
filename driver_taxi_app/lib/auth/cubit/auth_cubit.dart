@@ -5,6 +5,7 @@ import 'package:shared/models/car_model.dart';
 import 'package:shared/models/car_type.dart';
 import 'package:shared/models/driver_model.dart';
 import 'package:shared/repositories/driver/driver_repository.dart';
+import 'package:shared/utils/config.dart';
 
 class DriverAuthCubit extends Cubit<DriverAuthState> {
   late ReownAppKit appKit;
@@ -26,7 +27,7 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
           name: "Ride Hardhat",
           chainId: '1337',
           currency: "ETH",
-          rpcUrl: "http://192.168.18.81:8545",
+          rpcUrl: rpcUrl,
           explorerUrl: "https://sepolia.etherscan.io",
           isTestNetwork: false,
         ),

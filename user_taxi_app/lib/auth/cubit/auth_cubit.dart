@@ -3,6 +3,7 @@ import 'package:reown_appkit/reown_appkit.dart';
 import 'package:taxiapp/auth/cubit/auth_state.dart';
 import 'package:shared/models/client_model.dart';
 import 'package:shared/repositories/client/client_repository.dart';
+import 'package:shared/utils/config.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   late ReownAppKit appKit;
@@ -24,7 +25,7 @@ class AuthCubit extends Cubit<AuthState> {
           name: "Ride Hardhat",
           chainId: '1337',
           currency: "ETH",
-          rpcUrl: "http://192.168.18.81:8545",
+          rpcUrl: rpcUrl,
           explorerUrl: "https://sepolia.etherscan.io",
           isTestNetwork: false,
         ),
@@ -42,7 +43,7 @@ class AuthCubit extends Cubit<AuthState> {
               linkMode: true,
             )),
       );
-      
+
       appKit.onSessionConnect.subscribe((event) async {
         print('Session connected');
         final address =
@@ -63,7 +64,6 @@ class AuthCubit extends Cubit<AuthState> {
       });
       await appKit.init();
       emit(UnauthenticatedState());
-
     } catch (e) {
       print(e);
       emit(AuthFailureState(errorMessage: e.toString()));

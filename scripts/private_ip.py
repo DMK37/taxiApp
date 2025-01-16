@@ -71,8 +71,12 @@ if private_ip:
     if os.name == 'nt':
         contract_path = contract_path.replace("/", "\\")
     if variable == "remote":
-        modify_line_in_file(contract_path, 23, f"      url: \"{remote}\",")
-    else:
         modify_line_in_file(contract_path, 23, f"      url: \"{private_ip}:8545\",")
+    
+    flutter_path = parent_path + "/shared/lib/utils/config.dart"
+    if os.name == 'nt':
+        flutter_path = flutter_path.replace("/", "\\")
+    if variable == "remote":
+        modify_line_in_file(flutter_path, 8, f"const String rpcUrl = \"http://{private_ip}:8545\";")
 else:
     print("Private IP address not found.")
