@@ -42,22 +42,22 @@ if private_ip:
     else:
         modify_line_in_file(file_path, 16, f"      \"applicationUrl\": \"{private_ip}:5112\",")
 
-    shared_client_path = parent_path + "/shared/lib/repositories/client/client_repository.dart"
+    shared_client_path = parent_path + "/shared/lib/utils/config.dart"
     if os.name == 'nt':
         shared_client_path = shared_client_path.replace("/", "\\")
     
     if variable == "remote":
-        modify_line_in_file(shared_client_path, 9, f"  final String apiUrl = \"{remote}/api/client\";")
+        modify_line_in_file(shared_client_path, 2, f"const String apiUrlClient = \"{remote}/api/client\";")
     else:
-        modify_line_in_file(shared_client_path, 9, f"  final String apiUrl = \"{private_ip}:5112/api/client\";")
+        modify_line_in_file(shared_client_path, 2, f"const String apiUrlClient = \"{private_ip}:5112/api/client\";")
 
-    shared_driver_path = parent_path + "/shared/lib/repositories/driver/driver_repository.dart"
+    shared_driver_path = parent_path + "/shared/lib/utils/config.dart"
     if os.name == 'nt':
         shared_driver_path = shared_driver_path.replace("/", "\\")
     if variable == "remote":
-        modify_line_in_file(shared_driver_path, 8, f"  final String apiUrl = \"{remote}/api/driver\";")
+        modify_line_in_file(shared_driver_path, 3, f"const String apiUrlDriver = \"{remote}/api/driver\";")
     else:
-        modify_line_in_file(shared_driver_path, 8, f"  final String apiUrl = \"{private_ip}:5112/api/driver\";")
+        modify_line_in_file(shared_driver_path, 3, f"const String apiUrlDriver = \"{private_ip}:5112/api/driver\";")
 
     init_order_path = parent_path + "/initial_order_server/config/config.go"
     if os.name == 'nt':

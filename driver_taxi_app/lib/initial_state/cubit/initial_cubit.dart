@@ -70,6 +70,15 @@ class DriverInitCubit extends Cubit<DriverState> {
     return res;
   }
 
+  Future<bool> confirmDestinationArrival(
+    ReownAppKitModal modal,
+    int rideId,
+    OrderMessageModel orderMessageModel,
+  ) async {
+    final res = await rideContract.confirmDestinationArrivalByDriver(modal, rideId);
+    return res;
+  }
+
   void orderCompleted(OrderMessageModel orderMessageModel) {
     emit(CompletedOrderState(orderMessageModel));
   }

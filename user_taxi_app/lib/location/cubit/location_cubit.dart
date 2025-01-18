@@ -6,6 +6,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:shared/utils/config.dart';
 import 'package:taxiapp/firebase/data_providers/client_location_dp.dart';
 import 'package:taxiapp/location/cubit/location_state.dart';
 import 'dart:convert';
@@ -14,7 +15,6 @@ import 'package:http/http.dart' as http;
 class LocationCubit extends Cubit<LocationState> {
   LocationCubit() : super(LocationLoadingState());
   PolylinePoints polylinePoints = PolylinePoints();
-  static const String placesApiKey = "AIzaSyAJI-buaRrNN3x2RASJk6yv_UltK2fePzM";
   Timer? _locationTimer;
 
   Future<void> checkPermissionsAndGetLocation() async {
@@ -66,7 +66,7 @@ class LocationCubit extends Cubit<LocationState> {
         'https://maps.googleapis.com/maps/api/place/autocomplete/json';
 
     String request =
-        '$baseURL?input=$input&key=$placesApiKey&location=${location.$1.latitude}%2C${location.$1.longitude}&radius=50000&strictbounds=true';
+        '$baseURL?input=$input&key=$mapsApiKey&location=${location.$1.latitude}%2C${location.$1.longitude}&radius=50000&strictbounds=true';
     try {
       var response = await http.get(Uri.parse(request));
 
@@ -89,7 +89,7 @@ class LocationCubit extends Cubit<LocationState> {
   Future<LatLng?> getPlaceCoordinates(String placeId) async {
     String baseURL = 'https://maps.googleapis.com/maps/api/place/details/json';
 
-    String request = '$baseURL?place_id=$placeId&key=$placesApiKey';
+    String request = '$baseURL?place_id=$placeId&key=$mapsApiKey';
 
     try {
       var response = await http.get(Uri.parse(request));

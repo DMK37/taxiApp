@@ -4,15 +4,14 @@ import 'package:shared/repositories/driver/driver_repository_abstract.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:shared/utils/config.dart';
+
 class DriverRepository implements DriverRepositoryAbstract {
-
-  final String apiUrl = "https://backend-deploy-asp-62fbd6e3f3d1.herokuapp.com/api/driver";
-
   @override
   Future<DriverModel?> createDriver(DriverModel driver) async {
     try {
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse(apiUrlDriver),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -34,7 +33,7 @@ class DriverRepository implements DriverRepositoryAbstract {
   @override
   Future<DriverModel?> getDriver(String id) async {
     try {
-      final response = await http.get(Uri.parse('$apiUrl/$id'));
+      final response = await http.get(Uri.parse('$apiUrlDriver/$id'));
 
       if (response.statusCode == 200) {
         print("Driver fetched successfully");
@@ -53,7 +52,7 @@ class DriverRepository implements DriverRepositoryAbstract {
   Future<DriverModel?> updateDriver(DriverModel driver) async {
     try {
       final response = await http.put(
-        Uri.parse('$apiUrl'),
+        Uri.parse('$apiUrlDriver'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -75,7 +74,7 @@ class DriverRepository implements DriverRepositoryAbstract {
 
   Future<List<CarType>> getCarTypes() async {
     try {
-      final response = await http.get(Uri.parse('$apiUrl/car-types'));
+      final response = await http.get(Uri.parse('$apiUrlDriver/car-types'));
 
       if (response.statusCode == 200) {
         print("Car types fetched successfully");

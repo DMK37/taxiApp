@@ -11,7 +11,6 @@ class LocationCubit extends Cubit<LocationState> {
   LocationCubit() : super(LocationLoadingState());
 
   PolylinePoints polylinePoints = PolylinePoints();
-  static const String apiKey = "AIzaSyAJI-buaRrNN3x2RASJk6yv_UltK2fePzM";
 
   Future<(LatLng, String)> getLocation() async {
     final currentPosition = await Geolocator.getCurrentPosition();

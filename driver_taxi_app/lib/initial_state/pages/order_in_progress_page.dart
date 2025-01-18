@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:reown_appkit/reown_appkit.dart';
 import 'package:shared/utils/map_utils.dart';
 
 class OrderInProgressPage extends StatefulWidget {
@@ -31,10 +32,18 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
   String? driverId;
   DatabaseReference? _databaseRef;
   StreamSubscription? _subscrition;
+  late ReownAppKitModal _appKitModal;
 
   @override
   void initState() {
     super.initState();
+
+    final appKit = context.read<DriverAuthCubit>().appKit;
+    _appKitModal = ReownAppKitModal(
+      context: context,
+      appKit: appKit,
+    );
+    _appKitModal.init().then((value) => setState(() {}));
     driverId =
         (context.read<DriverAuthCubit>().state as DriverAuthenticatedState)
             .driver
@@ -72,8 +81,8 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
         final ctr = await _controller.future;
 
         final (polyline, _) = await mapUtils.getPolyline(
-            widget.message.destinationLocation,
-            LatLng(position.latitude, position.longitude));
+            LatLng(position.latitude, position.longitude),
+            widget.message.destinationLocation);
         polylines[const PolylineId('route')] = polyline;
 
         ctr.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
@@ -105,6 +114,17 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
                 mapType: MapType.normal,
                 onMapCreated: (GoogleMapController controller) async {
                   _controller.complete(controller);
+
+                  final (polyline, _) = await mapUtils.getPolyline(
+                      widget.message.sourceLocation,
+                      widget.message.destinationLocation);
+                  polylines[const PolylineId('polyline')] = polyline;
+                  setState(() {});
+                  LatLngBounds bounds =
+                      mapUtils.calculateBounds(polyline.points);
+                  final GoogleMapController ctr = await _controller.future;
+                  await ctr
+                      .animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
                 },
                 initialCameraPosition: CameraPosition(
                   target: (context.read<LocationCubit>().state
@@ -166,7 +186,12 @@ class _OrderInProgressPageState extends State<OrderInProgressPage> {
                       const Spacer(),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () async {},
+                        onPressed: () async {
+                          await context
+                              .read<DriverInitCubit>()
+                              .confirmDestinationArrival(_appKitModal,
+                                  widget.message.rideId, widget.message);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,

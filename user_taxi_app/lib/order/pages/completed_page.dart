@@ -56,6 +56,7 @@ class CompletedPage extends StatelessWidget {
                     context.go('/');
                   },
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
                     foregroundColor: Colors.green,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(

@@ -172,6 +172,17 @@ class _OrderUpcomingPageState extends State<OrderUpcomingPage> {
                 mapType: MapType.normal,
                 onMapCreated: (GoogleMapController controller) async {
                   _controller.complete(controller);
+                  final (location, _) =
+                      await context.read<LocationCubit>().getLocation();
+                  final (polyline, _) = await mapUtils.getPolyline(
+                      location, widget.message.sourceLocation);
+                  polylines[const PolylineId('polyline')] = polyline;
+                  setState(() {});
+                  LatLngBounds bounds =
+                      mapUtils.calculateBounds(polyline.points);
+                  final GoogleMapController ctr = await _controller.future;
+                  await ctr
+                      .animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
                 },
                 initialCameraPosition: CameraPosition(
                   target: (context.read<LocationCubit>().state

@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:shared/utils/config.dart';
 
 class MapUtils {
-  static const String placesApiKey = "AIzaSyAJI-buaRrNN3x2RASJk6yv_UltK2fePzM";
-
   Future<void> goToTheLocation(LatLng location,
       Completer<GoogleMapController> googleMapController) async {
     final GoogleMapController controller = await googleMapController.future;
@@ -37,7 +36,7 @@ class MapUtils {
     PolylinePoints polylinePoints = PolylinePoints();
 
     final result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey: placesApiKey,
+      googleApiKey: mapsApiKey,
       request: PolylineRequest(
         origin: PointLatLng(origin.latitude, origin.longitude),
         destination: PointLatLng(destination.latitude, destination.longitude),
