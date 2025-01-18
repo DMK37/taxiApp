@@ -93,12 +93,23 @@ func TestIntegrationEventRetrieving(t *testing.T) {
 	require.NoError(t, err)
 
 	dbClientMock := mock.NewMockRealtimeDatabase()
+
+	firestoreService.AddDocument(ctx, "clients", "0x1234567890123456789012345678901234567890", map[string]interface{}{
+		"FirstName": "John",
+		"LastName":  "Doe"})
+	firestoreService.AddDocument(ctx, "drivers", "0x0987654321098765432109876543210987654321", map[string]interface{}{
+		"FirstName": "Jane",
+		"LastName":  "Smith"})
 	t.Run("Test RideCreated event", func(t *testing.T) {
 		// Send a test message
 		event := RideCreated{
 			RideId: 1,
 			Client: common.Address(common.FromHex("0x1234567890123456789012345678901234567890")),
 			Cost:   big.NewInt(100),
+			Destination: "destination",
+			Source: "source",
+			SourceLocation: "sourceLocation",
+			DestinationLocation: "destinationLocation",
 		}
 		HandleRideCreatedEvent(event, firestoreService, client, queueURL, dbClientMock)
 
@@ -126,6 +137,10 @@ func TestIntegrationEventRetrieving(t *testing.T) {
 		dbEvent.Client = common.HexToAddress(dbEventSnapshot.Data()["client"].(string))
 		dbEvent.Cost = new(big.Int)
 		dbEvent.Cost.SetString(dbEventSnapshot.Data()["cost"].(string), 10)
+		dbEvent.Destination = dbEventSnapshot.Data()["destination"].(string)
+		dbEvent.Source = dbEventSnapshot.Data()["source"].(string)
+		dbEvent.SourceLocation = dbEventSnapshot.Data()["sourceLocation"].(string)
+		dbEvent.DestinationLocation = dbEventSnapshot.Data()["destinationLocation"].(string)
 
 		require.Equal(t, event.RideId, receivedEvent.RideId)
 		require.Equal(t, event.Cost.String(), receivedEvent.Cost.String())
@@ -134,33 +149,52 @@ func TestIntegrationEventRetrieving(t *testing.T) {
 		require.Equal(t, event.RideId, dbEvent.RideId)
 		require.Equal(t, event.Cost.String(), dbEvent.Cost.String())
 		require.Equal(t, event.Client.Hex(), dbEvent.Client.Hex())
+		require.Equal(t, event.Destination, dbEvent.Destination)
+		require.Equal(t, event.Source, dbEvent.Source)
+		require.Equal(t, event.SourceLocation, dbEvent.SourceLocation)
+		require.Equal(t, event.DestinationLocation, dbEvent.DestinationLocation)
 	})
 
-	t.Run("Test RideStarted event", func(t *testing.T) {
+	t.Run("Test RideConfirmed event", func(t *testing.T) {
 		createEvent := RideCreated{
-			RideId: 1,
-			Client: common.Address(common.FromHex("0x1234567890123456789012345678901234567890")),
-			Cost:   big.NewInt(100),
+			RideId:              1,
+			Client:              common.Address(common.FromHex("0x1234567890123456789012345678901234567890")),
+			Cost:                big.NewInt(100),
+			Source:              "source",
+			SourceLocation:      "sourceLocation",
+			Destination:         "destination",
+			DestinationLocation: "destinationLocation",
 		}
-		event := RideStarted{
-			RideId:    1,
-			StartTime: 1001,
+		event := RideConfirmed{
+			RideId:           1,
+			Driver:           common.Address(common.FromHex("0x0987654321098765432109876543210987654321")),
+			ConfirmationTime: 1001,
 		}
 		type Log struct {
-			RideId    uint64
-			StartTime uint64
-			Client    common.Address
-			Cost      *big.Int
+			RideId              uint64
+			ConfirmationTime    uint64
+			Client              common.Address
+			Driver              common.Address
+			Cost                *big.Int
+			Destination         string
+			Source              string
+			SourceLocation      string
+			DestinationLocation string
 		}
 		expectedLog := Log{
-			RideId:    createEvent.RideId,
-			StartTime: event.StartTime,
-			Client:    createEvent.Client,
-			Cost:      createEvent.Cost,
+			RideId:           createEvent.RideId,
+			ConfirmationTime: event.ConfirmationTime,
+			Client:           createEvent.Client,
+			Cost:             createEvent.Cost,
+			Driver:           event.Driver,
+			Destination:      createEvent.Destination,
+			Source:           createEvent.Source,
+			SourceLocation:   createEvent.SourceLocation,
+			DestinationLocation: createEvent.DestinationLocation,
 		}
 
 		HandleRideCreatedEvent(createEvent, firestoreService, client, queueURL, dbClientMock)
-		HandleRideStartedEvent(event, firestoreService, dbClientMock)
+		HandleRideConfirmedEvent(event, firestoreService, dbClientMock)
 
 		dbEventSnapshot, err := firestoreService.GetDocument(ctx, "rides", fmt.Sprintf("%d", event.RideId))
 		require.NoError(t, err)
@@ -171,11 +205,17 @@ func TestIntegrationEventRetrieving(t *testing.T) {
 		require.NoError(t, err)
 		dbLog.RideId = id
 		dbLog.Client = common.HexToAddress(dbEventSnapshot.Data()["client"].(string))
+		dbLog.Driver = common.HexToAddress(dbEventSnapshot.Data()["driver"].(string))
 		dbLog.Cost = new(big.Int)
 		dbLog.Cost.SetString(dbEventSnapshot.Data()["cost"].(string), 10)
-		startTime, err := strconv.ParseUint(dbEventSnapshot.Data()["startTime"].(string), 10, 64)
+		confirmationTime, err := strconv.ParseUint(dbEventSnapshot.Data()["confirmationTime"].(string), 10, 64)
 		require.NoError(t, err)
-		dbLog.StartTime = startTime
+		dbLog.ConfirmationTime = confirmationTime
+		dbLog.Destination = dbEventSnapshot.Data()["destination"].(string)
+		dbLog.Source = dbEventSnapshot.Data()["source"].(string)
+		dbLog.SourceLocation = dbEventSnapshot.Data()["sourceLocation"].(string)
+		dbLog.DestinationLocation = dbEventSnapshot.Data()["destinationLocation"].(string)
+
 
 		require.Equal(t, expectedLog, dbLog)
 	})
