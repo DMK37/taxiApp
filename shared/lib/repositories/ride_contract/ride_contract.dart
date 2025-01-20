@@ -33,6 +33,7 @@ class RideContract implements RideContractAbstract {
   @override
   Future<bool> confirmDestinationArrivalByClient(
       ReownAppKitModal modal, int rideId) async {
+    await _navigateToMetamask();
     final address =
         modal.session?.namespaces?['eip155']?.accounts[0].split(':')[2];
     final resp = await modal.requestWriteContract(

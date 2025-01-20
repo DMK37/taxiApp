@@ -4,8 +4,8 @@ import "github.com/ethereum/go-ethereum/common"
 
 var (
 	WS_URL                   = "wss://sepolia.infura.io/ws/v3/eb54180721764626b9eea2db4bb7fa9f"
-	WS_HARDHAT_URL           = "ws://192.168.18.81:8545"
-	HARDHAT_CONTRACT_ADDRESS = common.HexToAddress("0xA3391Cc3a3e0AAFA305AEEE03E00999151B5df5A")
+	WS_HARDHAT_URL           = "ws://192.168.18.115:8545"
+	HARDHAT_CONTRACT_ADDRESS = common.HexToAddress("0x882cD5bB50caC0c874016a52EC8883459c158318")
 	CONTRACT_ADDRESS         = common.HexToAddress("0x9A841D91a524BBc413c688b6aF5BB7bAca0b510f")
 	FIREBASE_PROJECT_ID      = "taxiapp-6761d"
 	AWS_QUEUE_URL            = "https://sqs.us-east-1.amazonaws.com/703671903373/Order.fifo"
