@@ -23,13 +23,19 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
       appKit: appKit,
       
     );
-    _appKitModal.init();
+    _appKitModal.init().then((value) => setState(() {}));
+    _appKitModal.onModalError.subscribe((event) {
+      print('Error: ${event.message}');
+    });
     _appKitModal.disconnect();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login Page'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -39,14 +45,6 @@ class _DriverLoginPageState extends State<DriverLoginPage> {
               height: 200,
             ),
             const SizedBox(height: 20),
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     //context.read<DriverAuthCubit>().signIn();
-                
-            //     context.push('/map');
-            //   },
-            //   child: const Text('Connect MetaMask'),
-            // ),
             AppKitModalConnectButton(
               appKit: _appKitModal,
             ),

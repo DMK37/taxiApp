@@ -36,7 +36,7 @@ if private_ip:
     parent_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
     file_path = parent_path + "/main_server/TaxiServer/Properties/launchSettings.json"
     if os.name == 'nt':
-        file_path = parent_directory.replace("/", "\\")
+        file_path = file_path.replace("/", "\\")
     if variable == "remote":
         modify_line_in_file(file_path, 16, f"      \"applicationUrl\": \"{remote}\",")
     else:

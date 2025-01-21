@@ -8,6 +8,8 @@ class HistoryRide {
   final String sourceLocation;
   final String cost;
   final String status;
+  final String startTime;
+  final String endTime;
 
 
   HistoryRide({
@@ -20,6 +22,8 @@ class HistoryRide {
     required this.destinationLocation,
     required this.sourceLocation,
     required this.status,
+    required this.endTime,
+    required this.startTime,
   });
 
   factory HistoryRide.fromJson(String id, Map<String, dynamic> json) {
@@ -33,6 +37,8 @@ class HistoryRide {
       cost: json['cost'] ?? '',
       client: json['client'] ?? '',
       status: json['status'] ?? '',
+      startTime: json['startTime'] ?? '',
+      endTime: json['endTime'] ?? '',
     );
   }
 }

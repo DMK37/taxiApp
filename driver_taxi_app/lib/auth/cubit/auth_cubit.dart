@@ -45,7 +45,8 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
               linkMode: true,
             )),
       );
-      emit(DriverUnauthenticatedState());
+      await appKit.init();
+      //emit(DriverUnauthenticatedState());
       appKit.onSessionConnect.subscribe((event) async {
         print('Session connected');
         final address = event.session.namespaces['eip155']?.accounts[0].split(':')[2];
@@ -66,6 +67,7 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
         print('Session deleted');
         emit(DriverUnauthenticatedState());
       });
+      //await appKit.init();
       emit(DriverUnauthenticatedState());
     } catch (e) {
       print(e);
@@ -73,22 +75,22 @@ class DriverAuthCubit extends Cubit<DriverAuthState> {
     }
   }
 
-  void isConnected(ReownAppKitModal modal) {
-    emit(DriverAuthLoadingState());
-    if (modal.isConnected) {
-      final address = modal.session?.namespaces?['eip155']?.accounts.first.split(':').last;
-      emit(DriverAuthenticatedState(
+  // void isConnected(ReownAppKitModal modal) {
+  //   emit(DriverAuthLoadingState());
+  //   if (modal.isConnected) {
+  //     final address = modal.session?.namespaces?['eip155']?.accounts.first.split(':').last;
+  //     emit(DriverAuthenticatedState(
         
-          driver: DriverModel(
-              id: address ?? "0x1234567890",
-              firstName: "John",
-              lastName: "John",
-              car: CarModel(carName: "Volvo", carType: CarType.basic)
-              )));
-    } else {
-      emit(DriverUnauthenticatedState());
-    }
-  }
+  //         driver: DriverModel(
+  //             id: address ?? "0x1234567890",
+  //             firstName: "John",
+  //             lastName: "John",
+  //             car: CarModel(carName: "Volvo", carType: CarType.basic)
+  //             )));
+  //   } else {
+  //     emit(DriverUnauthenticatedState());
+  //   }
+  // }
 
   Future<void> createAccount(String id, String firstName, String lastName, String carName, CarType carType) async {
     emit(DriverAuthLoadingState());

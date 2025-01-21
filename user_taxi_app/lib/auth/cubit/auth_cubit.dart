@@ -46,10 +46,8 @@ class AuthCubit extends Cubit<AuthState> {
 
       appKit.onSessionConnect.subscribe((event) async {
         print('Session connected');
-        final address =
-            event.session.namespaces['eip155']?.accounts[0].split(':')[2];
-        final client =
-            await clientRepository.getClient(address ?? "0x1234567890");
+        final address = event.session.namespaces['eip155']?.accounts[0].split(':')[2];
+        final client = await clientRepository.getClient(address ?? "0x1234567890");
         if (client == null) {
           // emit first login
           print('First login');
@@ -70,11 +68,9 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> createAccount(
-      String id, String firstName, String lastName) async {
+  Future<void> createAccount(String id, String firstName, String lastName) async {
     emit(AuthLoadingState());
-    final client =
-        ClientModel(id: id, firstName: firstName, lastName: lastName);
+    final client = ClientModel(id: id, firstName: firstName, lastName: lastName);
     final response = await clientRepository.createClient(client);
     if (response == null) {
       emit(AuthFailureState(errorMessage: 'Failed to create account'));
@@ -84,11 +80,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthenticatedState(user: client));
   }
 
-  Future<void> updateAccount(
-      String id, String firstName, String lastName) async {
+  Future<void> updateAccount(String id, String firstName, String lastName) async {
     emit(AuthLoadingState());
-    final client =
-        ClientModel(id: id, firstName: firstName, lastName: lastName);
+    final client = ClientModel(id: id, firstName: firstName, lastName: lastName);
     final response = await clientRepository.updateClient(client);
     if (response == null) {
       emit(AuthFailureState(errorMessage: 'Failed to update account'));

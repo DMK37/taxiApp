@@ -233,6 +233,7 @@ class _DriverPageState extends State<DriverPage> {
                     child: const Text('Save Changes'),
                   ),
                 ),
+                _buildRideHistoryWidget(context),
               ],
             ),
           ),

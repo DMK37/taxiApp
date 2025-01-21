@@ -43,12 +43,8 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
-            <!-- <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyAJI-buaRrNN3x2RASJk6yv_UltK2fePzM" 
-            /> -->
             <intent-filter>
-                                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -72,5 +68,6 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <package android:name="io.metamask"/>
     </queries>
 </manifest>

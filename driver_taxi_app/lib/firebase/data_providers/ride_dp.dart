@@ -18,14 +18,14 @@ class RidesDataProvider {
               final rideData = entry.value as Map<String, dynamic>;
               return HistoryRide.fromJson(rideId, rideData);
             })
-            .where((ride) => ride.status == "finished")
+            .where((ride) => ride.status == "completed")
             .toList();
       } else {
         return [];
       }
     } catch (e) {
-      print('Error fetching finished rides for client "$driver": $e');
-      throw Exception('Failed to load finished rides for client');
+      print('Error fetching finished rides for driver "$driver": $e');
+      throw Exception('Failed to load finished rides for driver');
     }
   }
 }
