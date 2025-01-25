@@ -13,7 +13,11 @@ import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/order/cubit/order_cubit.dart';
 import 'package:taxiapp/router_config.dart';
-import 'package:taxiapp/theme/light_theme.dart';
+
+import 'package:shared/theme/dark_theme.dart';
+import 'package:shared/theme/light_theme.dart';
+import 'package:taxiapp/theme/theme_notifier.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   final appRouter = AppRouter();
@@ -26,7 +30,12 @@ void main() async {
     HttpOverrides.global = CustomHttpOverrides();
   }
 
-  runApp(MyApp(router: appRouter.router));
+    runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: MyApp(router: appRouter.router),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -54,6 +63,8 @@ class MyApp extends StatelessWidget {
           title: 'Taxi App',
           debugShowCheckedModeBanner: false,
           theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: Provider.of<ThemeNotifier>(context).themeMode,
         ));
   }
 }

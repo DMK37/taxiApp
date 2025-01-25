@@ -10,6 +10,7 @@ import 'package:taxiapp/components/main_draggable_scrollable_sheet.dart';
 import 'package:taxiapp/initial_order/cubit/initial_order_cubit.dart';
 import 'package:taxiapp/location/cubit/location_cubit.dart';
 import 'package:taxiapp/location/cubit/location_state.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class InitialOrderPage extends StatefulWidget {
   const InitialOrderPage({super.key});
@@ -19,8 +20,7 @@ class InitialOrderPage extends StatefulWidget {
 }
 
 class _InitialOrderPageState extends State<InitialOrderPage> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _sourceController = TextEditingController();
   final mapUtils = MapUtils();
@@ -33,16 +33,17 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
   LatLng? _destination;
   List<dynamic> _autoCompleteSuggestions = [];
 
+  String _darkMapStyle = '''[]''';
+  String _lightMapStyle = '''[]''';
+
   @override
   void initState() {
     super.initState();
-    _sourceController.text =
-        (context.read<LocationCubit>().state as LocationSuccessState).address;
-    context.read<InitialOrderCubit>().pickSource(
-        (context.read<LocationCubit>().state as LocationSuccessState).location,
+    _loadMapStyles();
+    _sourceController.text = (context.read<LocationCubit>().state as LocationSuccessState).address;
+    context.read<InitialOrderCubit>().pickSource((context.read<LocationCubit>().state as LocationSuccessState).location,
         (context.read<LocationCubit>().state as LocationSuccessState).address);
-    _source =
-        (context.read<LocationCubit>().state as LocationSuccessState).location;
+    _source = (context.read<LocationCubit>().state as LocationSuccessState).location;
 
     _sourceFocusNode.addListener(() {
       if (_sourceFocusNode.hasFocus) {
@@ -61,8 +62,6 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
         );
       }
     });
-
-    
   }
 
   @override
@@ -75,8 +74,24 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
     super.dispose();
   }
 
+  Future<void> _loadMapStyles() async {
+    try {
+      _darkMapStyle = await rootBundle.loadString('assets/map_styles/dark_map_style.json');
+      print('loaded dart map theme');
+    } catch (e) {
+      print('cant load dart map theme');
+    }
+    try {
+      _lightMapStyle = await rootBundle.loadString('assets/map_styles/light_map_style.json');
+      print('loaded light map theme');
+    } catch (e) {
+      print('cant load light map theme');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final String currentStyle = Theme.of(context).brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle;
     return Scaffold(
       body: Stack(
         children: [
@@ -84,15 +99,14 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
             height: MediaQuery.of(context).size.height * 0.8,
             child: Stack(children: [
               GoogleMap(
+                style: currentStyle,
                 tiltGesturesEnabled: false,
                 mapType: MapType.normal,
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
                 },
                 initialCameraPosition: CameraPosition(
-                  target: (context.read<LocationCubit>().state
-                          as LocationSuccessState)
-                      .location,
+                  target: (context.read<LocationCubit>().state as LocationSuccessState).location,
                   zoom: 17.0,
                 ),
                 myLocationEnabled: true,
@@ -109,8 +123,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                     _autoCompleteSuggestions = [];
                   });
                   final loc = _isDestination ? _destination : _source;
-                  final places = await placemarkFromCoordinates(
-                      loc!.latitude, loc.longitude);
+                  final places = await placemarkFromCoordinates(loc!.latitude, loc.longitude);
                   final address = "${places[0].street}, ${places[0].locality}";
                   if (_isDestination) {
                     _destinationController.text = address;
@@ -140,8 +153,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
               width: 40,
               child: FloatingActionButton(
                 heroTag: 'user-page',
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 onPressed: () {
                   context.push('/user');
@@ -162,8 +174,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
               child: FloatingActionButton(
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 onPressed: () async {
-                  final location =
-                      await context.read<LocationCubit>().getLocation();
+                  final location = await context.read<LocationCubit>().getLocation();
                   mapUtils.goToTheLocation(location.$1, _controller);
                 },
                 child: Icon(
@@ -179,8 +190,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                   ? Column(
                       children: [
                         Center(
-                          child: Text("Pick Destination",
-                              style: Theme.of(context).textTheme.titleMedium),
+                          child: Text("Pick Destination", style: Theme.of(context).textTheme.titleMedium),
                         ),
                         const SizedBox(height: 10),
                         TextField(
@@ -199,14 +209,13 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
-                            context.read<InitialOrderCubit>().pickDestination(
-                                _destination!, _destinationController.text);
+                            context
+                                .read<InitialOrderCubit>()
+                                .pickDestination(_destination!, _destinationController.text);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor:
-                                Theme.of(context).colorScheme.surface,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            foregroundColor: Theme.of(context).colorScheme.surface,
                           ),
                           child: Text(
                             'Confirm Destination Point',
@@ -246,15 +255,11 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                             setState(() {
                               _isDestination = true;
                             });
-                            context
-                                .read<InitialOrderCubit>()
-                                .pickSource(_source!, _sourceController.text);
+                            context.read<InitialOrderCubit>().pickSource(_source!, _sourceController.text);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor:
-                                Theme.of(context).colorScheme.surface,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            foregroundColor: Theme.of(context).colorScheme.surface,
                           ),
                           child: Text(
                             'Confirm Pick Up Point',
@@ -290,17 +295,14 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       borderSide: BorderSide(
                         width: 1.5,
-                        color:
-                            Theme.of(context).inputDecorationTheme.fillColor!,
+                        color: Theme.of(context).inputDecorationTheme.fillColor!,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       borderSide: BorderSide(
                         color: Theme.of(context).colorScheme.primary,
                         width: 1.5,
@@ -321,9 +323,8 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                   ),
                   onTap: () async {
                     if (_sourceController.text != "") {
-                      _autoCompleteSuggestions = await context
-                          .read<LocationCubit>()
-                          .getAutoCompleteSuggestions(_sourceController.text);
+                      _autoCompleteSuggestions =
+                          await context.read<LocationCubit>().getAutoCompleteSuggestions(_sourceController.text);
                     } else {
                       _autoCompleteSuggestions = [];
                     }
@@ -333,9 +334,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                   },
                   onChanged: (value) async {
                     if (value.isNotEmpty) {
-                      _autoCompleteSuggestions = await context
-                          .read<LocationCubit>()
-                          .getAutoCompleteSuggestions(value);
+                      _autoCompleteSuggestions = await context.read<LocationCubit>().getAutoCompleteSuggestions(value);
                       setState(() {});
                     }
                   },
@@ -353,17 +352,14 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       borderSide: BorderSide(
                         width: 1.5,
-                        color:
-                            Theme.of(context).inputDecorationTheme.fillColor!,
+                        color: Theme.of(context).inputDecorationTheme.fillColor!,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       borderSide: BorderSide(
                         color: Theme.of(context).colorScheme.primary,
                         width: 1.5,
@@ -383,10 +379,8 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                   ),
                   onTap: () async {
                     if (_destinationController.text != "") {
-                      _autoCompleteSuggestions = await context
-                          .read<LocationCubit>()
-                          .getAutoCompleteSuggestions(
-                              _destinationController.text);
+                      _autoCompleteSuggestions =
+                          await context.read<LocationCubit>().getAutoCompleteSuggestions(_destinationController.text);
                     } else {
                       _autoCompleteSuggestions = [];
                     }
@@ -396,9 +390,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                   },
                   onChanged: (value) async {
                     if (value.isNotEmpty) {
-                      _autoCompleteSuggestions = await context
-                          .read<LocationCubit>()
-                          .getAutoCompleteSuggestions(value);
+                      _autoCompleteSuggestions = await context.read<LocationCubit>().getAutoCompleteSuggestions(value);
                       setState(() {});
                     }
                   },
@@ -406,20 +398,17 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                 const SizedBox(height: 10),
                 SizedBox(
                   height: MediaQuery.of(context).viewInsets.bottom > 0
-                      ? MediaQuery.of(context).size.height * 0.755 -
-                          MediaQuery.of(context).viewInsets.bottom
+                      ? MediaQuery.of(context).size.height * 0.755 - MediaQuery.of(context).viewInsets.bottom
                       : MediaQuery.of(context).size.height * 0.73,
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
                     itemCount: _autoCompleteSuggestions.length,
                     itemBuilder: (context, index) {
-                      String suggestion =
-                          _autoCompleteSuggestions[index]['description'];
+                      String suggestion = _autoCompleteSuggestions[index]['description'];
                       return Column(
                         children: [
                           ListTile(
-                            leading: Icon(Icons.location_on,
-                                color: Theme.of(context).colorScheme.primary),
+                            leading: Icon(Icons.location_on, color: Theme.of(context).colorScheme.primary),
                             title: Text(
                               suggestion,
                               style: const TextStyle(
@@ -430,19 +419,13 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                             onTap: () async {
                               final LatLng? loc = await context
                                   .read<LocationCubit>()
-                                  .getPlaceCoordinates(
-                                      _autoCompleteSuggestions[index]
-                                          ['place_id']);
+                                  .getPlaceCoordinates(_autoCompleteSuggestions[index]['place_id']);
                               if (_isDestination) {
-                                context
-                                    .read<InitialOrderCubit>()
-                                    .pickDestination(loc!, suggestion);
+                                context.read<InitialOrderCubit>().pickDestination(loc!, suggestion);
                                 _destinationController.text = suggestion;
                                 _destination = loc;
                               } else {
-                                context
-                                    .read<InitialOrderCubit>()
-                                    .pickSource(loc!, suggestion);
+                                context.read<InitialOrderCubit>().pickSource(loc!, suggestion);
                                 _sourceController.text = suggestion;
                                 _source = loc;
                               }
@@ -453,8 +436,7 @@ class _InitialOrderPageState extends State<InitialOrderPage> {
                           ),
                           if (index != _autoCompleteSuggestions.length - 1)
                             SizedBox(
-                              width: MediaQuery.of(context).size.width *
-                                  0.85, // Adjust the width as needed
+                              width: MediaQuery.of(context).size.width * 0.85, // Adjust the width as needed
                               child: Divider(
                                 color: Theme.of(context).colorScheme.secondary,
                                 height: 1,

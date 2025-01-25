@@ -459,6 +459,25 @@ class MockDriverInitCubit extends _i1.Mock implements _i11.DriverInitCubit {
       ) as _i8.Future<bool>);
 
   @override
+  _i8.Future<bool> confirmDestinationArrival(
+    _i2.ReownAppKitModal? modal,
+    int? rideId,
+    _i13.OrderMessageModel? orderMessageModel,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #confirmDestinationArrival,
+          [
+            modal,
+            rideId,
+            orderMessageModel,
+          ],
+        ),
+        returnValue: _i8.Future<bool>.value(false),
+        returnValueForMissingStub: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
   void orderCompleted(_i13.OrderMessageModel? orderMessageModel) =>
       super.noSuchMethod(
         Invocation.method(

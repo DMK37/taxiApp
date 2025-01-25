@@ -41,9 +41,9 @@ class _MainDraggableScrollableSheetState
             valueListenable: _extentNotifier,
             builder: (context, extent, child) {
               return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(25.0),
                     topRight: Radius.circular(25.0),
                   ),
@@ -62,7 +62,7 @@ class _MainDraggableScrollableSheetState
                         width: 50,
                         height: 5,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(2.5),
                         ),
                       ),

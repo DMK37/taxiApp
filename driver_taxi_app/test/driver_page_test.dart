@@ -1,30 +1,30 @@
 import 'package:driver_taxi_app/auth/cubit/auth_cubit.dart';
 import 'package:driver_taxi_app/auth/cubit/auth_state.dart';
 import 'package:driver_taxi_app/driver/pages/driver_page.dart';
+import 'package:driver_taxi_app/theme/theme_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:reown_appkit/reown_appkit.dart';
+import 'package:provider/provider.dart';
 import 'package:shared/models/car_model.dart';
 import 'package:shared/models/car_type.dart';
 import 'package:mockito/annotations.dart';
 import 'package:shared/models/driver_model.dart';
 
 @GenerateNiceMocks([MockSpec<DriverAuthCubit>()])
-@GenerateNiceMocks([MockSpec<ReownAppKit>()])
+@GenerateNiceMocks([MockSpec<ThemeNotifier>()])
 import 'driver_page_test.mocks.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   late MockDriverAuthCubit mockDriverAuthCubit;
+  late MockThemeNotifier mockThemeNotifier;
 
   setUp(() {
     mockDriverAuthCubit = MockDriverAuthCubit();
-    final mockAppKit = MockReownAppKit();
-
-    when(mockDriverAuthCubit.appKit).thenReturn(mockAppKit);
+    mockThemeNotifier = MockThemeNotifier();
 
     when(mockDriverAuthCubit.state).thenReturn(
       DriverAuthenticatedState(
@@ -38,16 +38,22 @@ void main() {
     );
   });
 
+  Widget createTestWidget(Widget child) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeNotifier>.value(value: mockThemeNotifier),
+        BlocProvider<DriverAuthCubit>.value(value: mockDriverAuthCubit),
+      ],
+      child: MaterialApp(home: child),
+    );
+  }
+
   group('DriverPage Integration Tests', () {
     testWidgets('renders DriverPage with initial values', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: BlocProvider<DriverAuthCubit>.value(
-            value: mockDriverAuthCubit,
-            child: const DriverPage(showAppKitButton: false),
-          ),
-        ),
-      );
+      await tester.pumpWidget(createTestWidget(const DriverPage(
+        showAppKitButton: false,
+        showRideHistory: false,
+      )));
 
       expect(find.text('John'), findsOneWidget); // First Name
       expect(find.text('Doe'), findsOneWidget); // Last Name
@@ -56,16 +62,10 @@ void main() {
     });
 
     testWidgets('shows validation error when fields are empty', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: BlocProvider<DriverAuthCubit>.value(
-            value: mockDriverAuthCubit,
-            child: const DriverPage(
-              showAppKitButton: false,
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(createTestWidget(const DriverPage(
+        showAppKitButton: false,
+        showRideHistory: false,
+      )));
 
       await tester.enterText(find.byType(TextFormField).at(0), ''); // First Name
       await tester.pump();
@@ -94,17 +94,10 @@ void main() {
         'BMW X5',
         CarType.comfort,
       )).thenAnswer((_) async => Future<void>.value());
-
-      await tester.pumpWidget(
-        MaterialApp(
-          home: BlocProvider<DriverAuthCubit>.value(
-            value: mockDriverAuthCubit,
-            child: const DriverPage(
-              showAppKitButton: false,
-            ),
-          ),
-        ),
-      );
+      await tester.pumpWidget(createTestWidget(const DriverPage(
+        showAppKitButton: false,
+        showRideHistory: false,
+      )));
 
       await tester.enterText(find.byType(TextFormField).at(0), 'John'); // First Name
       await tester.enterText(find.byType(TextFormField).at(1), 'Smith'); // Last Name
