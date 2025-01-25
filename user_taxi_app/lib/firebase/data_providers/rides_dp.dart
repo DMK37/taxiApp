@@ -1,28 +1,22 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:shared/models/ride_history_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RidesDataProvider {
-  final DatabaseReference _ridesRef = FirebaseDatabase.instance.ref("rides");
-   Future<List<HistoryRide>> fetchFinishedRidesByClient(String client) async {
+  final CollectionReference _ridesCollection =
+      FirebaseFirestore.instance.collection("rides");
+
+  Future<List<HistoryRide>> fetchFinishedRidesByClient(String client) async {
     try {
+      final QuerySnapshot querySnapshot = await _ridesCollection
+          .where("client", isEqualTo: client)
+          .where("status", isEqualTo: "finished")
+          .get();
 
-      final Query query = _ridesRef.orderByChild("client").equalTo(client);
-      final DataSnapshot snapshot = await query.get();
-
-      if (snapshot.exists) {
-        final ridesData = snapshot.value as Map<String, dynamic>;
-
-        return ridesData.entries
-            .map((entry) {
-              final rideId = entry.key;
-              final rideData = entry.value as Map<String, dynamic>;
-              return HistoryRide.fromJson(rideId, rideData);
-            })
-            .where((ride) => ride.status == "finished")
-            .toList();
-      } else {
-        return [];
-      }
+      return querySnapshot.docs.map((doc) {
+        final rideId = doc.id;
+        final rideData = doc.data() as Map<String, dynamic>;
+        return HistoryRide.fromJson(rideId, rideData);
+      }).toList();
     } catch (e) {
       print('Error fetching finished rides for client "$client": $e');
       throw Exception('Failed to load finished rides for client');

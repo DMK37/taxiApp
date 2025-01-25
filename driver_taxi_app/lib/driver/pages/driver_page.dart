@@ -195,25 +195,25 @@ class _DriverPageState extends State<DriverPage> {
                 ),
                 const SizedBox(height: 20),
                 Row(
-                children: <Widget>[
-                  const Text(
-                    'Change theme:',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12.0),
-                    child: Switch(
-                      value: themeNotifier.isDarkMode,
-                      onChanged: (value) {
-                        themeNotifier.toggleTheme();
-                      },
+                  children: <Widget>[
+                    const Text(
+                      'Change theme:',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0),
+                      child: Switch(
+                        value: themeNotifier.isDarkMode,
+                        onChanged: (value) {
+                          themeNotifier.toggleTheme();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20.0,
+                ),
                 Center(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -236,6 +236,15 @@ class _DriverPageState extends State<DriverPage> {
                     child: const Text('Save Changes'),
                   ),
                 ),
+                const SizedBox(
+                  height: 40.0,
+                ),
+                const Center(
+                  child: Text(
+                    'Ride History',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
                 _buildRideHistoryWidget(context),
               ],
             ),
@@ -245,8 +254,8 @@ class _DriverPageState extends State<DriverPage> {
     );
   }
 
-    Widget _buildRideHistoryWidget(BuildContext context) {
-  DriverModel driver = (context.read<DriverAuthCubit>().state as DriverAuthenticatedState).driver;
-  return RideHistoryWidget(context: context, driver: driver);
-}
+  Widget _buildRideHistoryWidget(BuildContext context) {
+    DriverModel driver = (context.read<DriverAuthCubit>().state as DriverAuthenticatedState).driver;
+    return RideHistoryWidget(context: context, driver: driver);
+  }
 }
