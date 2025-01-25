@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class InitialDriverPage extends StatefulWidget {
   const InitialDriverPage({super.key});
@@ -30,9 +31,13 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
   LatLng? _currentAddress;
   late String driverId;
 
+  String _darkMapStyle = '''[]''';
+  String _lightMapStyle = '''[]''';
+
   @override
   void initState() {
     super.initState();
+    _loadMapStyles();
     _currentAddressController.text =
         (context.read<LocationCubit>().state as LocationSuccessState).address;
     driverId =
@@ -41,6 +46,21 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
             .id;
     _databaseRef = FirebaseDatabase.instance.ref("notifications/$driverId");
     _listenForNewItems();
+  }
+
+    Future<void> _loadMapStyles() async {
+    try {
+      _darkMapStyle = await rootBundle.loadString('assets/map_styles/dark_map_style.json');
+      print('loaded dart map theme');
+    } catch (e) {
+      print('cant load dart map theme');
+    }
+    try {
+      _lightMapStyle = await rootBundle.loadString('assets/map_styles/light_map_style.json');
+      print('loaded light map theme');
+    } catch (e) {
+      print('cant load light map theme');
+    }
   }
 
   void _listenForNewItems() {
@@ -62,6 +82,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
 
   @override
   Widget build(BuildContext context) {
+    final String currentStyle = Theme.of(context).brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle;
     return Scaffold(
       body: Stack(
         children: [
@@ -70,6 +91,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
             child: Stack(
               children: [
                 GoogleMap(
+                  style: currentStyle,
                   tiltGesturesEnabled: false,
                   mapType: MapType.normal,
                   onMapCreated: (GoogleMapController controller) {
@@ -196,6 +218,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: const Text("You are online!"),
           content: const Text(
               "You are now online and clients can see your localization."),
@@ -224,6 +247,7 @@ class _InitialDriverPageState extends State<InitialDriverPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.primary,
           title: const Text("You are offline!"),
           content: const Text(
               "You are now offline and clients can't see your localization."),

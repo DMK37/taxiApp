@@ -13,6 +13,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase/firebase_options.dart';
 import 'package:shared/utils/custom_http_override.dart';
 import 'package:flutter_driver/driver_extension.dart';
+import 'package:driver_taxi_app/theme/theme_notifier.dart';
+import 'package:shared/theme/dark_theme.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   final appRouter = AppRouter();
@@ -25,7 +28,12 @@ void main() async {
     HttpOverrides.global = CustomHttpOverrides();
   }
   enableFlutterDriverExtension();
-  runApp(MyApp(router: appRouter.router));
+    runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: MyApp(router: appRouter.router),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -50,6 +58,8 @@ class MyApp extends StatelessWidget {
           title: 'Taxi Driver App',
           debugShowCheckedModeBanner: false,
           theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: Provider.of<ThemeNotifier>(context).themeMode,
         ));
   }
 }
