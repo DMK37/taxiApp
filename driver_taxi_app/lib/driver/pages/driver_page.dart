@@ -10,8 +10,9 @@ import 'package:provider/provider.dart';
 import 'package:shared/models/driver_model.dart';
 
 class DriverPage extends StatefulWidget {
-  const DriverPage({super.key, this.showAppKitButton = true});
+  const DriverPage({super.key, this.showAppKitButton = true, this.showRideHistory = true});
   final bool showAppKitButton;
+  final bool showRideHistory;
 
   @override
   State<DriverPage> createState() => _DriverPageState();
@@ -245,7 +246,7 @@ class _DriverPageState extends State<DriverPage> {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
-                _buildRideHistoryWidget(context),
+                if(widget.showRideHistory) _buildRideHistoryWidget(context),
               ],
             ),
           ),

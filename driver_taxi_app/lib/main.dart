@@ -12,7 +12,6 @@ import 'package:shared/theme/light_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase/firebase_options.dart';
 import 'package:shared/utils/custom_http_override.dart';
-//import 'package:flutter_driver/driver_extension.dart';
 import 'package:driver_taxi_app/theme/theme_notifier.dart';
 import 'package:shared/theme/dark_theme.dart';
 import 'package:provider/provider.dart';
@@ -27,8 +26,7 @@ void main() async {
   if (const bool.fromEnvironment('dart.vm.product') == false) {
     HttpOverrides.global = CustomHttpOverrides();
   }
-  //enableFlutterDriverExtension();
-    runApp(
+  runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
       child: MyApp(router: appRouter.router),
@@ -45,8 +43,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) =>
-                LocationCubit()..checkPerrmissionsAndGetLocation(),
+            create: (context) => LocationCubit()..checkPerrmissionsAndGetLocation(),
           ),
           BlocProvider(
             create: (context) => DriverAuthCubit(DriverRepository())..init(),
