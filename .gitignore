@@ -6,7 +6,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 .env
-
+taxiapp-6761d-firebase-adminsdk-4yxbd-536043c9c8.json
+AndroidManifest.xml
+GoogleService-Info.plist
 # User-specific files
 *.rsuser
 *.suo
